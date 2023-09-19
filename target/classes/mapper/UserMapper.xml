@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.abc.warehouse.mapper.UserMapper">
+
+    <resultMap id="BaseResultMap" type="com.abc.warehouse.pojo.User">
+            <id property="id" column="ID" jdbcType="INTEGER"/>
+            <result property="pwd" column="pwd" jdbcType="VARCHAR"/>
+            <result property="userName" column="user_name" jdbcType="VARCHAR"/>
+            <result property="role" column="Role" jdbcType="VARCHAR"/>
+            <result property="gender" column="Gender" jdbcType="OTHER"/>
+            <result property="birthdate" column="BirthDate" jdbcType="DATE"/>
+            <result property="idnumber" column="IDNumber" jdbcType="VARCHAR"/>
+            <result property="nativeplace" column="NativePlace" jdbcType="VARCHAR"/>
+            <result property="address" column="Address" jdbcType="VARCHAR"/>
+            <result property="phonenumber" column="PhoneNumber" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        ID,pwd,user_name,
+        Role,Gender,BirthDate,
+        IDNumber,NativePlace,Address,
+        PhoneNumber
+    </sql>
+</mapper>

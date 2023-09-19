@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.abc.warehouse.mapper.DeliverMapper">
+
+    <resultMap id="BaseResultMap" type="com.abc.warehouse.pojo.Deliver">
+            <id property="deliverId" column="deliver_id" jdbcType="BIGINT"/>
+            <result property="houseId" column="house_id" jdbcType="BIGINT"/>
+            <result property="deliverTime" column="deliver_time" jdbcType="TIMESTAMP"/>
+            <result property="materialId" column="material_id" jdbcType="BIGINT"/>
+            <result property="deliverCount" column="deliver_count" jdbcType="INTEGER"/>
+            <result property="empId" column="emp_id" jdbcType="BIGINT"/>
+            <result property="notes" column="notes" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        deliver_id,house_id,deliver_time,
+        material_id,deliver_count,emp_id,
+        notes
+    </sql>
+</mapper>
