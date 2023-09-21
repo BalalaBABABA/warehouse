@@ -1,6 +1,8 @@
 package com.abc.warehouse.utils;
 
-import com.hmdp.dto.UserDTO;
+import com.abc.warehouse.dto.UserDTO;
+import com.abc.warehouse.pojo.User;
+
 
 
 public class UserHolder {
