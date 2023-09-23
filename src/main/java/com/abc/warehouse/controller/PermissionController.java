@@ -21,14 +21,25 @@ public class PermissionController {
         return permissionService.getPermissionTypes();
     }
 
+
+
+    /**
+     * 根据resourceId获取types
+     * @return
+     */
+    @GetMapping("/types/{resourceId}")
+    public Result getPermissionTypesByResourceId(@PathVariable("resourceId")Long resourceId){
+        return permissionService.getPermissionTypesByResourceId(resourceId);
+    }
+
     /**
      * 根据resourceId获取对应的所有用户权限
      * @param resourceId
      * @return
      */
-    @PostMapping("/{resource_id}")
-    public Result getAllUsersPermissions(@PathVariable("resource_id") Long resourceId){
-        return permissionService.getAllUsersPermissionsByResourceId(resourceId);
+    @PostMapping("/{page}/{resource_id}")
+    public Result getAllUsersPermissions(@PathVariable("page")Integer pageCount,@PathVariable("resource_id") Long resourceId){
+        return permissionService.getAllUsersPermissionsByResourceId(pageCount,resourceId);
     }
 
     /**
@@ -50,7 +61,7 @@ public class PermissionController {
      * @param resourceId
      * @return
      */
-    @PostMapping("/del/{user_id}/{resource_id}/{flag}")
+    @PostMapping("/del/{user_id}/{resource_id}")
     public Result deleteUserResource(@PathVariable("user_id")Long userId,
                                      @PathVariable("resource_id")Long resourceId
                                      ){

@@ -17,4 +17,9 @@ public class UserController {
         // 调用userService的方法实现
         return Result.ok("你好");
     }
+
+    @GetMapping("/totalpage")
+    public long getTotalPage(){
+        return userService.getTotalPage();
+    }
 }
