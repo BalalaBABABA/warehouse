@@ -6,13 +6,13 @@
 
     <resultMap id="BaseResultMap" type="com.abc.warehouse.pojo.Permission">
             <id property="id" column="id" jdbcType="BIGINT"/>
-            <result property="empId" column="emp_id" jdbcType="BIGINT"/>
+            <result property="userId" column="user_id" jdbcType="BIGINT"/>
             <result property="resourceId" column="resource_id" jdbcType="BIGINT"/>
             <result property="type" column="type" jdbcType="VARCHAR"/>
     </resultMap>
 
     <sql id="Base_Column_List">
-        id,emp_id,resource_id,
+        id,user_id,resource_id,
         type
     </sql>
 </mapper>

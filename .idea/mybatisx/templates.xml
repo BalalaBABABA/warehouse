@@ -63,13 +63,17 @@
             </option>
             <option name="needsComment" value="true" />
             <option name="needsModel" value="true" />
-            <option name="relativePackage" value="dto" />
+            <option name="relativePackage" value="pojo" />
             <option name="superClass" value="" />
             <option name="tableUIInfoList">
               <list>
                 <TableUIInfo>
-                  <option name="className" value="Log" />
-                  <option name="tableName" value="log_208201302" />
+                  <option name="className" value="Deliver" />
+                  <option name="tableName" value="deliver_208201302" />
+                </TableUIInfo>
+                <TableUIInfo>
+                  <option name="className" value="Store" />
+                  <option name="tableName" value="store_208201302" />
                 </TableUIInfo>
               </list>
             </option>
