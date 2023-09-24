@@ -15,7 +15,7 @@ public class UserController {
     @GetMapping("/{id}")
     public Result getUserById(@PathVariable("id")Long id){
         // 调用userService的方法实现
-        return Result.ok("你好");//2222222222222
+        return Result.ok("你好");//3333333333
     }
 
     @GetMapping("/totalpage")
