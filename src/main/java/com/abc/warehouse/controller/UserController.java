@@ -22,4 +22,14 @@ public class UserController {
     public long getTotalPage(){
         return userService.getTotalPage();
     }//1112223333
+
+    @GetMapping("/list")
+    public Result getAllUser(){
+        return userService.getAllUser();
+    }
+
+    @PostMapping("/{id}")
+    public Result getAllUser(@PathVariable("id") Long id){
+        return userService.deleteUserById(id);
+    }
 }

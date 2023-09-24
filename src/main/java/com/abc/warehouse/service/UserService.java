@@ -1,5 +1,6 @@
 package com.abc.warehouse.service;
 
+import com.abc.warehouse.dto.Result;
 import com.abc.warehouse.pojo.User;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -11,4 +12,8 @@ import com.baomidou.mybatisplus.extension.service.IService;
 public interface UserService extends IService<User> {
 
     long getTotalPage();
+
+    Result getAllUser();
+
+    Result deleteUserById(Long id);
 }

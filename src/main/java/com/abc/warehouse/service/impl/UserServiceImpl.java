@@ -1,11 +1,14 @@
 package com.abc.warehouse.service.impl;
 
+import com.abc.warehouse.dto.Result;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.abc.warehouse.pojo.User;
 import com.abc.warehouse.service.UserService;
 import com.abc.warehouse.mapper.UserMapper;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 import static com.abc.warehouse.utils.SystemConstants.DEFAULT_PAGE_SIZE;
 
@@ -25,6 +28,20 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         page(page, null);
         return page.getPages();
     }
+
+    @Override
+    public Result getAllUser() {
+        List<User> list = list();
+        return Result.ok(list);
+    }
+
+    @Override
+    public Result deleteUserById(Long id) {
+        boolean b = this.removeById(id);
+        return b?Result.ok():Result.fail("删除失败");
+    }
+
+
 }
 
 
