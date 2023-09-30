@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
+
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 /**
@@ -13,6 +15,7 @@ import lombok.Data;
  */
 @TableName(value ="permission_208201302")
 @Data
+@AllArgsConstructor
 public class Permission implements Serializable {
     /**
      * 主键
@@ -23,12 +26,12 @@ public class Permission implements Serializable {
     /**
      * 人员id
      */
-    private Long empId;
+    private Long userId;
 
     /**
      * 资源id
      */
-    private Long resoucreId;
+    private Long resourceId;
 
     /**
      * 权限类型

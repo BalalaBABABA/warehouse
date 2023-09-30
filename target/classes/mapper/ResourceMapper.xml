@@ -2,9 +2,9 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.abc.warehouse.mapper.ResoucreMapper">
+<mapper namespace="com.abc.warehouse.mapper.ResourceMapper">
 
-    <resultMap id="BaseResultMap" type="com.abc.warehouse.pojo.Resoucre">
+    <resultMap id="BaseResultMap" type="com.abc.warehouse.pojo.Resource">
             <id property="id" column="id" jdbcType="BIGINT"/>
             <result property="name" column="name" jdbcType="VARCHAR"/>
     </resultMap>

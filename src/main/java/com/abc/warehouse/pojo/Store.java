@@ -44,7 +44,7 @@ public class Store implements Serializable {
     /**
      * 操作人员代码
      */
-    private Long empId;
+    private Long userId;
 
     /**
      * 备注

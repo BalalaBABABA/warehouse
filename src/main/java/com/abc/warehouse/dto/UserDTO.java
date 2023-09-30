@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * 不包含pwd属性，保护隐私
@@ -57,6 +58,7 @@ public class UserDTO {
      * 联系电话
      */
     private String phonenumber;
+
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;

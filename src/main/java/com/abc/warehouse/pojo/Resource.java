@@ -5,15 +5,18 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
+
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 /**
  * 资源表
- * @TableName resoucre_208201302
+ * @TableName resource_208201302
  */
-@TableName(value ="resoucre_208201302")
+@TableName(value ="resource_208201302")
 @Data
-public class Resoucre implements Serializable {
+@AllArgsConstructor
+public class Resource implements Serializable {
     /**
      * 资源代码
      */

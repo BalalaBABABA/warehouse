@@ -10,13 +10,13 @@
             <result property="deliverTime" column="deliver_time" jdbcType="TIMESTAMP"/>
             <result property="materialId" column="material_id" jdbcType="BIGINT"/>
             <result property="deliverCount" column="deliver_count" jdbcType="INTEGER"/>
-            <result property="empId" column="emp_id" jdbcType="BIGINT"/>
+            <result property="userId" column="user_id" jdbcType="BIGINT"/>
             <result property="notes" column="notes" jdbcType="VARCHAR"/>
     </resultMap>
 
     <sql id="Base_Column_List">
         deliver_id,house_id,deliver_time,
-        material_id,deliver_count,emp_id,
+        material_id,deliver_count,user_id,
         notes
     </sql>
 </mapper>

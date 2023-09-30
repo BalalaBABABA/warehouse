@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 /**
 * @author 吧啦
 * @description 针对表【material_208201302(物料表)】的数据库操作Service实现
-* @createDate 2023-09-19 15:31:44
+* @createDate 2023-09-23 16:58:22
 */
 @Service
 public class MaterialServiceImpl extends ServiceImpl<MaterialMapper, Material>
