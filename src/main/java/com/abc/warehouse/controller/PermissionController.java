@@ -13,7 +13,7 @@ public class PermissionController {
     private PermissionService permissionService;
 
     /**
-     * 获取所有权限类型
+     * ???????
      * @return
      */
     @GetMapping("/types")
@@ -24,7 +24,7 @@ public class PermissionController {
 
 
     /**
-     * 根据resourceId获取types
+     * ??resourceId??types
      * @return
      */
     @GetMapping("/types/{resourceId}")
@@ -33,7 +33,7 @@ public class PermissionController {
     }
 
     /**
-     * 根据resourceId获取对应的所有用户权限
+     * ??resourceId???????????
      * @param resourceId
      * @return
      */
@@ -43,7 +43,7 @@ public class PermissionController {
     }
 
     /**
-     * 根据权限类型，更新用户的某个权限
+     * ????????????????
      * @param userId
      * @param resourceId
      * @param type
@@ -56,7 +56,7 @@ public class PermissionController {
     }
 
     /**
-     * 根据资源id，取消某个用户的权限
+     * ????id??????????
      * @param userId
      * @param resourceId
      * @return

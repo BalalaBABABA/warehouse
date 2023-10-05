@@ -9,5 +9,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
 * @createDate 2023-09-23 16:58:22
 */
 public interface MaterialService extends IService<Material> {
-
+//哈哈哈哈哈11嗯
 }

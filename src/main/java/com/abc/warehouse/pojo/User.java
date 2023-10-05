@@ -15,56 +15,19 @@ import lombok.Data;
 @TableName(value ="user_208201302")
 @Data
 public class User implements Serializable {
-    /**
-     * 人员代码
-     */
+
     @TableId(type = IdType.AUTO)
-    private Integer id;
-
-    /**
-     * 密码
-     */
-    private String pwd;
-
-    /**
-     * 姓名
-     */
-    private String userName;
-
-    /**
-     * 角色
-     */
+    private Long id;
+    private String password;
+    private String name;
     private String role;
-
-    /**
-     * 性别
-     */
-    private Object gender;
-
-    /**
-     * 出生日期
-     */
-    private Date birthdate;
-
-    /**
-     * 身份证号
-     */
-    private String idnumber;
-
-    /**
-     * 籍贯
-     */
-    private String nativeplace;
-
-    /**
-     * 家庭住址
-     */
+    private String sex;
+    private Date birthDate;
+    private String idNumber;
+    private String nativePlace;
     private String address;
+    private String phone;
 
-    /**
-     * 联系电话
-     */
-    private String phonenumber;
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;

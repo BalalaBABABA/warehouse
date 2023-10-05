@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 * @description 针对表【store_208201302】的数据库操作Service实现
 * @createDate 2023-09-23 17:51:32
 */
+//哈哈
 @Service
 public class StoreServiceImpl extends ServiceImpl<StoreMapper, Store>
     implements StoreService{
