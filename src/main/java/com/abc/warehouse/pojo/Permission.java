@@ -8,6 +8,7 @@ import java.io.Serializable;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * 权限表
@@ -16,6 +17,7 @@ import lombok.Data;
 @TableName(value ="permission_208201302")
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class Permission implements Serializable {
     /**
      * 主键

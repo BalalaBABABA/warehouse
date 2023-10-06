@@ -15,4 +15,20 @@
         id,user_id,resource_id,
         type
     </sql>
+    <insert id="saveUserPermissions" parameterType="list">
+        insert into permission_208201302(user_id,resource_id,type)
+        <foreach item="userId" collection="userIds"  open="values" separator="," >
+            (#{userId} , #{resourceId} ,#{type})
+        </foreach>
+    </insert>
+    <select id="searchPermissionByRole" resultType="com.abc.warehouse.pojo.Permission">
+          select * from permission_208201302 where resource_id = #{resourceId}
+                                               and user_id in (select id from user_208201302 where role = #{role})
+    </select>
+<!--    List<Permission> searchPermissionByUser(Long resourceId, Long userId, String empName);-->
+    <select id="searchPermissionByUser" resultType="com.abc.warehouse.pojo.Permission">
+        select * from permission_208201302 where resource_id = #{resourcedId}
+                                             and user_id in (select id from user_208201302  where id = #{userId}  or  user_name like CONCAT('%',IFNULL(${empName},''),'%'))
+    </select>
+
 </mapper>
