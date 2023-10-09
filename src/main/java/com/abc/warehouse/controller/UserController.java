@@ -23,13 +23,13 @@ public class UserController {
      * @param user
      * @return
      */
-//    @PostMapping("/login")
-//    public Result login(HttpServletRequest request, @RequestBody User user)
-//    {
-//
-//
-//        return null;
-//    }
+    @PostMapping("/login")
+    public Result login(HttpServletRequest request, @RequestBody User user)
+    {
+
+
+        return null;
+    }
 
     @PostMapping("/save")
     public Result save(@RequestBody User user){
@@ -38,7 +38,6 @@ public class UserController {
         userService.save(user);
         return Result.ok("新增用户成功");
     }
-
 
     @GetMapping("/{id}")
     public Result getUserById(@PathVariable("id")Long id){
