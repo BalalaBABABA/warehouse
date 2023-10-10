@@ -1,19 +1,23 @@
 package com.abc.warehouse.controller;
 
 import com.abc.warehouse.dto.Result;
+import com.abc.warehouse.dto.params.AddPermissionParams;
+import com.abc.warehouse.pojo.Permission;
 import com.abc.warehouse.service.PermissionService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
+import com.abc.warehouse.dto.params.PermissionParams;
 
 @RestController
+@Slf4j
 @RequestMapping("/permission")
 public class PermissionController {
     @Autowired
     private PermissionService permissionService;
 
     /**
-     * ???????
+     * 获取所有权限类型
      * @return
      */
     @GetMapping("/types")
@@ -24,7 +28,7 @@ public class PermissionController {
 
 
     /**
-     * ??resourceId??types
+     * 根据resourceId获取types
      * @return
      */
     @GetMapping("/types/{resourceId}")
@@ -33,7 +37,7 @@ public class PermissionController {
     }
 
     /**
-     * ??resourceId???????????
+     * 根据resourceId获取对应的所有用户权限
      * @param resourceId
      * @return
      */
@@ -43,20 +47,15 @@ public class PermissionController {
     }
 
     /**
-     * ????????????????
-     * @param userId
-     * @param resourceId
-     * @param type
-     * @return
+     * 根据权限类型，更新用户的某个权限
      */
-    @PostMapping("/update/{user_id}/{resource_id}/{type}/{flag}")
-    public Result updateUserPermission(@PathVariable("user_id")Long userId,@PathVariable("resource_id")Long resourceId
-                                       ,@PathVariable("type")String type,@PathVariable("flag")Boolean flag){
-        return permissionService.updateUserPermission(userId,resourceId,type,flag);
+    @PostMapping("/update/{flag}")
+    public Result updateUserPermission(@RequestBody Permission permission,@PathVariable("flag")Boolean flag){
+        return permissionService.updateUserPermission(permission,flag);
     }
 
     /**
-     * ????id??????????
+     * 根据资源id，取消某个用户的对某个资源的所有权限
      * @param userId
      * @param resourceId
      * @return
@@ -67,4 +66,36 @@ public class PermissionController {
                                      ){
         return permissionService.deleteUserResource(userId,resourceId);
     }
+
+    /**
+     * 给某些用户，添加某一种权限
+     * @return
+     */
+    @PostMapping("/add")
+    public Result addOneUserPermission(@RequestBody AddPermissionParams params){
+        return permissionService.addOneUserPermission(params);
+    }
+
+    /**
+     * 根据userId(user_name)和resource_id，查找该资源下，该用户的权限
+     * @return
+     */
+    @PostMapping("/search")
+    public Result searchPermissionByUserId(@RequestBody PermissionParams params){
+        return permissionService.searchPermissionByUser(params);
+    }
+
+    /**
+     * 根据resource_id和role，查找该资源下，该用户的权限
+     * @param role
+     * @param resourceId
+     * @return
+     */
+    @PostMapping("/search/role")
+    public Result searchPermissionByRole(@RequestBody PermissionParams params)
+    {
+        return permissionService.searchPermissionByRole(params);
+    }
+
+
 }

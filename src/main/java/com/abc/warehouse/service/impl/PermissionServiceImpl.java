@@ -3,12 +3,15 @@ package com.abc.warehouse.service.impl;
 import cn.hutool.core.bean.BeanUtil;
 import com.abc.warehouse.dto.Result;
 import com.abc.warehouse.dto.UserPermission;
+import com.abc.warehouse.dto.params.AddPermissionParams;
+import com.abc.warehouse.dto.params.PermissionParams;
 import com.abc.warehouse.pojo.Resource;
 import com.abc.warehouse.pojo.User;
 import com.abc.warehouse.service.ResourceService;
 import com.abc.warehouse.service.UserService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.abc.warehouse.pojo.Permission;
@@ -37,6 +40,8 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
     @Autowired
     private ResourceService resourceService;
 
+    @Autowired
+    private PermissionMapper permissionMapper;
     @Autowired
     private UserService userService;
     @Override
@@ -86,7 +91,10 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
     }
 
     @Override
-    public Result updateUserPermission(Long userId, Long resourceId, String type, Boolean flag) {
+    public Result updateUserPermission(Permission permission,Boolean flag) {
+        Long userId = permission.getUserId();
+        String type = permission.getType();
+        Long resourceId = permission.getResourceId();
         if(flag)
         {
             boolean save = save(new Permission(null, userId, resourceId, type));
@@ -122,6 +130,33 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
         return Result.ok(permissons);
     }
 
+    @Override
+    public Result addOneUserPermission(AddPermissionParams permission) {
+        List<Long> userIds = permission.getUserIds();
+        Long resourceId = permission.getResourceId();
+        String type = permission.getType();
+        permissionMapper.saveUserPermissions(userIds,resourceId,type);
+        return Result.ok();
+    }
+
+    @Override
+    public Result searchPermissionByUser(PermissionParams params) {
+        Long resourceId = params.getResourceId();
+        String empName = params.getEmpName();
+        Long userId = params.getUserId();
+        Page<Permission> page = new Page<>(params.getCurrentPage(),params.getPageSize());
+        IPage<Permission> iPage = permissionMapper.searchPermissionByUser(page,resourceId, userId, empName);
+        return Result.ok(iPage.getRecords());
+    }
+
+    @Override
+    public Result searchPermissionByRole(PermissionParams params) {
+        String role = params.getRole();
+        Long resourceId = params.getResourceId();
+        Page<Permission> page = new Page<>(params.getCurrentPage(),params.getPageSize());
+        IPage<Permission> permissions = permissionMapper.searchPermissionByRole(page,resourceId, role);
+        return Result.ok(permissions.getRecords());
+    }
 
 
 }
