@@ -29,7 +29,7 @@ public class MaterialServiceImpl extends ServiceImpl<MaterialMapper, Material>
     @Override
     public Result delMaterial(Long id) {
         removeById(id);
-        return Result.ok("ok");
+        return Result.ok();
     }
 
     @Override
