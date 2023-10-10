@@ -1,5 +1,6 @@
 package com.abc.warehouse.service;
 
+import com.abc.warehouse.dto.Result;
 import com.abc.warehouse.pojo.Material;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -9,5 +10,8 @@ import com.baomidou.mybatisplus.extension.service.IService;
 * @createDate 2023-09-23 16:58:22
 */
 public interface MaterialService extends IService<Material> {
-
+    Result saveMaterial(Material material);
+    Result delMaterial(Long id);
+    Result updateMaterial(Material material);
+    void materialPage(Integer curPage);
 }

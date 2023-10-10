@@ -26,8 +26,7 @@ public class Log implements Serializable {
      */
     private Long userId;
 
-    /**
-     * 内容
+    /**     * 内容
      */
     private String content;
 
