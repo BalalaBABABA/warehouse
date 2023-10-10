@@ -15,12 +15,12 @@ public class UserPermission {
      * 人员代码
      */
 
-    private Integer id;
+    private Long id;
 
     /**
      * 姓名
      */
-    private String userName;
+    private String name;
 
     /**
      * 角色
