@@ -68,12 +68,8 @@
             <option name="tableUIInfoList">
               <list>
                 <TableUIInfo>
-                  <option name="className" value="Deliver" />
-                  <option name="tableName" value="deliver_208201302" />
-                </TableUIInfo>
-                <TableUIInfo>
-                  <option name="className" value="Store" />
-                  <option name="tableName" value="store_208201302" />
+                  <option name="className" value="User" />
+                  <option name="tableName" value="user_208201302" />
                 </TableUIInfo>
               </list>
             </option>

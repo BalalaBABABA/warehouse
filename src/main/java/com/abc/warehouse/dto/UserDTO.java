@@ -17,7 +17,7 @@ public class UserDTO {
      * 人员代码
      */
 
-    private Integer id;
+    private Long id;
 
     /**
      * 姓名

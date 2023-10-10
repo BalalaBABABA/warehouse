@@ -5,22 +5,22 @@
 <mapper namespace="com.abc.warehouse.mapper.UserMapper">
 
     <resultMap id="BaseResultMap" type="com.abc.warehouse.pojo.User">
-            <id property="id" column="ID" jdbcType="INTEGER"/>
-            <result property="pwd" column="pwd" jdbcType="VARCHAR"/>
-            <result property="userName" column="user_name" jdbcType="VARCHAR"/>
-            <result property="role" column="Role" jdbcType="VARCHAR"/>
-            <result property="gender" column="Gender" jdbcType="OTHER"/>
-            <result property="birthdate" column="BirthDate" jdbcType="DATE"/>
-            <result property="idnumber" column="IDNumber" jdbcType="VARCHAR"/>
-            <result property="nativeplace" column="NativePlace" jdbcType="VARCHAR"/>
-            <result property="address" column="Address" jdbcType="VARCHAR"/>
-            <result property="phonenumber" column="PhoneNumber" jdbcType="VARCHAR"/>
+            <result property="id" column="id" jdbcType="BIGINT"/>
+            <result property="password" column="password" jdbcType="VARCHAR"/>
+            <result property="name" column="name" jdbcType="VARCHAR"/>
+            <result property="role" column="role" jdbcType="VARCHAR"/>
+            <result property="sex" column="sex" jdbcType="VARCHAR"/>
+            <result property="birthDate" column="birth_date" jdbcType="DATE"/>
+            <result property="idNumber" column="id_number" jdbcType="VARCHAR"/>
+            <result property="nativePlace" column="native_place" jdbcType="VARCHAR"/>
+            <result property="address" column="address" jdbcType="VARCHAR"/>
+            <result property="phone" column="phone" jdbcType="VARCHAR"/>
     </resultMap>
 
     <sql id="Base_Column_List">
-        ID,pwd,user_name,
-        Role,Gender,BirthDate,
-        IDNumber,NativePlace,Address,
-        PhoneNumber
+        id,password,name,
+        role,sex,birth_date,
+        id_number,native_place,address,
+        phone
     </sql>
 </mapper>
