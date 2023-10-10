@@ -15,6 +15,9 @@ public class Result {
     private Object data;
     private Long total;
 
+    public Result(boolean b, Object o, Object o1, Object o2) {
+    }
+
     public static Result ok(){
         return new Result(true, null, null, null);
     }

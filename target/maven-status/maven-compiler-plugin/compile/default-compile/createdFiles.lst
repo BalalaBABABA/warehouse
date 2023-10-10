@@ -10,6 +10,7 @@ com\abc\warehouse\pojo\Material.class
 com\abc\warehouse\utils\SystemConstants.class
 com\abc\warehouse\service\ResourceService.class
 com\abc\warehouse\service\MaterialService.class
+com\abc\warehouse\controller\MaterialController.class
 com\abc\warehouse\service\HouseService.class
 com\abc\warehouse\service\impl\StoreServiceImpl.class
 com\abc\warehouse\service\StoreService.class
@@ -18,6 +19,7 @@ com\abc\warehouse\mapper\ResourceMapper.class
 com\abc\warehouse\service\impl\MaterialServiceImpl.class
 com\abc\warehouse\utils\SimpleRedisLock.class
 com\abc\warehouse\mapper\UserMapper.class
+com\abc\warehouse\controller\ResourceController.class
 com\abc\warehouse\utils\RedisConstants.class
 com\abc\warehouse\mapper\HouseMapper.class
 com\abc\warehouse\WareHouseApplication.class
@@ -27,6 +29,7 @@ com\abc\warehouse\dto\UserPermission.class
 com\abc\warehouse\service\impl\HouseServiceImpl.class
 com\abc\warehouse\service\impl\UserServiceImpl.class
 com\abc\warehouse\service\impl\ResourceServiceImpl.class
+com\abc\warehouse\config\MybatisPlusConfig.class
 com\abc\warehouse\mapper\StoreMapper.class
 com\abc\warehouse\pojo\Permission.class
 com\abc\warehouse\pojo\User.class
