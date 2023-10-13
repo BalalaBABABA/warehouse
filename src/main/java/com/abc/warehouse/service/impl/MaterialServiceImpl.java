@@ -1,8 +1,9 @@
 package com.abc.warehouse.service.impl;
 
 import com.abc.warehouse.dto.Result;
+import com.abc.warehouse.dto.constants.PageConstants;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.mapper.Mapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -39,17 +40,61 @@ public class MaterialServiceImpl extends ServiceImpl<MaterialMapper, Material>
     }
 
     @Override
-    public void materialPage(Integer curPage) {
+    public Result materialPage(Integer curPage) {
         LambdaQueryWrapper<Material> wrapper = new LambdaQueryWrapper<>();  //查询条件构造器
-        IPage<Material> pageQuery = new Page<>(curPage, 5);
+        IPage<Material> pageQuery = new Page<>(curPage, PageConstants.MATERIAL_SEARCH_PAGE_SIZE);
         IPage<Material> page = baseMapper.selectPage(pageQuery, wrapper);
-
-        System.out.println("当前页：" + page.getCurrent());
-        System.out.println("每页显示条数：" + page.getSize());
-        System.out.println("总记录数：" + page.getTotal());
-        System.out.println("总页数：" + page.getPages());
+        return Result.ok(page.getRecords(), page.getTotal());
+//        System.out.println("当前页：" + page.getCurrent());
+//        System.out.println("每页显示条数：" + page.getSize());
+//        System.out.println("总记录数：" + page.getTotal());
+//        System.out.println("总页数：" + page.getPages());
     }
 
+    @Override
+    public Result materialId(Integer curPage, Long id){
+        QueryWrapper<Material> wrapper = new QueryWrapper<>();
+        wrapper.eq("id", id);
+        IPage<Material> pageQuery = new Page<>(curPage, PageConstants.MATERIAL_SEARCH_PAGE_SIZE);
+        IPage<Material> page = baseMapper.selectPage(pageQuery, wrapper);
+        return Result.ok(page.getRecords(), page.getTotal());
+    }
+
+    @Override
+    public Result materialName(Integer curPage, String name){
+        QueryWrapper<Material> wrapper = new QueryWrapper<>();
+        wrapper.eq("name", name);
+        IPage<Material> pageQuery = new Page<>(curPage, PageConstants.MATERIAL_SEARCH_PAGE_SIZE);
+        IPage<Material> page = baseMapper.selectPage(pageQuery, wrapper);
+        return Result.ok(page.getRecords(), page.getTotal());
+    }
+
+    @Override
+    public Result materialHouseId(Integer curPage, Long id){
+        QueryWrapper<Material> wrapper = new QueryWrapper<>();
+        wrapper.eq("house_id", id);
+        IPage<Material> pageQuery = new Page<>(curPage, PageConstants.MATERIAL_SEARCH_PAGE_SIZE);
+        IPage<Material> page = baseMapper.selectPage(pageQuery, wrapper);
+        return Result.ok(page.getRecords(), page.getTotal());
+    }
+
+    @Override
+    public Result materialType(Integer curPage, String type) {
+        QueryWrapper<Material> wrapper = new QueryWrapper<>();
+        wrapper.eq("type", type);
+        IPage<Material> pageQuery = new Page<>(curPage, PageConstants.MATERIAL_SEARCH_PAGE_SIZE);
+        IPage<Material> page = baseMapper.selectPage(pageQuery, wrapper);
+        return Result.ok(page.getRecords(), page.getTotal());
+    }
+
+    @Override
+    public Result materialComments(Integer curPage, String comments) {
+        QueryWrapper<Material> wrapper = new QueryWrapper<>();
+        wrapper.eq("comments", comments);
+        IPage<Material> pageQuery = new Page<>(curPage, PageConstants.MATERIAL_SEARCH_PAGE_SIZE);
+        IPage<Material> page = baseMapper.selectPage(pageQuery, wrapper);
+        return Result.ok(page.getRecords(), page.getTotal());
+    }
 
 }
 
