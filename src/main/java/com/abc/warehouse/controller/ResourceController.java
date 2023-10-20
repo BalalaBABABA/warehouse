@@ -20,7 +20,7 @@ public class ResourceController {
 
     @PostMapping("/{name}")
     public Result saveNewResource(@PathVariable("name")String name){
-        resourceService.save(new Resource(null, name));
+        resourceService.save(new Resource(null, name,""));
         return Result.ok(null);
     }
 }

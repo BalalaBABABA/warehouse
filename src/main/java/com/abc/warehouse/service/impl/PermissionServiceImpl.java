@@ -3,12 +3,14 @@ package com.abc.warehouse.service.impl;
 import cn.hutool.core.bean.BeanUtil;
 import com.abc.warehouse.dto.Result;
 import com.abc.warehouse.dto.UserPermission;
+import com.abc.warehouse.dto.constants.RedisConstants;
 import com.abc.warehouse.dto.params.AddPermissionParams;
 import com.abc.warehouse.dto.params.PermissionParams;
 import com.abc.warehouse.pojo.Resource;
 import com.abc.warehouse.pojo.User;
 import com.abc.warehouse.service.ResourceService;
 import com.abc.warehouse.service.UserService;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -18,7 +20,9 @@ import com.abc.warehouse.pojo.Permission;
 import com.abc.warehouse.service.PermissionService;
 import com.abc.warehouse.mapper.PermissionMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,6 +41,8 @@ import static com.abc.warehouse.utils.SystemConstants.DEFAULT_PAGE_SIZE;
 public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permission>
         implements PermissionService{
 
+    @Autowired
+    private StringRedisTemplate redisTemplate;
     @Autowired
     private ResourceService resourceService;
 
@@ -91,13 +97,26 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
     }
 
     @Override
+    @Transactional
     public Result updateUserPermission(Permission permission,Boolean flag) {
+        /**
+         * 1.删除用户权限缓存
+         * 2.更新用户权限数据库
+         */
         Long userId = permission.getUserId();
         String type = permission.getType();
         Long resourceId = permission.getResourceId();
+        String uri = permission.getUri();
+
+        // 删除缓存
+        redisTemplate.delete(RedisConstants.PERMISSIONS_USER_KEY+userId);
+
+        // 更新数据库
         if(flag)
         {
-            boolean save = save(new Permission(null, userId, resourceId, type));
+
+            boolean save = save(new Permission(null, userId, resourceId, type,uri));
+
             return save?Result.ok():Result.fail("增加权限失败");
         }
         else{
@@ -111,7 +130,15 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
     }
 
     @Override
+    @Transactional
     public Result deleteUserResource(Long userId, Long resourceId) {
+        /**
+         * 1.删除用户权限缓存
+         * 2.更新用户权限数据库
+         */
+        // 删除缓存
+        redisTemplate.delete(RedisConstants.PERMISSIONS_USER_KEY+userId);
+        // 更新数据库
         UpdateWrapper<Permission> updateWrapper=new UpdateWrapper<>();
         updateWrapper.eq("user_id",userId)
                 .eq("resource_id",resourceId);
@@ -131,10 +158,15 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
     }
 
     @Override
+    @Transactional
     public Result addOneUserPermission(AddPermissionParams permission) {
         List<Long> userIds = permission.getUserIds();
+        List<String> userIdList = userIds.stream().map(userid -> RedisConstants.PERMISSIONS_USER_KEY + userid).collect(Collectors.toList());
+        // 删除缓存
+        redisTemplate.delete(userIdList);
         Long resourceId = permission.getResourceId();
         String type = permission.getType();
+        // 更新数据库
         permissionMapper.saveUserPermissions(userIds,resourceId,type);
         return Result.ok();
     }
@@ -156,6 +188,14 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
         Page<Permission> page = new Page<>(params.getCurrentPage(),params.getPageSize());
         IPage<Permission> permissions = permissionMapper.searchPermissionByRole(page,resourceId, role);
         return Result.ok(permissions.getRecords());
+    }
+
+    @Override
+    public List<Permission> getByUserId(Long userId) {
+        LambdaQueryWrapper<Permission> queryWrapper=new LambdaQueryWrapper<>();
+        queryWrapper.eq(Permission::getUserId,userId);
+        List<Permission> list = list(queryWrapper);
+        return list;
     }
 
 

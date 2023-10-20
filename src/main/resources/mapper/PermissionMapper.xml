@@ -9,11 +9,12 @@
             <result property="userId" column="user_id" jdbcType="BIGINT"/>
             <result property="resourceId" column="resource_id" jdbcType="BIGINT"/>
             <result property="type" column="type" jdbcType="VARCHAR"/>
+            <result property="uri" column="uri" jdbcType="VARCHAR"/>
     </resultMap>
 
     <sql id="Base_Column_List">
         id,user_id,resource_id,
-        type
+        type,uri
     </sql>
     <insert id="saveUserPermissions" parameterType="list">
         insert into permission_208201302(user_id,resource_id,type)

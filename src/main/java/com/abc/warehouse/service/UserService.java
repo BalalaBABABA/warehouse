@@ -17,4 +17,5 @@ public interface UserService extends IService<User> {
 
     Result deleteUserById(Long id);
 
+    Result getNamesAndIds();
 }

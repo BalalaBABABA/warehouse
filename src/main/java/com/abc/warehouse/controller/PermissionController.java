@@ -87,8 +87,6 @@ public class PermissionController {
 
     /**
      * 根据resource_id和role，查找该资源下，该用户的权限
-     * @param role
-     * @param resourceId
      * @return
      */
     @PostMapping("/search/role")

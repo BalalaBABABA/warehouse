@@ -6,6 +6,8 @@ import com.abc.warehouse.dto.params.PermissionParams;
 import com.abc.warehouse.pojo.Permission;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import java.util.List;
+
 /**
 * @author 吧啦
 * @description 针对表【permission_208201302(权限表)】的数据库操作Service
@@ -24,4 +26,6 @@ public interface PermissionService extends IService<Permission> {
 
 
     Result searchPermissionByRole(PermissionParams params);
+
+    List<Permission> getByUserId(Long userId);
 }
