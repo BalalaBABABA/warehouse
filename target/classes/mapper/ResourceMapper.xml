@@ -7,9 +7,10 @@
     <resultMap id="BaseResultMap" type="com.abc.warehouse.pojo.Resource">
             <id property="id" column="id" jdbcType="BIGINT"/>
             <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="uriName" column="uri_name" jdbcType="VARCHAR"/>
     </resultMap>
 
     <sql id="Base_Column_List">
-        id,name
+        id,name,uri_name
     </sql>
 </mapper>

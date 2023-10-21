@@ -80,8 +80,7 @@ public class LoginInterceptor implements HandlerInterceptor {
         //先查缓存
         String permissionsJson = redisTemplate.opsForValue().get(RedisConstants.PERMISSIONS_USER_KEY + userId);
         List<String> permissions = JSONUtil.toList(permissionsJson, String.class);
-        //刷新有效期
-        redisTemplate.expire(RedisConstants.PERMISSIONS_USER_KEY + userId,PERMISSIONS_USER_TTL,TimeUnit.SECONDS);
+
         //缓存没有，查询数据库,并加入缓存
         if(permissions.isEmpty()){
             //1. 查询数据库
@@ -90,6 +89,8 @@ public class LoginInterceptor implements HandlerInterceptor {
             //2. 设置缓存
             redisTemplate.opsForValue().set(RedisConstants.PERMISSIONS_USER_KEY+userId,JSONUtil.toJsonStr(permissions), PERMISSIONS_USER_TTL);
         }
+        //刷新有效期
+        redisTemplate.expire(RedisConstants.PERMISSIONS_USER_KEY + userId,PERMISSIONS_USER_TTL,TimeUnit.SECONDS);
 
         if(permissions.isEmpty())return true;
         for (String permissionUri : permissions) {
