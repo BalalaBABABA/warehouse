@@ -6,10 +6,13 @@ import cn.hutool.json.JSONUtil;
 import com.abc.warehouse.dto.UserDTO;
 import com.abc.warehouse.dto.constants.RedisConstants;
 import com.abc.warehouse.pojo.Permission;
+import com.abc.warehouse.pojo.PermissionType;
 import com.abc.warehouse.pojo.User;
 import com.abc.warehouse.service.PermissionService;
+import com.abc.warehouse.service.PermissionTypeService;
 import com.abc.warehouse.utils.JwtUtils;
 import com.abc.warehouse.utils.UserHolder;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +40,8 @@ public class LoginInterceptor implements HandlerInterceptor {
     private StringRedisTemplate redisTemplate;
     @Autowired
     private PermissionService  permissionService;
+    @Autowired
+    private PermissionTypeService permissionTypeService;
 
     @Override
     @Transactional
@@ -81,11 +86,13 @@ public class LoginInterceptor implements HandlerInterceptor {
         String permissionsJson = redisTemplate.opsForValue().get(RedisConstants.PERMISSIONS_USER_KEY + userId);
         List<String> permissions = JSONUtil.toList(permissionsJson, String.class);
 
+
+        Map<Long, PermissionType> typesMap = permissionTypeService.getAllTypesMap();
         //缓存没有，查询数据库,并加入缓存
         if(permissions.isEmpty()){
             //1. 查询数据库
             List<Permission> permissionList = permissionService.getByUserId(userId);
-            permissions = permissionList.stream().map(permission -> permission.getUri()).collect(Collectors.toList());
+            permissions = permissionList.stream().map(permission -> typesMap.get(permission.getPermissionId()).getUri()).collect(Collectors.toList());
             //2. 设置缓存
             redisTemplate.opsForValue().set(RedisConstants.PERMISSIONS_USER_KEY+userId,JSONUtil.toJsonStr(permissions), PERMISSIONS_USER_TTL);
         }

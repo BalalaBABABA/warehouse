@@ -11,9 +11,11 @@ import com.abc.warehouse.dto.constants.RedisConstants;
 import com.abc.warehouse.dto.params.LoginParams;
 import com.abc.warehouse.dto.params.PermissionParams;
 import com.abc.warehouse.pojo.Permission;
+import com.abc.warehouse.pojo.PermissionType;
 import com.abc.warehouse.pojo.User;
 import com.abc.warehouse.service.LoginService;
 import com.abc.warehouse.service.PermissionService;
+import com.abc.warehouse.service.PermissionTypeService;
 import com.abc.warehouse.service.UserService;
 import com.abc.warehouse.utils.*;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -37,6 +39,9 @@ public class LoginServiceImpl implements LoginService {
 
     @Autowired
     private PermissionService permissionService;
+
+    @Autowired
+    private PermissionTypeService permissionTypeService;
 
     @Autowired
     private StringRedisTemplate redisTemplate;
@@ -76,7 +81,8 @@ public class LoginServiceImpl implements LoginService {
 //        for (Permission permission : permissions) {
 //            set.add(permission.getUri());
 //        }
-        List<String> permissionList = permissions.stream().map(permission -> permission.getUri()).collect(Collectors.toList());
+        Map<Long, PermissionType> typesMap = permissionTypeService.getAllTypesMap();
+        List<String> permissionList = permissions.stream().map(permission -> typesMap.get(permission.getPermissionId()).getUri()).collect(Collectors.toList());
 
         redisTemplate.opsForValue().set(RedisConstants.PERMISSIONS_USER_KEY+userId,JSONUtil.toJsonStr(permissionList),RedisConstants.PERMISSIONS_USER_TTL,TimeUnit.SECONDS);
 

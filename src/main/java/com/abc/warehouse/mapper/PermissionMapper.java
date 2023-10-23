@@ -17,8 +17,8 @@ import java.util.List;
 public interface PermissionMapper extends BaseMapper<Permission> {
 
      void saveUserPermissions(@Param("userIds") List<Long> userIds,
-                              @Param("resourceId") Long resourceId,
-                              @Param("type") String type) ;
+                              @Param("permissionId") Long permissionId
+                              ) ;
 
     IPage<Permission> searchPermissionByRole(
             @Param("page") Page<Permission> page,
@@ -26,7 +26,7 @@ public interface PermissionMapper extends BaseMapper<Permission> {
             @Param("role") String role);
 
     IPage<Permission> searchPermissionByUser(@Param("page") Page<Permission> page,
-                                            @Param("resourcedId") Long resourceId,
+                                            @Param("resourceId") Long resourceId,
                                             @Param("userId") Long userId,
                                             @Param("empName") String empName);
 }

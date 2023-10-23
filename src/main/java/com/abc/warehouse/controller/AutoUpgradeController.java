@@ -1,5 +1,6 @@
 package com.abc.warehouse.controller;
 
+import com.abc.warehouse.utils.FileUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -41,7 +42,9 @@ public class AutoUpgradeController {
          * 3.返回
          */
         String staticPath = resourceLoader.getResource("classpath:static").getFile().getAbsolutePath();
+//        String sourceFolderPath = staticPath +"\\autouprade\\upgrade";
         String zipFilePath = staticPath + "\\autoupgrade\\"+zipFileName; // 替换为实际的文件名和扩展名
+
         log.info("用户访问安装包:"+zipFilePath);
         File zipFile = new File(zipFilePath);
         if (!zipFile.exists()) {
@@ -65,7 +68,7 @@ public class AutoUpgradeController {
      * @return
      */
     @GetMapping("/version")
-    public String getVersion(){
+    public String getVersion() throws IOException {
         return version;
     }
 }

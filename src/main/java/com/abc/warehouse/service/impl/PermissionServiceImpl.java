@@ -6,12 +6,15 @@ import com.abc.warehouse.dto.UserPermission;
 import com.abc.warehouse.dto.constants.RedisConstants;
 import com.abc.warehouse.dto.params.AddPermissionParams;
 import com.abc.warehouse.dto.params.PermissionParams;
+import com.abc.warehouse.pojo.PermissionType;
 import com.abc.warehouse.pojo.Resource;
 import com.abc.warehouse.pojo.User;
+import com.abc.warehouse.service.PermissionTypeService;
 import com.abc.warehouse.service.ResourceService;
 import com.abc.warehouse.service.UserService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -29,6 +32,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.abc.warehouse.utils.SystemConstants.DEFAULT_PAGE_SIZE;
 
@@ -49,6 +53,8 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
     @Autowired
     private PermissionMapper permissionMapper;
     @Autowired
+    private PermissionTypeService permissionTypeService;
+    @Autowired
     private UserService userService;
     @Override
     public Result getPermissionTypes() {
@@ -57,19 +63,26 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
         Map<Long,List> permissions =new HashMap<>();
 
         //2.根据资源id查询所有权限类型
+
         list.forEach(resource -> {
-            //2.1 获取id
             Long resourceId = resource.getId();
-            QueryWrapper<Permission> queryWrapper=new QueryWrapper<>();
-            queryWrapper.eq("resource_id",resourceId).groupBy("type");
-            //2.2 查询所有id对应的权限
-            List<Permission> permissionsByresourceId = list(queryWrapper);
-            //2.3 存储权限的类型字段
-            List<String> types=new ArrayList();
-            permissionsByresourceId.forEach(permission -> types.add(permission.getType()));
-            //2.4 存入Map
+            List<PermissionType> permissionTypes = permissionTypeService.getTypesByResourceId(resourceId);
+            List<String> types = permissionTypes.stream().map(permissionType -> permissionType.getType()).collect(Collectors.toList());
             permissions.put(resourceId,types);
         });
+//        list.forEach(resource -> {
+//            //2.1 获取id
+//            Long resourceId = resource.getId();
+//            QueryWrapper<Permission> queryWrapper=new QueryWrapper<>();
+//            queryWrapper.eq("resource_id",resourceId).groupBy("type");
+//            //2.2 查询所有id对应的权限
+//            List<Permission> permissionsByresourceId = list(queryWrapper);
+//            //2.3 存储权限的类型字段
+//            List<String> types=new ArrayList();
+//            permissionsByresourceId.forEach(permission -> types.add(permission.getType()));
+//            //2.4 存入Map
+//            permissions.put(resourceId,types);
+//        });
         return Result.ok(permissions);
     }
 
@@ -83,14 +96,23 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
         List<UserPermission> userPermissions = userList
                 .stream().map(user -> BeanUtil.copyProperties(user, UserPermission.class))
                 .collect(Collectors.toList());
+        List<PermissionType> permissionTypes = permissionTypeService.getTypesByResourceId(resourceId);
+        List<Long> permissionTypeIdList = permissionTypes.stream().map(permissionType -> permissionType.getId()).collect(Collectors.toList());
+        Map<Long, String> typesMap = permissionTypeService.getTypesMapByResourceId(resourceId);
+        //根据userId和resourceid查询权限表
         userPermissions.forEach(user -> {
             //根据userId和resourceid查询权限表
-            QueryWrapper<Permission> queryWrapper=new QueryWrapper<>();
-            queryWrapper.eq("resource_id",resourceId)
-                    .eq("user_id",user.getId());
+            LambdaQueryWrapper<Permission> queryWrapper=new LambdaQueryWrapper<>();
+            queryWrapper.eq(Permission::getUserId,user.getId());
+            if(!permissionTypeIdList.isEmpty())
+            {
+                queryWrapper.in(Permission::getPermissionId,permissionTypeIdList);
+            }
             List<Permission> list = list(queryWrapper);
             List<String> permissons=new ArrayList<>();
-            list.forEach(i->permissons.add(i.getType()));
+            list.forEach(i->
+                    permissons.add(typesMap.get(i.getPermissionId()))
+            );
             user.setPermissionList(permissons);
         });
         return Result.ok(userPermissions);
@@ -104,9 +126,8 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
          * 2.更新用户权限数据库
          */
         Long userId = permission.getUserId();
-        String type = permission.getType();
-        Long resourceId = permission.getResourceId();
-        String uri = permission.getUri();
+        Long permissionId = permission.getPermissionId();
+
 
         // 删除缓存
         redisTemplate.delete(RedisConstants.PERMISSIONS_USER_KEY+userId);
@@ -115,16 +136,18 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
         if(flag)
         {
 
-            boolean save = save(new Permission(null, userId, resourceId, type,uri));
+
+            boolean save = save(new Permission(null, userId, permissionId));
 
             return save?Result.ok():Result.fail("增加权限失败");
         }
         else{
-            UpdateWrapper<Permission> updateWrapper=new UpdateWrapper<>();
-            updateWrapper.eq("user_id",userId)
-                    .eq("resource_id",resourceId)
-                    .eq("type",type);
+
+            LambdaUpdateWrapper<Permission> updateWrapper=new LambdaUpdateWrapper<>();
+            updateWrapper.eq(Permission::getUserId,userId)
+                    .eq(Permission::getPermissionId,permissionId);
             boolean remove = remove(updateWrapper);
+
             return remove?Result.ok():Result.fail("取消权限失败");
         }
     }
@@ -138,20 +161,27 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
          */
         // 删除缓存
         redisTemplate.delete(RedisConstants.PERMISSIONS_USER_KEY+userId);
+        List<PermissionType> types = permissionTypeService.getTypesByResourceId(resourceId);
+        List<Long> permissionIdList = types.stream().map(type -> type.getId()).collect(Collectors.toList());
         // 更新数据库
-        UpdateWrapper<Permission> updateWrapper=new UpdateWrapper<>();
-        updateWrapper.eq("user_id",userId)
-                .eq("resource_id",resourceId);
-        boolean remove = remove(updateWrapper);
-        return remove?Result.ok():Result.fail("取消权限失败");
+        LambdaUpdateWrapper<PermissionType> updateWrapper=new LambdaUpdateWrapper<>();
+        updateWrapper.in(PermissionType::getId,permissionIdList);
+        boolean remove = permissionTypeService.remove(updateWrapper);
+
+        LambdaUpdateWrapper<Permission> updateWrapper1=new LambdaUpdateWrapper<>();
+        updateWrapper1.eq(Permission::getUserId,userId)
+                .in(Permission::getPermissionId,permissionIdList);
+        boolean remove1 = remove(updateWrapper1);
+        return remove && remove1?Result.ok():Result.fail("取消权限失败");
     }
 
     @Override
     public Result getPermissionTypesByResourceId(Long resourceId) {
-        QueryWrapper<Permission> queryWrapper=new QueryWrapper<>();
-        queryWrapper.eq("resource_id",resourceId).groupBy("type");
-
-        List<Permission> list = list(queryWrapper);
+//        QueryWrapper<Permission> queryWrapper=new QueryWrapper<>();
+//        queryWrapper.eq("resource_id",resourceId).groupBy("type");
+//
+//        List<Permission> list = list(queryWrapper);
+        List<PermissionType> list = permissionTypeService.getTypesByResourceId(resourceId);
         List<String> permissons=new ArrayList<>();
         list.forEach(i->permissons.add(i.getType()));
         return Result.ok(permissons);
@@ -166,8 +196,13 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
         redisTemplate.delete(userIdList);
         Long resourceId = permission.getResourceId();
         String type = permission.getType();
+        String uri = permission.getUri();
+        LambdaUpdateWrapper<PermissionType> queryWrapper=new LambdaUpdateWrapper<>();
+        PermissionType newType=new PermissionType(null,resourceId,type,uri);
+        permissionTypeService.save(newType);
+        Long permissionId = newType.getId();
         // 更新数据库
-        permissionMapper.saveUserPermissions(userIds,resourceId,type);
+        permissionMapper.saveUserPermissions(userIds,permissionId);
         return Result.ok();
     }
 
