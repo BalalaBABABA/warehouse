@@ -1,5 +1,6 @@
 package com.abc.warehouse.mapper;
 
+import com.abc.warehouse.dto.UserPermission;
 import com.abc.warehouse.pojo.Permission;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -20,12 +21,12 @@ public interface PermissionMapper extends BaseMapper<Permission> {
                               @Param("permissionId") Long permissionId
                               ) ;
 
-    IPage<Permission> searchPermissionByRole(
-            @Param("page") Page<Permission> page,
+    IPage<UserPermission> searchPermissionByRole(
+            @Param("page") Page<UserPermission> page,
             @Param("resourceId") Long resourceId ,
             @Param("role") String role);
 
-    IPage<Permission> searchPermissionByUser(@Param("page") Page<Permission> page,
+    IPage<UserPermission> searchPermissionByUser(@Param("page") Page<UserPermission> page,
                                             @Param("resourceId") Long resourceId,
                                             @Param("userId") Long userId,
                                             @Param("empName") String empName);

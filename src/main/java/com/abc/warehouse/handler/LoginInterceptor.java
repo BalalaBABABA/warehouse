@@ -4,6 +4,7 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.abc.warehouse.dto.UserDTO;
+import com.abc.warehouse.dto.constants.ErrorCode;
 import com.abc.warehouse.dto.constants.RedisConstants;
 import com.abc.warehouse.pojo.Permission;
 import com.abc.warehouse.pojo.PermissionType;
@@ -45,6 +46,7 @@ public class LoginInterceptor implements HandlerInterceptor {
 
     @Override
     @Transactional
+
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         /**
          * 1.判断 请求路径 是否为HandlerMethod（controller方法）
@@ -64,15 +66,17 @@ public class LoginInterceptor implements HandlerInterceptor {
         log.info("request method:{}",request.getMethod());
         log.info("token:{}", token);
         log.info("=================request end===========================");
-
+        response.setContentType("application/json");
         if(StringUtils.isBlank(token)){
             log.warn("token为空");
+            response.setStatus(ErrorCode.NO_LOGIN.getCode());
             return false;
         }
 
         Map<String, Object> map = JwtUtils.checkToken(token);
         if(map==null){
             log.warn("token登录验证失败");
+            response.setStatus(ErrorCode.TOKEN_ILLEGAL_EXIST.getCode());
             return false;
         }
 
@@ -106,6 +110,7 @@ public class LoginInterceptor implements HandlerInterceptor {
             }
         }
         log.warn("用户没有访问权限  uri:"+requestURI);
+        response.setStatus(ErrorCode.NO_PERMISSION.getCode());
         return false;
     }
 

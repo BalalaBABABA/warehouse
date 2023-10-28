@@ -5,7 +5,8 @@ import com.abc.warehouse.dto.Result;
 import com.abc.warehouse.dto.UserPermission;
 import com.abc.warehouse.dto.constants.RedisConstants;
 import com.abc.warehouse.dto.params.AddPermissionParams;
-import com.abc.warehouse.dto.params.PermissionParams;
+import com.abc.warehouse.dto.params.SearchPermissionParams;
+import com.abc.warehouse.dto.params.UpdatePermissionParams;
 import com.abc.warehouse.pojo.PermissionType;
 import com.abc.warehouse.pojo.Resource;
 import com.abc.warehouse.pojo.User;
@@ -13,10 +14,9 @@ import com.abc.warehouse.service.PermissionTypeService;
 import com.abc.warehouse.service.ResourceService;
 import com.abc.warehouse.service.UserService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.abc.warehouse.pojo.Permission;
@@ -27,12 +27,8 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static com.abc.warehouse.utils.SystemConstants.DEFAULT_PAGE_SIZE;
 
@@ -120,13 +116,19 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
 
     @Override
     @Transactional
-    public Result updateUserPermission(Permission permission,Boolean flag) {
+    public Result updateUserPermission(UpdatePermissionParams params, Boolean flag) {
         /**
          * 1.删除用户权限缓存
          * 2.更新用户权限数据库
          */
-        Long userId = permission.getUserId();
-        Long permissionId = permission.getPermissionId();
+        Long userId = params.getUserId();
+        Long resourceId = params.getResourceId();
+        String type =  params.getType();
+        LambdaUpdateWrapper<PermissionType> qw=new LambdaUpdateWrapper<>();
+        qw.eq(PermissionType::getResourceId,resourceId)
+                .eq(PermissionType::getType,type);
+        PermissionType permission = permissionTypeService.getOne(qw);
+        Long permissionId = permission.getId();
 
 
         // 删除缓存
@@ -135,14 +137,10 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
         // 更新数据库
         if(flag)
         {
-
-
             boolean save = save(new Permission(null, userId, permissionId));
-
             return save?Result.ok():Result.fail("增加权限失败");
         }
         else{
-
             LambdaUpdateWrapper<Permission> updateWrapper=new LambdaUpdateWrapper<>();
             updateWrapper.eq(Permission::getUserId,userId)
                     .eq(Permission::getPermissionId,permissionId);
@@ -164,23 +162,17 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
         List<PermissionType> types = permissionTypeService.getTypesByResourceId(resourceId);
         List<Long> permissionIdList = types.stream().map(type -> type.getId()).collect(Collectors.toList());
         // 更新数据库
-        LambdaUpdateWrapper<PermissionType> updateWrapper=new LambdaUpdateWrapper<>();
-        updateWrapper.in(PermissionType::getId,permissionIdList);
-        boolean remove = permissionTypeService.remove(updateWrapper);
 
         LambdaUpdateWrapper<Permission> updateWrapper1=new LambdaUpdateWrapper<>();
         updateWrapper1.eq(Permission::getUserId,userId)
                 .in(Permission::getPermissionId,permissionIdList);
         boolean remove1 = remove(updateWrapper1);
-        return remove && remove1?Result.ok():Result.fail("取消权限失败");
+        return remove1?Result.ok():Result.fail("取消权限失败");
     }
 
     @Override
     public Result getPermissionTypesByResourceId(Long resourceId) {
-//        QueryWrapper<Permission> queryWrapper=new QueryWrapper<>();
-//        queryWrapper.eq("resource_id",resourceId).groupBy("type");
-//
-//        List<Permission> list = list(queryWrapper);
+
         List<PermissionType> list = permissionTypeService.getTypesByResourceId(resourceId);
         List<String> permissons=new ArrayList<>();
         list.forEach(i->permissons.add(i.getType()));
@@ -192,11 +184,14 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
     public Result addOneUserPermission(AddPermissionParams permission) {
         List<Long> userIds = permission.getUserIds();
         List<String> userIdList = userIds.stream().map(userid -> RedisConstants.PERMISSIONS_USER_KEY + userid).collect(Collectors.toList());
-        // 删除缓存
-        redisTemplate.delete(userIdList);
         Long resourceId = permission.getResourceId();
         String type = permission.getType();
         String uri = permission.getUri();
+        if(userIds.isEmpty() || resourceId == null || StringUtils.isBlank(type)||StringUtils.isBlank(type)){
+            return Result.fail("参数不能为空！");
+        }
+        // 删除缓存
+        redisTemplate.delete(userIdList);
         LambdaUpdateWrapper<PermissionType> queryWrapper=new LambdaUpdateWrapper<>();
         PermissionType newType=new PermissionType(null,resourceId,type,uri);
         permissionTypeService.save(newType);
@@ -206,23 +201,60 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
         return Result.ok();
     }
 
+
     @Override
-    public Result searchPermissionByUser(PermissionParams params) {
+    public Result searchPermissionByUser(SearchPermissionParams params) {
         Long resourceId = params.getResourceId();
         String empName = params.getEmpName();
         Long userId = params.getUserId();
-        Page<Permission> page = new Page<>(params.getCurrentPage(),params.getPageSize());
-        IPage<Permission> iPage = permissionMapper.searchPermissionByUser(page,resourceId, userId, empName);
-        return Result.ok(iPage.getRecords());
+        Map<Long, String> types = permissionTypeService.getTypesMapByResourceId(resourceId);
+        Page<UserPermission> page = new Page<>(params.getCurrentPage(),params.getPageSize());
+        IPage<UserPermission> permissions = permissionMapper.searchPermissionByUser(page,resourceId, userId, empName);
+        List<UserPermission> records = permissions.getRecords();
+        if(records.isEmpty())records = Collections.emptyList();
+        for (UserPermission permission : records) {
+            List<String> permissionList = new ArrayList<>();
+            String[] strings = permission.getPermissionListStr().split(",");
+            for (String string : strings) {
+                long permissionId =Long.parseLong(string);
+                permissionList.add(types.get(permissionId));
+            }
+            permission.setPermissionList(permissionList);
+            permission.setPermissionListStr(null);
+
+        }
+        Map<String,Object> map = new HashMap<>();
+        map.put("records",permissions.getRecords());
+        map.put("totalPage",permissions.getPages());
+        return Result.ok(map);
+
     }
 
     @Override
-    public Result searchPermissionByRole(PermissionParams params) {
+    public Result searchPermissionByRole(SearchPermissionParams params) {
         String role = params.getRole();
         Long resourceId = params.getResourceId();
-        Page<Permission> page = new Page<>(params.getCurrentPage(),params.getPageSize());
-        IPage<Permission> permissions = permissionMapper.searchPermissionByRole(page,resourceId, role);
-        return Result.ok(permissions.getRecords());
+        Map<Long, String> types = permissionTypeService.getTypesMapByResourceId(resourceId);
+
+        Page<UserPermission> page = new Page<>(params.getCurrentPage(),params.getPageSize());
+        IPage<UserPermission> permissions = permissionMapper.searchPermissionByRole(page,resourceId, role);
+        List<UserPermission> records = permissions.getRecords();
+        if(records.isEmpty())records = Collections.emptyList();
+        for (UserPermission permission : records) {
+            List<String> permissionList = new ArrayList<>();
+            String[] strings = permission.getPermissionListStr().split(",");
+            for (String string : strings) {
+                long permissionId =Long.parseLong(string);
+                permissionList.add(types.get(permissionId));
+            }
+            permission.setPermissionList(permissionList);
+            permission.setPermissionListStr(null);
+
+        }
+        Map<String,Object> map = new HashMap<>();
+        map.put("records",permissions.getRecords());
+        map.put("totalPage",permissions.getPages());
+        return Result.ok(map);
     }
 
     @Override

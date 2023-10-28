@@ -2,7 +2,7 @@
 server:
   port: 8081
   # 安装包版本
-  version: 1.0.2
+  version: 1.0.4
   # 安装包名字
   upgrade-zip: upgrade.zip
 spring:

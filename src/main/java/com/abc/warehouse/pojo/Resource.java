@@ -34,4 +34,8 @@ public class Resource implements Serializable {
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
+
+    public Resource(Long id){
+        this.id=id;
+    }
 }

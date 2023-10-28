@@ -1,7 +1,6 @@
 package com.abc.warehouse.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.json.JSON;
 import cn.hutool.json.JSONUtil;
 import com.abc.warehouse.dto.Result;
 import com.abc.warehouse.dto.UserDTO;
@@ -9,7 +8,6 @@ import com.abc.warehouse.dto.UserPermission;
 import com.abc.warehouse.dto.constants.ErrorCode;
 import com.abc.warehouse.dto.constants.RedisConstants;
 import com.abc.warehouse.dto.params.LoginParams;
-import com.abc.warehouse.dto.params.PermissionParams;
 import com.abc.warehouse.pojo.Permission;
 import com.abc.warehouse.pojo.PermissionType;
 import com.abc.warehouse.pojo.User;

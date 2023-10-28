@@ -8,7 +8,6 @@
             <id property="id" column="id" jdbcType="BIGINT"/>
             <result property="userId" column="user_id" jdbcType="BIGINT"/>
             <result property="permissionId" column="permission_id" jdbcType="BIGINT"/>
-
     </resultMap>
 
     <sql id="Base_Column_List">
@@ -20,14 +19,24 @@
             (#{userId} , #{permissionId})
         </foreach>
     </insert>
-    <select id="searchPermissionByRole" resultType="com.abc.warehouse.pojo.Permission">
-          select * from permission_208201302 where permission_id in (select id from permission_type_208201302 where resource_id = #{resourceId})
-                                               and user_id in (select id from user_208201302 where role = #{role})
+    <select id="searchPermissionByRole" resultType="com.abc.warehouse.dto.UserPermission">
+        select u.id,u.name as name,u.role as role,GROUP_CONCAT(p.permission_id) as permissionListStr  from permission_208201302 p,user_208201302 u
+        where
+                permission_id in (select id from permission_type_208201302 where resource_id = #{resourceId})
+          and
+            user_id in (select id from user_208201302 where role = #{role})
+          and p.user_id=u.id
+        group by u.id
     </select>
 <!--    List<Permission> searchPermissionByUser(Long resourceId, Long userId, String empName);-->
-    <select id="searchPermissionByUser" resultType="com.abc.warehouse.pojo.Permission">
-        select * from permission_208201302 where permission_id in (select id from permission_type_208201302 where resource_id = #{resourceId})
-                                             and user_id in (select id from user_208201302  where id = #{userId}  or  name like CONCAT('%',IFNULL(${empName},''),'%'))
+    <select id="searchPermissionByUser" resultType="com.abc.warehouse.dto.UserPermission">
+        select u.id,u.name as name,u.role as role,GROUP_CONCAT(p.permission_id) as permissionListStr  from permission_208201302 p,user_208201302 u
+        where
+                permission_id in (select id from permission_type_208201302 where resource_id = #{resourceId})
+          and
+                user_id in (select id from user_208201302  where id = #{userId}  or  name like CONCAT('%',IFNULL(#{empName},''),'%'))
+          and p.user_id=u.id
+        group by u.id
     </select>
 
 </mapper>

@@ -2,12 +2,12 @@ package com.abc.warehouse.controller;
 
 import com.abc.warehouse.dto.Result;
 import com.abc.warehouse.dto.params.AddPermissionParams;
-import com.abc.warehouse.pojo.Permission;
+import com.abc.warehouse.dto.params.UpdatePermissionParams;
 import com.abc.warehouse.service.PermissionService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import com.abc.warehouse.dto.params.PermissionParams;
+import com.abc.warehouse.dto.params.SearchPermissionParams;
 
 @RestController
 @Slf4j
@@ -50,8 +50,8 @@ public class PermissionController {
      * 根据权限类型，更新用户的某个权限
      */
     @PostMapping("/update/{flag}")
-    public Result updateUserPermission(@RequestBody Permission permission,@PathVariable("flag")Boolean flag){
-        return permissionService.updateUserPermission(permission,flag);
+    public Result updateUserPermission(@RequestBody UpdatePermissionParams params, @PathVariable("flag")Boolean flag){
+        return permissionService.updateUserPermission(params,flag);
     }
 
     /**
@@ -81,7 +81,7 @@ public class PermissionController {
      * @return
      */
     @PostMapping("/search")
-    public Result searchPermissionByUserId(@RequestBody PermissionParams params){
+    public Result searchPermissionByUserId(@RequestBody SearchPermissionParams params){
         return permissionService.searchPermissionByUser(params);
     }
 
@@ -90,7 +90,7 @@ public class PermissionController {
      * @return
      */
     @PostMapping("/search/role")
-    public Result searchPermissionByRole(@RequestBody PermissionParams params)
+    public Result searchPermissionByRole(@RequestBody SearchPermissionParams params)
     {
         return permissionService.searchPermissionByRole(params);
     }
