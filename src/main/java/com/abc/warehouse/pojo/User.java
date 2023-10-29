@@ -6,6 +6,8 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
 import java.util.Date;
+
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 /**
@@ -18,18 +20,17 @@ public class User implements Serializable {
     /**
      * 人员代码
      */
-    @TableId(type = IdType.AUTO)
-    private Integer id;
+    private Long id;
 
     /**
      * 密码
      */
-    private String pwd;
+    private String password;
 
     /**
      * 姓名
      */
-    private String userName;
+    private String name;
 
     /**
      * 角色
@@ -39,22 +40,22 @@ public class User implements Serializable {
     /**
      * 性别
      */
-    private Object gender;
+    private String sex;
 
     /**
      * 出生日期
      */
-    private Date birthdate;
+    private Date birthDate;
 
     /**
      * 身份证号
      */
-    private String idnumber;
+    private String idNumber;
 
     /**
      * 籍贯
      */
-    private String nativeplace;
+    private String nativePlace;
 
     /**
      * 家庭住址
@@ -64,7 +65,7 @@ public class User implements Serializable {
     /**
      * 联系电话
      */
-    private String phonenumber;
+    private String phone;
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;

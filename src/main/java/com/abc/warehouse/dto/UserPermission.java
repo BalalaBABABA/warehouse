@@ -15,12 +15,12 @@ public class UserPermission {
      * 人员代码
      */
 
-    private Integer id;
+    private Long id;
 
     /**
      * 姓名
      */
-    private String userName;
+    private String name;
 
     /**
      * 角色
@@ -30,4 +30,14 @@ public class UserPermission {
      * 权限列表
      */
     private List<String> permissionList;
+
+
+    private String permissionListStr;
+
+    public UserPermission(Long id, String name, String role, List<String> permissionList) {
+        this.id = id;
+        this.name = name;
+        this.role = role;
+        this.permissionList = permissionList;
+    }
 }

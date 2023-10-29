@@ -24,6 +24,15 @@ public class RegexUtils {
     }
 
     /**
+     * 是否是无效密码格式
+     * @param password 要校验的密码
+     * @return true:符合，false：不符合
+     */
+    public static boolean isPasswordInvalid(String password){
+        return mismatch(password, RegexPatterns.PASSWORD_REGEX);
+    }
+
+    /**
      * 是否是无效验证码格式
      * @param code 要校验的验证码
      * @return true:符合，false：不符合

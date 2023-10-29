@@ -18,7 +18,7 @@ public class Store implements Serializable {
     /**
      * 进仓单号
      */
-    @TableId(type = IdType.AUTO)
+//    @TableId(type = IdType.AUTO)
     private Long storeId;
 
     /**

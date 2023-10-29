@@ -1,5 +1,8 @@
 package com.abc.warehouse.service.impl;
 
+import com.abc.warehouse.dto.Result;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.abc.warehouse.pojo.User;
@@ -7,16 +10,18 @@ import com.abc.warehouse.service.UserService;
 import com.abc.warehouse.mapper.UserMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 import static com.abc.warehouse.utils.SystemConstants.DEFAULT_PAGE_SIZE;
 
 /**
-* @author 吧啦
-* @description 针对表【user_208201302(人员表)】的数据库操作Service实现
-* @createDate 2023-09-23 16:58:22
-*/
+ * @author 吧啦
+ * @description 针对表【user_208201302(人员表)】的数据库操作Service实现
+ * @createDate 2023-09-23 16:58:22
+ */
 @Service
 public class UserServiceImpl extends ServiceImpl<UserMapper, User>
-    implements UserService{
+        implements UserService{
 
     @Override
     public long getTotalPage() {
@@ -25,6 +30,27 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         page(page, null);
         return page.getPages();
     }
+
+    @Override
+    public Result getAllUser() {
+        List<User> list = list();
+        return Result.ok(list);
+    }
+
+    @Override
+    public Result deleteUserById(Long id) {
+        boolean b = this.removeById(id);
+        return b?Result.ok():Result.fail("删除失败");
+    }
+    @Override
+    public Result getNamesAndIds(){
+        LambdaQueryWrapper<User> queryWrapper=new LambdaQueryWrapper<>();
+        queryWrapper.select(User::getId,User::getName);
+        List<User> list = list(queryWrapper);
+        return Result.ok(list);
+    }
+
+
 }
 
 

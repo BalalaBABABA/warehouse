@@ -20,14 +20,22 @@ public class Resource implements Serializable {
     /**
      * 资源代码
      */
-    @TableId(type = IdType.AUTO)
+//    @TableId(type = IdType.AUTO)
     private Long id;
 
     /**
      * 资源名称
      */
     private String name;
+    /**
+     * uri名称
+     */
+    private String uriName;
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
+
+    public Resource(Long id){
+        this.id=id;
+    }
 }

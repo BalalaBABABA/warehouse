@@ -12,7 +12,7 @@ public class ResourceController {
     @Autowired
     private ResourceService resourceService;
 
-    @GetMapping("/")
+    @GetMapping
     public Result getAllResources()
     {
         return resourceService.getAllResources();
@@ -20,7 +20,7 @@ public class ResourceController {
 
     @PostMapping("/{name}")
     public Result saveNewResource(@PathVariable("name")String name){
-        boolean save = resourceService.save(new Resource(null, name));
-        return save?Result.ok():Result.fail("增加权限功能失败！");
+        resourceService.save(new Resource(null, name,""));
+        return Result.ok(null);
     }
 }
