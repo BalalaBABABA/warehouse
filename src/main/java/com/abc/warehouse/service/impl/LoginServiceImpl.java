@@ -80,7 +80,12 @@ public class LoginServiceImpl implements LoginService {
 //            set.add(permission.getUri());
 //        }
         Map<Long, PermissionType> typesMap = permissionTypeService.getAllTypesMap();
-        List<String> permissionList = permissions.stream().map(permission -> typesMap.get(permission.getPermissionId()).getUri()).collect(Collectors.toList());
+        List<String> permissionList ;
+        if(permissions.isEmpty()){
+            permissionList =Collections.emptyList();
+        }else{
+            permissionList = permissions.stream().map(permission -> typesMap.get(permission.getPermissionId()).getUri()).collect(Collectors.toList());
+        }
 
         redisTemplate.opsForValue().set(RedisConstants.PERMISSIONS_USER_KEY+userId,JSONUtil.toJsonStr(permissionList),RedisConstants.PERMISSIONS_USER_TTL,TimeUnit.SECONDS);
 
