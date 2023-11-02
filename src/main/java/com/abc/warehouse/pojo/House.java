@@ -17,7 +17,7 @@ public class House implements Serializable {
     /**
      * 仓库代码
      */
-    @TableId(type = IdType.AUTO)
+//    @TableId(type = IdType.AUTO)
     private Long houseId;
 
     /**

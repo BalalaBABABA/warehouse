@@ -2,9 +2,12 @@ package com.abc.warehouse.service;
 
 import com.abc.warehouse.dto.Result;
 import com.abc.warehouse.dto.params.AddPermissionParams;
-import com.abc.warehouse.dto.params.PermissionParams;
+import com.abc.warehouse.dto.params.SearchPermissionParams;
+import com.abc.warehouse.dto.params.UpdatePermissionParams;
 import com.abc.warehouse.pojo.Permission;
 import com.baomidou.mybatisplus.extension.service.IService;
+
+import java.util.List;
 
 /**
 * @author 吧啦
@@ -14,14 +17,16 @@ import com.baomidou.mybatisplus.extension.service.IService;
 public interface PermissionService extends IService<Permission> {
     Result getPermissionTypes();
     Result getAllUsersPermissionsByResourceId(Integer pageCount, Long resourceId) ;
-    Result updateUserPermission(Permission permission,Boolean flag);
+    Result updateUserPermission(UpdatePermissionParams params, Boolean flag);
     Result deleteUserResource(Long userId, Long resourceId);
     Result getPermissionTypesByResourceId(Long resourceId);
 
     Result addOneUserPermission(AddPermissionParams permission);
 
-    Result searchPermissionByUser(PermissionParams permission);
+    Result searchPermissionByUser(SearchPermissionParams permission);
 
 
-    Result searchPermissionByRole(PermissionParams params);
+    Result searchPermissionByRole(SearchPermissionParams params);
+
+    List<Permission> getByUserId(Long userId);
 }

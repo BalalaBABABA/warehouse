@@ -1,6 +1,8 @@
 package com.abc.warehouse.service.impl;
 
 import com.abc.warehouse.dto.Result;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.abc.warehouse.pojo.User;
@@ -39,6 +41,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     public Result deleteUserById(Long id) {
         boolean b = this.removeById(id);
         return b?Result.ok():Result.fail("删除失败");
+    }
+    @Override
+    public Result getNamesAndIds(){
+        LambdaQueryWrapper<User> queryWrapper=new LambdaQueryWrapper<>();
+        queryWrapper.select(User::getId,User::getName);
+        List<User> list = list(queryWrapper);
+        return Result.ok(list);
     }
 
 
