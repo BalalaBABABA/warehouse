@@ -16,6 +16,7 @@ public class PermissionController {
     @Autowired
     private PermissionService permissionService;
 
+
     /**
      * 获取所有权限类型
      * @return
@@ -41,7 +42,7 @@ public class PermissionController {
      * @param resourceId
      * @return
      */
-    @PostMapping("/{page}/{resource_id}")
+    @PostMapping("/{page}/{resource_id}/get")
     public Result getAllUsersPermissions(@PathVariable("page")Integer pageCount,@PathVariable("resource_id") Long resourceId){
         return permissionService.getAllUsersPermissionsByResourceId(pageCount,resourceId);
     }

@@ -20,23 +20,19 @@
         </foreach>
     </insert>
     <select id="searchPermissionByRole" resultType="com.abc.warehouse.dto.UserPermission">
-        select u.id,u.name as name,u.role as role,GROUP_CONCAT(p.permission_id) as permissionListStr  from permission_208201302 p,user_208201302 u
-        where
-                permission_id in (select id from permission_type_208201302 where resource_id = #{resourceId})
-          and
-            user_id in (select id from user_208201302 where role = #{role})
-          and p.user_id=u.id
-        group by u.id
+        SELECT u.id, u.name AS name, u.role AS role, GROUP_CONCAT(p.permission_id) AS permissionListStr
+        FROM user_208201302 u
+                 LEFT JOIN permission_208201302 p ON p.user_id = u.id AND p.permission_id IN (SELECT id FROM permission_type_208201302 WHERE resource_id = #{resourceId})
+        WHERE u.role = #{role}
+        GROUP BY u.id
     </select>
 <!--    List<Permission> searchPermissionByUser(Long resourceId, Long userId, String empName);-->
     <select id="searchPermissionByUser" resultType="com.abc.warehouse.dto.UserPermission">
-        select u.id,u.name as name,u.role as role,GROUP_CONCAT(p.permission_id) as permissionListStr  from permission_208201302 p,user_208201302 u
-        where
-                permission_id in (select id from permission_type_208201302 where resource_id = #{resourceId})
-          and
-                user_id in (select id from user_208201302  where id = #{userId}  or  name like CONCAT('%',IFNULL(#{empName},''),'%'))
-          and p.user_id=u.id
-        group by u.id
+        SELECT u.id, u.name AS name, u.role AS role, GROUP_CONCAT(p.permission_id) AS permissionListStr
+        FROM user_208201302 u
+                 LEFT JOIN permission_208201302 p ON p.user_id = u.id AND p.permission_id IN (SELECT id FROM permission_type_208201302 WHERE resource_id = #{resourceId})
+        WHERE u.id = #{userId} OR u.name LIKE CONCAT('%', IFNULL(#{empName},''), '%')
+        GROUP BY u.id
     </select>
 
 </mapper>

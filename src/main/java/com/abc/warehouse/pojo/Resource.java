@@ -31,7 +31,10 @@ public class Resource implements Serializable {
      * uri名称
      */
     private String uriName;
-
+    /**
+     * icon
+     */
+    private String icon;
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
 

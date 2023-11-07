@@ -3,6 +3,7 @@ package com.abc.warehouse.handler;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
+import com.abc.warehouse.dto.Result;
 import com.abc.warehouse.dto.UserDTO;
 import com.abc.warehouse.dto.constants.ErrorCode;
 import com.abc.warehouse.dto.constants.RedisConstants;
@@ -16,12 +17,17 @@ import com.abc.warehouse.utils.UserHolder;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.util.AntPathMatcher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
+import org.springframework.web.util.UriComponents;
+import org.springframework.web.util.UriComponentsBuilder;
+import org.springframework.web.util.UriTemplate;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -29,12 +35,14 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static com.abc.warehouse.dto.constants.RedisConstants.PERMISSIONS_USER_TTL;
 
 @Component
 @Slf4j
+
 public class LoginInterceptor implements HandlerInterceptor {
 
     @Autowired
@@ -43,10 +51,10 @@ public class LoginInterceptor implements HandlerInterceptor {
     private PermissionService  permissionService;
     @Autowired
     private PermissionTypeService permissionTypeService;
+    private static final String PERMISSION_URI_REGEX = "(/\\w+)+";
 
     @Override
     @Transactional
-
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         /**
          * 1.判断 请求路径 是否为HandlerMethod（controller方法）
@@ -59,7 +67,7 @@ public class LoginInterceptor implements HandlerInterceptor {
             return true;
         }
         String token = request.getHeader("Authorization");
-
+        Result result = new Result();
         log.info("=================request start===========================");
         String requestURI = request.getRequestURI();
         log.info("request uri:{}",requestURI);
@@ -67,16 +75,25 @@ public class LoginInterceptor implements HandlerInterceptor {
         log.info("token:{}", token);
         log.info("=================request end===========================");
         response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
         if(StringUtils.isBlank(token)){
             log.warn("token为空");
-            response.setStatus(ErrorCode.NO_LOGIN.getCode());
+            result.setSuccess(false);
+            result.setErrorMsg(ErrorCode.NO_LOGIN.getMsg());
+            String resultJson =JSONUtil.toJsonStr(result);
+            //response.setStatus(ErrorCode.NO_LOGIN.getCode());
+            response.getWriter().write(resultJson);
             return false;
         }
 
         Map<String, Object> map = JwtUtils.checkToken(token);
         if(map==null){
             log.warn("token登录验证失败");
-            response.setStatus(ErrorCode.TOKEN_ILLEGAL_EXIST.getCode());
+            result.setSuccess(false);
+            result.setErrorMsg(ErrorCode.TOKEN_ILLEGAL_EXIST.getMsg());
+            String resultJson =JSONUtil.toJsonStr(result);
+            //response.setStatus(ErrorCode.TOKEN_ILLEGAL_EXIST.getCode());
+            response.getWriter().write(resultJson);
             return false;
         }
 
@@ -103,14 +120,22 @@ public class LoginInterceptor implements HandlerInterceptor {
         //刷新有效期
         redisTemplate.expire(RedisConstants.PERMISSIONS_USER_KEY + userId,PERMISSIONS_USER_TTL,TimeUnit.SECONDS);
 
-        if(permissions.isEmpty())return true;
+        //if(permissions.isEmpty())return true;
+        AntPathMatcher pathMatcher = new AntPathMatcher();
         for (String permissionUri : permissions) {
-            if(permissionUri.equals(requestURI)){
+            if (pathMatcher.match(permissionUri, requestURI)) {
                 return true;
             }
         }
+
+
         log.warn("用户没有访问权限  uri:"+requestURI);
-        response.setStatus(ErrorCode.NO_PERMISSION.getCode());
+
+        result.setSuccess(false);
+        result.setErrorMsg(ErrorCode.NO_PERMISSION.getMsg());
+        String resultJson =JSONUtil.toJsonStr(result);
+        //response.setStatus(ErrorCode.NO_PERMISSION.getCode());
+        response.getWriter().write(resultJson);
         return false;
     }
 
