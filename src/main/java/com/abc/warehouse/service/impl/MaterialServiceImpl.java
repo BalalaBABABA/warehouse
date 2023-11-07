@@ -44,7 +44,8 @@ public class MaterialServiceImpl extends ServiceImpl<MaterialMapper, Material>
         LambdaQueryWrapper<Material> wrapper = new LambdaQueryWrapper<>();  //查询条件构造器
         IPage<Material> pageQuery = new Page<>(curPage, PageConstants.MATERIAL_SEARCH_PAGE_SIZE);
         IPage<Material> page = baseMapper.selectPage(pageQuery, wrapper);
-        return Result.ok(page.getRecords(), page.getTotal());
+        return Result.ok(page.getRecords(), page.getPages());
+
 //        System.out.println("当前页：" + page.getCurrent());
 //        System.out.println("每页显示条数：" + page.getSize());
 //        System.out.println("总记录数：" + page.getTotal());
@@ -57,7 +58,7 @@ public class MaterialServiceImpl extends ServiceImpl<MaterialMapper, Material>
         wrapper.eq("id", id);
         IPage<Material> pageQuery = new Page<>(curPage, PageConstants.MATERIAL_SEARCH_PAGE_SIZE);
         IPage<Material> page = baseMapper.selectPage(pageQuery, wrapper);
-        return Result.ok(page.getRecords(), page.getTotal());
+        return Result.ok(page.getRecords(), page.getPages());
     }
 
     @Override
@@ -66,7 +67,7 @@ public class MaterialServiceImpl extends ServiceImpl<MaterialMapper, Material>
         wrapper.eq("name", name);
         IPage<Material> pageQuery = new Page<>(curPage, PageConstants.MATERIAL_SEARCH_PAGE_SIZE);
         IPage<Material> page = baseMapper.selectPage(pageQuery, wrapper);
-        return Result.ok(page.getRecords(), page.getTotal());
+        return Result.ok(page.getRecords(), page.getPages());
     }
 
     @Override
@@ -75,25 +76,29 @@ public class MaterialServiceImpl extends ServiceImpl<MaterialMapper, Material>
         wrapper.eq("house_id", id);
         IPage<Material> pageQuery = new Page<>(curPage, PageConstants.MATERIAL_SEARCH_PAGE_SIZE);
         IPage<Material> page = baseMapper.selectPage(pageQuery, wrapper);
-        return Result.ok(page.getRecords(), page.getTotal());
+        return Result.ok(page.getRecords(), page.getPages());
     }
 
     @Override
     public Result materialType(Integer curPage, String type) {
         QueryWrapper<Material> wrapper = new QueryWrapper<>();
-        wrapper.eq("type", type);
+        wrapper.like("type", "%" + type + "%");
         IPage<Material> pageQuery = new Page<>(curPage, PageConstants.MATERIAL_SEARCH_PAGE_SIZE);
         IPage<Material> page = baseMapper.selectPage(pageQuery, wrapper);
-        return Result.ok(page.getRecords(), page.getTotal());
+        return Result.ok(page.getRecords(), page.getPages());
     }
 
     @Override
     public Result materialComments(Integer curPage, String comments) {
         QueryWrapper<Material> wrapper = new QueryWrapper<>();
-        wrapper.eq("comments", comments);
+        if(comments.equals(".nothing.")){
+            wrapper.eq("comments", "");
+        }else{
+            wrapper.like("comments", "%" + comments + "%");
+        }
         IPage<Material> pageQuery = new Page<>(curPage, PageConstants.MATERIAL_SEARCH_PAGE_SIZE);
         IPage<Material> page = baseMapper.selectPage(pageQuery, wrapper);
-        return Result.ok(page.getRecords(), page.getTotal());
+        return Result.ok(page.getRecords(), page.getPages());
     }
 
 }
