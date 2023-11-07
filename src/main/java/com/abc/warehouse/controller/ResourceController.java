@@ -18,9 +18,15 @@ public class ResourceController {
         return resourceService.getAllResources();
     }
 
+    @GetMapping("/all")
+    public Result getAllResourcesInfo()
+    {
+        return resourceService.getAllResourcesInfo();
+    }
+
     @PostMapping("/{name}")
     public Result saveNewResource(@PathVariable("name")String name){
-        resourceService.save(new Resource(null, name,"",""));
+        resourceService.save(new Resource(null, name,"","",""));
         return Result.ok(null);
     }
 }

@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 public class MaterialController {
     @Autowired
     private MaterialService materialService;
-
     @PostMapping("/save")
     public Result save(@RequestBody Material material){
         return materialService.saveMaterial(material);
