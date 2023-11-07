@@ -35,6 +35,10 @@ public class Resource implements Serializable {
      * icon
      */
     private String icon;
+    /**
+     * 页面
+     */
+    private String page;
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
 
