@@ -55,7 +55,7 @@ public class MaterialServiceImpl extends ServiceImpl<MaterialMapper, Material>
     @Override
     public Result materialId(Integer curPage, Long id){
         QueryWrapper<Material> wrapper = new QueryWrapper<>();
-        wrapper.eq("id", id);
+        wrapper.like("id", id);
         IPage<Material> pageQuery = new Page<>(curPage, PageConstants.MATERIAL_SEARCH_PAGE_SIZE);
         IPage<Material> page = baseMapper.selectPage(pageQuery, wrapper);
         return Result.ok(page.getRecords(), page.getPages());
@@ -64,7 +64,7 @@ public class MaterialServiceImpl extends ServiceImpl<MaterialMapper, Material>
     @Override
     public Result materialName(Integer curPage, String name){
         QueryWrapper<Material> wrapper = new QueryWrapper<>();
-        wrapper.eq("name", name);
+        wrapper.like("name", name);
         IPage<Material> pageQuery = new Page<>(curPage, PageConstants.MATERIAL_SEARCH_PAGE_SIZE);
         IPage<Material> page = baseMapper.selectPage(pageQuery, wrapper);
         return Result.ok(page.getRecords(), page.getPages());
@@ -73,7 +73,7 @@ public class MaterialServiceImpl extends ServiceImpl<MaterialMapper, Material>
     @Override
     public Result materialHouseId(Integer curPage, Long id){
         QueryWrapper<Material> wrapper = new QueryWrapper<>();
-        wrapper.eq("house_id", id);
+        wrapper.like("house_id", id);
         IPage<Material> pageQuery = new Page<>(curPage, PageConstants.MATERIAL_SEARCH_PAGE_SIZE);
         IPage<Material> page = baseMapper.selectPage(pageQuery, wrapper);
         return Result.ok(page.getRecords(), page.getPages());
