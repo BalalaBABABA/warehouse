@@ -12,4 +12,6 @@ public class AddPermissionParams {
     private Long resourceId;
 
     private String type;
+
+    private String uri;
 }

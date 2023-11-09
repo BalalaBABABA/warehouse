@@ -18,7 +18,7 @@ public class Deliver implements Serializable {
     /**
      * 出仓单号
      */
-    @TableId(type = IdType.AUTO)
+//    @TableId(type = IdType.AUTO)
     private Long deliverId;
 
     /**

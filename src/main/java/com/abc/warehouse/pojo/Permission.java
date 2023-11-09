@@ -22,7 +22,7 @@ public class Permission implements Serializable {
     /**
      * 主键
      */
-    @TableId(type = IdType.AUTO)
+//    @TableId(type = IdType.AUTO)
     private Long id;
 
     /**
@@ -31,14 +31,10 @@ public class Permission implements Serializable {
     private Long userId;
 
     /**
-     * 资源id
+     * 权限id
      */
-    private Long resourceId;
+    private Long permissionId;
 
-    /**
-     * 权限类型
-     */
-    private String type;
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
