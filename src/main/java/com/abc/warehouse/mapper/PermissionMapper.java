@@ -2,12 +2,15 @@ package com.abc.warehouse.mapper;
 
 import com.abc.warehouse.dto.UserPermission;
 import com.abc.warehouse.pojo.Permission;
+import com.abc.warehouse.pojo.PermissionType;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import org.apache.ibatis.annotations.MapKey;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 /**
 * @author 吧啦
@@ -30,6 +33,9 @@ public interface PermissionMapper extends BaseMapper<Permission> {
                                             @Param("resourceId") Long resourceId,
                                             @Param("userId") Long userId,
                                             @Param("empName") String empName);
+
+
+    List<PermissionType> getSelectMap(@Param("resourceId")long resourceId);
 }
 
 
