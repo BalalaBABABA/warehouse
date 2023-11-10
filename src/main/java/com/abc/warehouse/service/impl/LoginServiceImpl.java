@@ -75,10 +75,7 @@ public class LoginServiceImpl implements LoginService {
         }
 
         List<Permission> permissions = permissionService.getByUserId(userId);
-//        Set<String> set =new HashSet<>();
-//        for (Permission permission : permissions) {
-//            set.add(permission.getUri());
-//        }
+
         Map<Long, PermissionType> typesMap = permissionTypeService.getAllTypesMap();
         List<String> permissionList ;
         if(permissions.isEmpty()){
@@ -94,8 +91,11 @@ public class LoginServiceImpl implements LoginService {
         map.put("user",user);
         redisTemplate.opsForValue().set(RedisConstants.LOGIN_USER_KEY+token, JSONUtil.toJsonStr(map),RedisConstants.LOGIN_USER_TTL, TimeUnit.SECONDS);
 
+        UserDTO userDTO = BeanUtil.copyProperties(user, UserDTO.class);
+
         //放入ThreadLocal
-        UserHolder.saveUser(BeanUtil.copyProperties(user, UserDTO.class));
+        UserHolder.saveUser(userDTO);
+
         return Result.ok(token);
     }
 

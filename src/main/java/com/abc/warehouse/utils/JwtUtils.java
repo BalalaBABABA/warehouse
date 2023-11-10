@@ -1,13 +1,7 @@
 package com.abc.warehouse.utils;
 
-import cn.hutool.core.bean.BeanUtil;
-import com.abc.warehouse.dto.UserDTO;
-import com.abc.warehouse.dto.constants.LoginConstants;
-import com.abc.warehouse.dto.constants.RedisConstants;
 import io.jsonwebtoken.*;
-import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.servlet.http.HttpServletRequest;
 import java.security.SecureRandom;
 import java.util.*;
 
@@ -48,6 +42,18 @@ public class JwtUtils {
                 .setExpiration(new Date(System.currentTimeMillis()+24*60*60*60*1000)); //一天过期时间
         String token =jwtBuilder.compact();
         return token;
+    }
+
+
+    public static Object getUserIdFromToken(String token){
+        try {
+            Jwt parse = Jwts.parser().setSigningKey(secretKey).parse(token);
+            Map<String, Object> map = (Map<String, Object>) parse.getBody();
+            return map.get("userId");
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public static Map<String, Object> checkToken(String token){
