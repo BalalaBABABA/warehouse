@@ -17,6 +17,8 @@ import lombok.Data;
 @TableName(value ="user_208201302")
 @Data
 public class User implements Serializable {
+
+    @TableId(type = IdType.AUTO)
     /**
      * 人员代码
      */

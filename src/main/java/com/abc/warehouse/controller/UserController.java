@@ -16,7 +16,10 @@ import javax.servlet.http.HttpServletRequest;
 public class UserController {
     @Autowired
     private UserService userService;
-
+    @GetMapping
+    public Result enter(){
+        return Result.ok();
+    }
     /**
      * 用户登录
      * @param request
@@ -26,17 +29,18 @@ public class UserController {
     @PostMapping("/login")
     public Result login(HttpServletRequest request, @RequestBody User user)
     {
-
-
         return null;
     }
 
     @PostMapping("/save")
     public Result save(@RequestBody User user){
-        //设置初始密码123456，需要进行md5加密处理
-        user.setPassword(DigestUtils.md5DigestAsHex("123456".getBytes()));
-        userService.save(user);
-        return Result.ok("新增用户成功");
+        return userService.saveUser(user);
+    }
+
+
+    @GetMapping("/delete/{id}")
+    public Result delete(@PathVariable("id") Long id){
+        return userService.deleteUser(id);
     }
 
     @GetMapping("/{id}")
@@ -55,13 +59,22 @@ public class UserController {
         return userService.getTotalPage();
     }
 
-    @GetMapping("/list")
-    public Result getAllUser(){
-        return userService.getAllUser();
+    @GetMapping("/search/{page}")
+    public Result search(@PathVariable("page") Integer page){
+        return userService.userPage(page);
     }
 
-    @PostMapping("/{id}")
-    public Result getAllUser(@PathVariable("id") Long id){
-        return userService.deleteUserById(id);
+//    @PostMapping("/{id}")
+//    public Result getAllUser(@PathVariable("id") Long id){
+//        return userService.deleteUser(id);
+//    }
+
+    @GetMapping("/searchByName/{page}/{name}")
+    public Result searchByName(@PathVariable("page") Integer page, @PathVariable("name") String name){
+        return userService.searchByName(page, name);
+    }
+    @GetMapping("/searchById/{page}/{id}")
+    public Result searchById(@PathVariable("page") Integer page, @PathVariable("id") Long id){
+        return userService.searchById(page, id);
     }
 }

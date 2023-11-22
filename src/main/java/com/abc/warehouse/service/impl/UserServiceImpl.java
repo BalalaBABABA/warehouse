@@ -1,18 +1,18 @@
 package com.abc.warehouse.service.impl;
-
 import com.abc.warehouse.dto.Result;
+import com.abc.warehouse.dto.constants.PageConstants;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.abc.warehouse.pojo.User;
 import com.abc.warehouse.service.UserService;
 import com.abc.warehouse.mapper.UserMapper;
 import org.springframework.stereotype.Service;
-
-import java.util.HashMap;
+import org.springframework.util.DigestUtils;
 import java.util.List;
-import java.util.Map;
+
 
 import static com.abc.warehouse.utils.SystemConstants.DEFAULT_PAGE_SIZE;
 
@@ -26,6 +26,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         implements UserService{
 
     @Override
+    public Result saveUser(User user) {
+        user.setPassword(DigestUtils.md5DigestAsHex("123456".getBytes()));
+        System.out.println("sex:"+user.getSex());
+        boolean save = save(user);
+        return save?Result.ok():Result.fail("增加权限失败");
+    }
+
+    @Override
     public long getTotalPage() {
         //设置分页参数
         Page<User> page =new Page<>(1, DEFAULT_PAGE_SIZE);
@@ -34,21 +42,15 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     }
 
     @Override
-    public Result getAllUser(Integer pageCount) {
-
-        //设置分页参数
-        Page<User> page =new Page<>(pageCount, DEFAULT_PAGE_SIZE);
-        page(page, null);
-        List<User> records = page.getRecords();
-        long pages = page.getPages();
-        Map<String,Object> map = new HashMap<>();
-        map.put("records",records);
-        map.put("totalPage",pages);
-        return Result.ok(map);
+    public Result userPage(Integer curPage) {
+        LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<>();  //查询条件构造器
+        IPage<User> pageQuery = new Page<>(curPage, PageConstants.MATERIAL_SEARCH_PAGE_SIZE);
+        IPage<User> page = baseMapper.selectPage(pageQuery, wrapper);
+        return Result.ok(page.getRecords(), page.getPages());
     }
 
     @Override
-    public Result deleteUserById(Long id) {
+    public Result deleteUser(Long id) {
         boolean b = this.removeById(id);
         return b?Result.ok():Result.fail("删除失败");
     }
@@ -58,6 +60,24 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         queryWrapper.select(User::getId,User::getName);
         List<User> list = list(queryWrapper);
         return Result.ok(list);
+    }
+
+    @Override
+    public Result searchByName(Integer curPage, String name) {
+        QueryWrapper<User> wrapper = new QueryWrapper();
+        wrapper.eq("name", name);
+        IPage<User> pageQuery = new Page((long)curPage, (long) PageConstants.MATERIAL_SEARCH_PAGE_SIZE);
+        IPage<User> page = ((UserMapper)this.baseMapper).selectPage(pageQuery, wrapper);
+        return Result.ok(page.getRecords(), page.getPages());
+    }
+
+    @Override
+    public Result searchById(Integer curPage, Long id) {
+        QueryWrapper<User> wrapper = new QueryWrapper();
+        wrapper.eq("id", id);
+        IPage<User> pageQuery = new Page((long)curPage, (long)PageConstants.MATERIAL_SEARCH_PAGE_SIZE);
+        IPage<User> page = ((UserMapper)this.baseMapper).selectPage(pageQuery, wrapper);
+        return Result.ok(page.getRecords(), page.getPages());
     }
 
 

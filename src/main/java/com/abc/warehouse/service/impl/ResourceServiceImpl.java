@@ -8,6 +8,7 @@ import com.abc.warehouse.mapper.ResourceMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -26,6 +27,16 @@ public class ResourceServiceImpl extends ServiceImpl<ResourceMapper, Resource>
         Map<String,String> map=new HashMap<>();
         list.forEach(resource -> {
             map.put(resource.getName(),resource.getId().toString());
+        });
+        return Result.ok(map);
+    }
+
+    @Override
+    public Result getAllResourcesInfo() {
+        List<Resource> list = list();
+        Map<String,Object> map=new LinkedHashMap<>();
+        list.forEach(resource -> {
+            map.put(resource.getName(),resource);
         });
         return Result.ok(map);
     }

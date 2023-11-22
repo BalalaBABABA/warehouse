@@ -11,11 +11,17 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface UserService extends IService<User> {
 
+    Result saveUser(User user);
+
     long getTotalPage();
 
-    Result deleteUserById(Long id);
+    Result deleteUser(Long id);
 
     Result getNamesAndIds();
 
-    Result getAllUser(Integer pageCount);
+    Result userPage(Integer pageCount);
+
+    Result searchByName(Integer curPage, String name);
+
+    Result searchById(Integer curPage, Long id);
 }
