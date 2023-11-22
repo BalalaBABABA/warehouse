@@ -9,9 +9,9 @@ public class AddPermissionParams {
 
     private List<Long>  userIds;
 
-    private Long resourceId;
+    private Long permissionId;
 
     private String type;
 
-    private String uri;
+
 }

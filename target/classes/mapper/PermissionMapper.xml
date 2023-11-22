@@ -23,7 +23,7 @@
         SELECT u.id, u.name AS name, u.role AS role, GROUP_CONCAT(p.permission_id) AS permissionListStr
         FROM user_208201302 u
                  LEFT JOIN permission_208201302 p ON p.user_id = u.id AND p.permission_id IN (SELECT id FROM permission_type_208201302 WHERE resource_id = #{resourceId})
-        WHERE u.role = #{role}
+        WHERE u.role LIKE CONCAT('%', IFNULL(#{role},''), '%')
         GROUP BY u.id
     </select>
 <!--    List<Permission> searchPermissionByUser(Long resourceId, Long userId, String empName);-->
@@ -34,5 +34,10 @@
         WHERE u.id = #{userId} OR u.name LIKE CONCAT('%', IFNULL(#{empName},''), '%')
         GROUP BY u.id
     </select>
+    <select id="getSelectMap" resultType="com.abc.warehouse.pojo.PermissionType">
+        select id,type from permission_type_208201302
+        where resource_id = #{resourceId} and id not in (select permission_id from permission_208201302 group by permission_id);
+    </select>
+
 
 </mapper>

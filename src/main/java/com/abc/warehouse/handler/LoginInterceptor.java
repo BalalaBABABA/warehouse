@@ -59,9 +59,15 @@ public class LoginInterceptor implements HandlerInterceptor {
         /**
          * 1.判断 请求路径 是否为HandlerMethod（controller方法）
          * 2.判断token是否为空
-         * 3.token不为空，登录验证
-         * 4.查权限缓存，判断是否有权限,有，读缓存，刷新有效期，没有，重建缓存
-         * 5.认证成功，放行
+         * 3.token不为空，登录验证,token有效期验证
+         * 4.判断是否是admin
+         * 5.查权限缓存，判断是否有权限,有，读缓存，刷新缓存有效期，没有，重建缓存
+         * 6.认证成功
+         *     1.放入ThreadLocal
+         *     2.放行
+         * 7.认证不成功
+         *     1.放入ThreadLocal
+         *     2.返回错误
          */
         if (!(handler instanceof HandlerMethod)) {
             return true;
@@ -79,6 +85,7 @@ public class LoginInterceptor implements HandlerInterceptor {
         if(StringUtils.isBlank(token)){
             log.warn("token为空");
             result.setSuccess(false);
+            result.setCode(ErrorCode.NO_LOGIN.getCode());
             result.setErrorMsg(ErrorCode.NO_LOGIN.getMsg());
             String resultJson =JSONUtil.toJsonStr(result);
             //response.setStatus(ErrorCode.NO_LOGIN.getCode());
@@ -90,20 +97,38 @@ public class LoginInterceptor implements HandlerInterceptor {
         if(map==null){
             log.warn("token登录验证失败");
             result.setSuccess(false);
+            result.setCode(ErrorCode.TOKEN_ILLEGAL_EXIST.getCode());
             result.setErrorMsg(ErrorCode.TOKEN_ILLEGAL_EXIST.getMsg());
             String resultJson =JSONUtil.toJsonStr(result);
-            //response.setStatus(ErrorCode.TOKEN_ILLEGAL_EXIST.getCode());
             response.getWriter().write(resultJson);
             return false;
         }
-
+        //如果redis查到token为空，则说明token有效期已过
         String tokenJson = redisTemplate.opsForValue().get(RedisConstants.LOGIN_USER_KEY + token);
+        if(StringUtils.isBlank(tokenJson)){
+            log.warn("token有效期已过");
+            result.setSuccess(false);
+            result.setCode(ErrorCode.TOKEN_ILLEGAL_EXIST.getCode());
+            result.setErrorMsg(ErrorCode.TOKEN_ILLEGAL_EXIST.getMsg());
+            String resultJson =JSONUtil.toJsonStr(result);
+            response.getWriter().write(resultJson);
+            return false;
+        }
         Map<String, Object> objectMap = JSONUtil.parseObj(tokenJson);
         Object userObj = objectMap.get("user");
         UserDTO userDTO = BeanUtil.toBean(userObj, UserDTO.class);
         Long userId = userDTO.getId();
+        String role = userDTO.getRole();
 
-        //先查缓存
+        //如果是amdin，直接放行
+        if(role == "amdin"){
+
+            //放入ThreadLocal
+            UserHolder.saveUser(userDTO);
+            return true;
+        }
+
+        //先查权限缓存
         String permissionsJson = redisTemplate.opsForValue().get(RedisConstants.PERMISSIONS_USER_KEY + userId);
         List<String> permissions = JSONUtil.toList(permissionsJson, String.class);
 
@@ -119,23 +144,26 @@ public class LoginInterceptor implements HandlerInterceptor {
         }
         //刷新有效期
         redisTemplate.expire(RedisConstants.PERMISSIONS_USER_KEY + userId,PERMISSIONS_USER_TTL,TimeUnit.SECONDS);
+        redisTemplate.expire(RedisConstants.LOGIN_USER_KEY + token,PERMISSIONS_USER_TTL,TimeUnit.SECONDS);
 
-        //if(permissions.isEmpty())return true;
         AntPathMatcher pathMatcher = new AntPathMatcher();
         for (String permissionUri : permissions) {
             if (pathMatcher.match(permissionUri, requestURI)) {
+                //放入ThreadLocal
+                UserHolder.saveUser(userDTO);
                 return true;
             }
         }
-
 
         log.warn("用户没有访问权限  uri:"+requestURI);
 
         result.setSuccess(false);
         result.setErrorMsg(ErrorCode.NO_PERMISSION.getMsg());
         String resultJson =JSONUtil.toJsonStr(result);
-        //response.setStatus(ErrorCode.NO_PERMISSION.getCode());
         response.getWriter().write(resultJson);
+
+        //放入ThreadLocal
+        UserHolder.saveUser(userDTO);
         return false;
     }
 

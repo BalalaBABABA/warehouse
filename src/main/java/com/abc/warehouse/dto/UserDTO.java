@@ -16,13 +16,12 @@ public class UserDTO {
     /**
      * 人员代码
      */
-
     private Long id;
 
     /**
      * 姓名
      */
-    private String userName;
+    private String name;
 
     /**
      * 角色
@@ -32,22 +31,22 @@ public class UserDTO {
     /**
      * 性别
      */
-    private Object gender;
+    private String sex;
 
     /**
      * 出生日期
      */
-    private Date birthdate;//嗯
+    private Date birthDate;
 
     /**
      * 身份证号
      */
-    private String idnumber;
+    private String idNumber;
 
     /**
      * 籍贯
      */
-    private String nativeplace;
+    private String nativePlace;
 
     /**
      * 家庭住址
@@ -57,9 +56,7 @@ public class UserDTO {
     /**
      * 联系电话
      */
-    private String phonenumber;
+    private String phone;
 
 
-    @TableField(exist = false)
-    private static final long serialVersionUID = 1L;
 }
