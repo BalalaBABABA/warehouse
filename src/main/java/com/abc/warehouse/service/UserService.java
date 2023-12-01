@@ -24,4 +24,6 @@ public interface UserService extends IService<User> {
     Result searchByName(Integer curPage, String name);
 
     Result searchById(Integer curPage, Long id);
+
+    Result updateUser(User user);
 }

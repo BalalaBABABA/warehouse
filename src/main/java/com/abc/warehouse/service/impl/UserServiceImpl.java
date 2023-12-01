@@ -1,6 +1,7 @@
 package com.abc.warehouse.service.impl;
 import com.abc.warehouse.dto.Result;
 import com.abc.warehouse.dto.constants.PageConstants;
+import com.abc.warehouse.utils.RegexUtils;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -28,7 +29,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     @Override
     public Result saveUser(User user) {
         user.setPassword(DigestUtils.md5DigestAsHex("123456".getBytes()));
-        System.out.println("sex:"+user.getSex());
+        if(RegexUtils.isIdNumberInvalid(user.getIdNumber())||RegexUtils.isPhoneInvalid(user.getPhone()))
+        {
+            return Result.fail("格式错误");
+        }
         boolean save = save(user);
         return save?Result.ok():Result.fail("增加权限失败");
     }
@@ -54,6 +58,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         boolean b = this.removeById(id);
         return b?Result.ok():Result.fail("删除失败");
     }
+
     @Override
     public Result getNamesAndIds(){
         LambdaQueryWrapper<User> queryWrapper=new LambdaQueryWrapper<>();
@@ -80,6 +85,16 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         return Result.ok(page.getRecords(), page.getPages());
     }
 
+    @Override
+    public Result updateUser(User user)
+    {
+        if(RegexUtils.isIdNumberInvalid(user.getIdNumber())||RegexUtils.isPhoneInvalid(user.getPhone()))
+        {
+            return Result.fail("格式错误");
+        }
+        updateById(user);
+        return Result.ok();
+    }
 
 }
 
