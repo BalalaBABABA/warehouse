@@ -15,7 +15,7 @@ public class GenerateID {
         this.stringredisTemplate = stringredisTemplate;
     }
 
-    //符号1位 + 时间8位 + 序列号6位
+    //标识1位 + 时间8位 + 序列号6位
     public long getId(String type, String keyPrefix){
         // 获取当前时间戳
         LocalDateTime now = LocalDateTime.now();

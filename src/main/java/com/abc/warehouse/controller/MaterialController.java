@@ -5,6 +5,7 @@ import com.abc.warehouse.dto.Result;
 import com.abc.warehouse.pojo.Material;
 import com.abc.warehouse.service.HouseService;
 import com.abc.warehouse.service.MaterialService;
+import com.abc.warehouse.service.MaterialTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +17,8 @@ public class MaterialController {
     private MaterialService materialService;
     @Autowired
     private HouseService houseService;
+    @Autowired
+    private MaterialTypeService materialTypeService;
 
     @GetMapping
     public Result enter(){
@@ -70,5 +73,10 @@ public class MaterialController {
     @GetMapping("/searchHouseId")
     public Result searchHouseId(){
         return Result.ok(houseService.searchHouseId());
+    }
+
+    @GetMapping("/typeName")
+    public Result typeName(){
+        return Result.ok(materialTypeService.typeName());
     }
 }
