@@ -14,6 +14,7 @@ import java.util.Map;
 */
 public interface PermissionTypeService extends IService<PermissionType> {
 
+     List<PermissionType> getTypesIsDisplayingByResourceId(Long resourceId);
      List<PermissionType> getTypesByResourceId(Long resourceId);
 
      Map<Long,String> getTypesMapByResourceId(Long resourceId);
@@ -24,4 +25,6 @@ public interface PermissionTypeService extends IService<PermissionType> {
      Result getPermissionTypesMap();
 
      Result delPermissionType(Long resourceId, String type);
+
+    Result getSelectMap(long resourceId);
 }

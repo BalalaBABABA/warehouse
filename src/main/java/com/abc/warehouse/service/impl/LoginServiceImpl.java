@@ -94,6 +94,7 @@ public class LoginServiceImpl implements LoginService {
         map.put("user",user);
         redisTemplate.opsForValue().set(RedisConstants.LOGIN_USER_KEY+token, JSONUtil.toJsonStr(map),RedisConstants.LOGIN_USER_TTL, TimeUnit.SECONDS);
 
+        //放入ThreadLocal
         UserHolder.saveUser(BeanUtil.copyProperties(user, UserDTO.class));
         return Result.ok(token);
     }

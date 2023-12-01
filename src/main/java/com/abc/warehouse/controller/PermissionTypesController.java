@@ -29,4 +29,9 @@ public class PermissionTypesController {
     public Result delPermissionType(@PathVariable("resourceId")Long resourceId,@PathVariable("type")String type){
         return permissionTypeService.delPermissionType(resourceId,type);
     }
+
+    @GetMapping("/select/map/{resourceId}")
+    public Result getSelectMap(@PathVariable("resourceId")long resourceId){
+        return permissionTypeService.getSelectMap(resourceId);
+    }
 }

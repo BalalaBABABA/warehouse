@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -40,6 +41,14 @@ public class PermissionTypeServiceImpl extends ServiceImpl<PermissionTypeMapper,
 
     @Autowired
     private StringRedisTemplate redisTemplate;
+
+    public List<PermissionType> getTypesIsDisplayingByResourceId(Long resourceId) {
+        LambdaQueryWrapper<PermissionType> queryWrapper=new LambdaQueryWrapper<>();
+        queryWrapper.eq(PermissionType::getResourceId,resourceId);
+        queryWrapper.eq(PermissionType::getIsdisplay,1);
+        return list(queryWrapper);
+    }
+
     @Override
     public List<PermissionType> getTypesByResourceId(Long resourceId) {
         LambdaQueryWrapper<PermissionType> queryWrapper=new LambdaQueryWrapper<>();
@@ -95,6 +104,7 @@ public class PermissionTypeServiceImpl extends ServiceImpl<PermissionTypeMapper,
             Long resourceId = resource.getId();
             LambdaQueryWrapper<PermissionType> queryWrapper1=new LambdaQueryWrapper<>();
             queryWrapper1.eq(PermissionType::getResourceId,resourceId);
+            queryWrapper1.eq(PermissionType::getIsdisplay,1);
             queryWrapper1.select(PermissionType::getType);
             List<PermissionType> permissionTypes = list(queryWrapper1);
             List<String> typesStr = permissionTypes.stream().map(PermissionType::getType).collect(Collectors.toList());
@@ -124,6 +134,16 @@ public class PermissionTypeServiceImpl extends ServiceImpl<PermissionTypeMapper,
             return Result.fail("删除失败");
         }
         return Result.ok();
+    }
+
+    @Override
+    public Result getSelectMap(long resourceId) {
+        List<PermissionType> list = permissionMapper.getSelectMap(resourceId);
+        Map<String,Long> map = new LinkedHashMap<>();
+        for (PermissionType permissionType : list) {
+            map.put(permissionType.getType(),permissionType.getId());
+        }
+        return Result.ok(map);
     }
 }
 

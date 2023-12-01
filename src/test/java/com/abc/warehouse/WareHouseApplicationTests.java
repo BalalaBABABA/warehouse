@@ -3,6 +3,7 @@ package com.abc.warehouse;
 import com.abc.warehouse.mapper.LogMapper;
 import com.abc.warehouse.pojo.Material;
 import com.abc.warehouse.service.MaterialService;
+import com.abc.warehouse.utils.GenerateID;
 import com.abc.warehouse.utils.RedisIdWorker;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,26 +28,34 @@ class WareHouseApplicationTests {
     }
 
     @Resource
-    private RedisIdWorker redisIdWorker;
+    private GenerateID generateID;
     private ExecutorService es = Executors.newFixedThreadPool(500);
 
     @Test
     void testIdWorker() throws InterruptedException {
-        CountDownLatch latch = new CountDownLatch(15);
+        CountDownLatch latch = new CountDownLatch(300);
         Runnable task = () -> {
-            for (int i = 0; i < 5; i++) {
-                long id = redisIdWorker.nextId("order");
+            for (int i = 0; i < 10; i++) {
+                long id = generateID.getId("1", "order");
                 System.out.println("id = " + id);
             }
             latch.countDown();
         };
         long begin = System.currentTimeMillis();
-        for (int i = 0; i < 15; i++){
+        for (int i = 0; i < 300; i++){
             es.submit(task);
         }
         latch.await();
         long end = System.currentTimeMillis();
         System.out.println("time = " + (end - begin));
+    }
+
+    @Test
+    public void testID(){
+        String str = "1";
+
+        long number = Long.parseLong(str);
+        System.out.println(number);
     }
 
     @Test

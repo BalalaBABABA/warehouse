@@ -124,6 +124,10 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
         Long userId = params.getUserId();
         Long resourceId = params.getResourceId();
         String type =  params.getType();
+
+        if(StringUtils.isBlank(userId.toString()) || StringUtils.isBlank(resourceId.toString())||StringUtils.isBlank(type)){
+            return Result.fail("参数不能为空");
+        }
         LambdaUpdateWrapper<PermissionType> qw=new LambdaUpdateWrapper<>();
         qw.eq(PermissionType::getResourceId,resourceId)
                 .eq(PermissionType::getType,type);
@@ -157,6 +161,9 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
          * 1.删除用户权限缓存
          * 2.更新用户权限数据库
          */
+        if(StringUtils.isBlank(userId.toString())||StringUtils.isBlank(resourceId.toString())){
+            return Result.fail("参数不能为空！");
+        }
         // 删除缓存
         redisTemplate.delete(RedisConstants.PERMISSIONS_USER_KEY+userId);
         List<PermissionType> types = permissionTypeService.getTypesByResourceId(resourceId);
@@ -173,7 +180,7 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
     @Override
     public Result getPermissionTypesByResourceId(Long resourceId) {
 
-        List<PermissionType> list = permissionTypeService.getTypesByResourceId(resourceId);
+        List<PermissionType> list = permissionTypeService.getTypesIsDisplayingByResourceId(resourceId);
         List<String> permissons=new ArrayList<>();
         list.forEach(i->permissons.add(i.getType()));
         return Result.ok(permissons);
@@ -184,20 +191,21 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
     public Result addOneUserPermission(AddPermissionParams permission) {
         List<Long> userIds = permission.getUserIds();
         List<String> userIdList = userIds.stream().map(userid -> RedisConstants.PERMISSIONS_USER_KEY + userid).collect(Collectors.toList());
-        Long resourceId = permission.getResourceId();
+        Long permissionId = permission.getPermissionId();
         String type = permission.getType();
-        String uri = permission.getUri();
-        if(userIds.isEmpty() || resourceId == null || StringUtils.isBlank(type)||StringUtils.isBlank(type)){
+
+        if(userIds.isEmpty() || permissionId == null || StringUtils.isBlank(type)||StringUtils.isBlank(type)){
             return Result.fail("参数不能为空！");
         }
         // 删除缓存
         redisTemplate.delete(userIdList);
-        LambdaUpdateWrapper<PermissionType> queryWrapper=new LambdaUpdateWrapper<>();
-        PermissionType newType=new PermissionType(null,resourceId,type,uri);
-        permissionTypeService.save(newType);
-        Long permissionId = newType.getId();
+//        LambdaUpdateWrapper<PermissionType> queryWrapper=new LambdaUpdateWrapper<>();
+//        PermissionType newType=new PermissionType(null,resourceId,type,uri);
+//        permissionTypeService.save(newType);
+
         // 更新数据库
         permissionMapper.saveUserPermissions(userIds,permissionId);
+        permissionTypeService.updateById(new PermissionType(null,null,null,null,1));
         return Result.ok();
     }
 
@@ -207,6 +215,9 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
         Long resourceId = params.getResourceId();
         String empName = params.getEmpName();
         Long userId = params.getUserId();
+        if(StringUtils.isBlank(empName)||StringUtils.isBlank(userId.toString())||StringUtils.isBlank(resourceId.toString())){
+            return Result.fail("参数不能为空！");
+        }
         Map<Long, String> types = permissionTypeService.getTypesMapByResourceId(resourceId);
         Page<UserPermission> page = new Page<>(params.getCurrentPage(),params.getPageSize());
         IPage<UserPermission> permissions = permissionMapper.searchPermissionByUser(page,resourceId, userId, empName);
@@ -234,6 +245,9 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
     public Result searchPermissionByRole(SearchPermissionParams params) {
         String role = params.getRole();
         Long resourceId = params.getResourceId();
+        if(StringUtils.isBlank(role)||StringUtils.isBlank(resourceId.toString())){
+            return Result.fail("参数不能为空！");
+        }
         Map<Long, String> types = permissionTypeService.getTypesMapByResourceId(resourceId);
 
         Page<UserPermission> page = new Page<>(params.getCurrentPage(),params.getPageSize());

@@ -2,6 +2,7 @@ package com.abc.warehouse.service.impl;
 
 import com.abc.warehouse.dto.Result;
 import com.abc.warehouse.dto.constants.PageConstants;
+import com.abc.warehouse.utils.GenerateID;
 import com.abc.warehouse.utils.RedisIdWorker;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -26,11 +27,11 @@ public class MaterialServiceImpl extends ServiceImpl<MaterialMapper, Material>
     implements MaterialService{
 
     @Resource
-    private RedisIdWorker redisIdWorker;
+    private GenerateID generateID;
 
     @Override
     public Result saveMaterial(Material material) {
-        long id = redisIdWorker.nextId("Material");
+        long id = generateID.getId("3", "Material");
         material.setId(id);
         save(material);
         return Result.ok();

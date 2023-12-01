@@ -10,9 +10,9 @@ import java.time.format.DateTimeFormatter;
 @Component
 public class RedisIdWorker {
     private static  final long BEGIN_TIMESTAMP = 1672531200L;  //开始时间戳
-    private static  final int COUNT_BITS = 32;  //开始时间戳
+    private static  final int COUNT_BITS = 32;  //序列号的位数
 
-    private StringRedisTemplate stringredisTemplate;  //序列号的位数
+    private StringRedisTemplate stringredisTemplate;
 
     public RedisIdWorker(StringRedisTemplate stringredisTemplate){
         this.stringredisTemplate = stringredisTemplate;

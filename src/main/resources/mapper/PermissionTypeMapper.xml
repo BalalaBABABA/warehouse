@@ -9,10 +9,11 @@
             <result property="resourceId" column="resource_id" jdbcType="BIGINT"/>
             <result property="type" column="type" jdbcType="VARCHAR"/>
             <result property="uri" column="uri" jdbcType="VARCHAR"/>
+        <result property="isdisplay" column="isdisplay" javaType="INTEGER"></result>
     </resultMap>
 
     <sql id="Base_Column_List">
         id,resource_id,type,
-        uri
+        uri,isdisplay
     </sql>
 </mapper>

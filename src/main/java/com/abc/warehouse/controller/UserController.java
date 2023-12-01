@@ -17,6 +17,10 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    @GetMapping
+    public Result enter(){
+        return Result.ok();
+    }
     /**
      * 用户登录
      * @param request
