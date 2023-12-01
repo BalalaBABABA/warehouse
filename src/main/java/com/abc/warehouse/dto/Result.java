@@ -11,11 +11,12 @@ import java.util.List;
 //@AllArgsConstructor
 public class Result {
     private Boolean success;
-
     private int code;
     private String errorMsg;
     private Object data;
     private Long total;
+    private String aesKey;
+
 
 
     public Result(Boolean success, String errorMsg, Object data, Long total) {
@@ -23,6 +24,16 @@ public class Result {
         this.errorMsg = errorMsg;
         this.data = data;
         this.total = total;
+    }
+
+    public Result(Boolean success, Object data, String aesKey) {
+        this.success = success;
+        this.data = data;
+        this.aesKey = aesKey;
+    }
+
+    public void setAesKey(String aesKey) {
+        this.aesKey = aesKey;
     }
 
     public static Result ok(){
@@ -34,7 +45,16 @@ public class Result {
     public static Result ok(List<?> data, Long total){
         return new Result(true, null, data, total);
     }
+
+//    public static Result ok(Object data,String aesKey,String publicKey){
+//        Result result = new Result();
+//        result.setSuccess(true);
+//        result.setData(data);
+//        result.setAesKey(aesKey);
+//        return result;
+//    }
     public static Result fail(String errorMsg){
         return new Result(false, errorMsg, null, null);
     }
+
 }

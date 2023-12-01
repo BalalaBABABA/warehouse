@@ -34,10 +34,7 @@
         WHERE u.id = #{userId} OR u.name LIKE CONCAT('%', IFNULL(#{empName},''), '%')
         GROUP BY u.id
     </select>
-    <select id="getSelectMap" resultType="com.abc.warehouse.pojo.PermissionType">
-        select id,type from permission_type_208201302
-        where resource_id = #{resourceId} and id not in (select permission_id from permission_208201302 group by permission_id);
-    </select>
+
 
 
 </mapper>

@@ -18,7 +18,7 @@ public interface PermissionService extends IService<Permission> {
     Result getPermissionTypes();
     Result getAllUsersPermissionsByResourceId(Integer pageCount, Long resourceId) ;
     Result updateUserPermission(UpdatePermissionParams params, Boolean flag);
-    Result deleteUserResource(Long userId, Long resourceId);
+    Result updateUserResource(Long userId, Long resourceId, Boolean flag);
     Result getPermissionTypesByResourceId(Long resourceId);
 
     Result addOneUserPermission(AddPermissionParams permission);

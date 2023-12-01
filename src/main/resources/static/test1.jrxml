@@ -1,0 +1,347 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.20.6.final using JasperReports Library version 6.20.6-5c96b6aa8a39ac1dc6b6bea4b81168e16dd39231  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="test1" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="66e4f746-5c80-4271-8f61-d5ee8d42cf1a">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="MyDB"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.property.dataset.dialog.DatasetDialog.sash.w1" value="281"/>
+	<property name="com.jaspersoft.studio.property.dataset.dialog.DatasetDialog.sash.w2" value="706"/>
+	<style name="Table_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Table_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Table 1_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Table 1_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Table 1_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<subDataset name="Empty Dataset1" uuid="78c4184d-f460-4773-b4d7-d0a354c3b6ad">
+		<field name="deliver_id" class="java.lang.Long">
+			<property name="com.jaspersoft.studio.field.name" value="deliver_id"/>
+			<property name="com.jaspersoft.studio.field.label" value="deliver_id"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="deliver_208201302"/>
+			<fieldDescription><![CDATA[出仓单号]]></fieldDescription>
+		</field>
+		<field name="house_id" class="java.lang.Long">
+			<property name="com.jaspersoft.studio.field.name" value="house_id"/>
+			<property name="com.jaspersoft.studio.field.label" value="house_id"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="deliver_208201302"/>
+			<fieldDescription><![CDATA[仓库代码]]></fieldDescription>
+		</field>
+		<field name="deliver_time" class="java.sql.Timestamp">
+			<property name="com.jaspersoft.studio.field.name" value="deliver_time"/>
+			<property name="com.jaspersoft.studio.field.label" value="deliver_time"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="deliver_208201302"/>
+			<fieldDescription><![CDATA[出仓时间]]></fieldDescription>
+		</field>
+		<field name="material_id" class="java.lang.Long">
+			<property name="com.jaspersoft.studio.field.name" value="material_id"/>
+			<property name="com.jaspersoft.studio.field.label" value="material_id"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="deliver_208201302"/>
+			<fieldDescription><![CDATA[物料代码]]></fieldDescription>
+		</field>
+		<field name="deliver_count" class="java.lang.Integer">
+			<property name="com.jaspersoft.studio.field.name" value="deliver_count"/>
+			<property name="com.jaspersoft.studio.field.label" value="deliver_count"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="deliver_208201302"/>
+			<fieldDescription><![CDATA[出仓数量]]></fieldDescription>
+		</field>
+		<field name="user_id" class="java.lang.Long">
+			<property name="com.jaspersoft.studio.field.name" value="user_id"/>
+			<property name="com.jaspersoft.studio.field.label" value="user_id"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="deliver_208201302"/>
+			<fieldDescription><![CDATA[操作人员代码]]></fieldDescription>
+		</field>
+		<field name="notes" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="notes"/>
+			<property name="com.jaspersoft.studio.field.label" value="notes"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="deliver_208201302"/>
+			<fieldDescription><![CDATA[备注]]></fieldDescription>
+		</field>
+	</subDataset>
+	<queryString>
+		<![CDATA[select * from deliver_208201302]]>
+	</queryString>
+	<field name="deliver_id" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="deliver_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="deliver_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="deliver_208201302"/>
+		<fieldDescription><![CDATA[出仓单号]]></fieldDescription>
+	</field>
+	<field name="house_id" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="house_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="house_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="deliver_208201302"/>
+		<fieldDescription><![CDATA[仓库代码]]></fieldDescription>
+	</field>
+	<field name="deliver_time" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="deliver_time"/>
+		<property name="com.jaspersoft.studio.field.label" value="deliver_time"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="deliver_208201302"/>
+		<fieldDescription><![CDATA[出仓时间]]></fieldDescription>
+	</field>
+	<field name="material_id" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="material_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="material_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="deliver_208201302"/>
+		<fieldDescription><![CDATA[物料代码]]></fieldDescription>
+	</field>
+	<field name="deliver_count" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="deliver_count"/>
+		<property name="com.jaspersoft.studio.field.label" value="deliver_count"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="deliver_208201302"/>
+		<fieldDescription><![CDATA[出仓数量]]></fieldDescription>
+	</field>
+	<field name="user_id" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="user_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="user_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="deliver_208201302"/>
+		<fieldDescription><![CDATA[操作人员代码]]></fieldDescription>
+	</field>
+	<field name="notes" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="notes"/>
+		<property name="com.jaspersoft.studio.field.label" value="notes"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="deliver_208201302"/>
+		<fieldDescription><![CDATA[备注]]></fieldDescription>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="111" splitType="Stretch">
+			<rectangle>
+				<reportElement x="0" y="0" width="555" height="111" backcolor="#BEE2F7" uuid="7b5382fc-c340-4da4-85dd-e546757590b4"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="237" y="22" width="81" height="34" uuid="3588bad7-6bd6-4ef1-aaa6-7b7cacd3af40"/>
+				<textElement>
+					<font fontName="黑体" size="26" isBold="true"/>
+				</textElement>
+				<text><![CDATA[出仓单]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="45" splitType="Stretch">
+			<staticText>
+				<reportElement x="20" y="10" width="100" height="30" uuid="f1d9443c-954a-41a0-970c-41fbb8c421ce"/>
+				<textElement>
+					<font size="16"/>
+				</textElement>
+				<text><![CDATA[出库人：]]></text>
+			</staticText>
+			<line>
+				<reportElement x="80" y="30" width="80" height="1" uuid="f85844cf-e639-4ec8-b149-c18e0f989650"/>
+			</line>
+			<staticText>
+				<reportElement x="340" y="10" width="100" height="30" uuid="ce2a7f87-56c7-45a6-ae51-4cc814cff5a9"/>
+				<textElement>
+					<font size="16"/>
+				</textElement>
+				<text><![CDATA[出库日期：]]></text>
+			</staticText>
+			<line>
+				<reportElement x="430" y="30" width="110" height="1" uuid="5904a754-079a-4b50-a4c8-01ea94f7c255"/>
+			</line>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="381" splitType="Stretch">
+			<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.spreadsheet.SpreadsheetLayout"/>
+			<componentElement>
+				<reportElement x="0" y="0" width="555" height="381" uuid="4a49a748-a480-4d46-91c7-6ba6d1b09712">
+					<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.VerticalRowLayout"/>
+					<property name="com.jaspersoft.studio.table.style.table_header" value="Table 1_TH"/>
+					<property name="com.jaspersoft.studio.table.style.column_header" value="Table 1_CH"/>
+					<property name="com.jaspersoft.studio.table.style.detail" value="Table 1_TD"/>
+				</reportElement>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="Empty Dataset1" uuid="8f0f089f-96ce-4c90-b2bf-6608df6c3992">
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					</datasetRun>
+					<jr:column width="80" uuid="9a6dd01d-e9da-46a2-80f0-2677b8dbacf2">
+						<jr:tableHeader style="Table 1_TH" height="30"/>
+						<jr:tableFooter style="Table 1_TH" height="30"/>
+						<jr:columnHeader style="Table 1_CH" height="30">
+							<staticText>
+								<reportElement x="0" y="0" width="80" height="30" uuid="2dd2bd0d-b0cc-40ab-9f8b-262ae6e7d9f7"/>
+								<text><![CDATA[deliver_id]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:columnFooter style="Table 1_CH" height="30"/>
+						<jr:detailCell style="Table 1_TD" height="30">
+							<textField>
+								<reportElement x="0" y="0" width="80" height="30" uuid="6463c95d-95db-49f6-852c-a21a37e80c80"/>
+								<textFieldExpression><![CDATA[$F{deliver_id}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="80" uuid="f110c14d-74dc-4f48-87f9-78fd5d3b6da5">
+						<jr:tableHeader style="Table 1_TH" height="30"/>
+						<jr:tableFooter style="Table 1_TH" height="30"/>
+						<jr:columnHeader style="Table 1_CH" height="30">
+							<staticText>
+								<reportElement x="0" y="0" width="80" height="30" uuid="0830a7f6-3df1-43b2-ba24-0e8425d0a28d"/>
+								<text><![CDATA[house_id]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:columnFooter style="Table 1_CH" height="30"/>
+						<jr:detailCell style="Table 1_TD" height="30">
+							<textField>
+								<reportElement x="0" y="0" width="80" height="30" uuid="36d21c29-cb35-4d49-9eff-2aeffcf63b21"/>
+								<textFieldExpression><![CDATA[$F{house_id}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="79" uuid="e1df1515-69b3-4c5b-85dc-e10142ed836f">
+						<jr:tableHeader style="Table 1_TH" height="30"/>
+						<jr:tableFooter style="Table 1_TH" height="30"/>
+						<jr:columnHeader style="Table 1_CH" height="30">
+							<staticText>
+								<reportElement x="0" y="0" width="79" height="30" uuid="dc2aafa9-f31d-4be8-a745-69502ebd1472"/>
+								<text><![CDATA[deliver_time]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:columnFooter style="Table 1_CH" height="30"/>
+						<jr:detailCell style="Table 1_TD" height="30">
+							<textField>
+								<reportElement x="0" y="0" width="79" height="30" uuid="25d1c827-9830-412a-8c62-0f3bab71f66d"/>
+								<textFieldExpression><![CDATA[$F{deliver_time}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="79" uuid="6b86aba0-d146-4196-8109-f233d9032ebd">
+						<jr:tableHeader style="Table 1_TH" height="30"/>
+						<jr:tableFooter style="Table 1_TH" height="30"/>
+						<jr:columnHeader style="Table 1_CH" height="30">
+							<staticText>
+								<reportElement x="0" y="0" width="79" height="30" uuid="5815d055-94f1-4ab9-99e8-8ce335592e4a"/>
+								<text><![CDATA[material_id]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:columnFooter style="Table 1_CH" height="30"/>
+						<jr:detailCell style="Table 1_TD" height="30">
+							<textField>
+								<reportElement x="0" y="0" width="79" height="30" uuid="63b27be8-73d0-4546-b0c3-3d3a79a83d36"/>
+								<textFieldExpression><![CDATA[$F{material_id}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="79" uuid="fb490657-125a-450b-8800-3c1f17c2dd58">
+						<jr:tableHeader style="Table 1_TH" height="30"/>
+						<jr:tableFooter style="Table 1_TH" height="30"/>
+						<jr:columnHeader style="Table 1_CH" height="30">
+							<staticText>
+								<reportElement x="0" y="0" width="79" height="30" uuid="872ca5e9-3dac-4c0f-85a6-316bf4a7a8b7"/>
+								<text><![CDATA[deliver_count]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:columnFooter style="Table 1_CH" height="30"/>
+						<jr:detailCell style="Table 1_TD" height="30">
+							<textField>
+								<reportElement x="0" y="0" width="79" height="30" uuid="507c4e0a-b365-4a18-a5b8-22440c9f80c3"/>
+								<textFieldExpression><![CDATA[$F{deliver_count}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="79" uuid="2983e10f-2176-47bb-b545-02bbffaa49a9">
+						<jr:tableHeader style="Table 1_TH" height="30"/>
+						<jr:tableFooter style="Table 1_TH" height="30"/>
+						<jr:columnHeader style="Table 1_CH" height="30">
+							<staticText>
+								<reportElement x="0" y="0" width="79" height="30" uuid="b07eaff4-8c95-4127-8511-a419855777e7"/>
+								<text><![CDATA[user_id]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:columnFooter style="Table 1_CH" height="30"/>
+						<jr:detailCell style="Table 1_TD" height="30">
+							<textField>
+								<reportElement x="0" y="0" width="79" height="30" uuid="bcc7847a-7904-4b5d-b843-4b5185a08fc4"/>
+								<textFieldExpression><![CDATA[$F{user_id}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="79" uuid="504ed2fd-bce8-4698-9526-662037fc7fcf">
+						<jr:tableHeader style="Table 1_TH" height="30"/>
+						<jr:tableFooter style="Table 1_TH" height="30"/>
+						<jr:columnHeader style="Table 1_CH" height="30">
+							<staticText>
+								<reportElement x="0" y="0" width="79" height="30" uuid="5f5ab3cc-80ff-4148-90df-3c3ccf74fa0d"/>
+								<text><![CDATA[notes]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:columnFooter style="Table 1_CH" height="30"/>
+						<jr:detailCell style="Table 1_TD" height="30">
+							<textField>
+								<reportElement x="0" y="0" width="79" height="30" uuid="2563deef-acf9-4d72-ab40-f5f76360dd21"/>
+								<textFieldExpression><![CDATA[$F{notes}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="50" splitType="Stretch">
+			<textField>
+				<reportElement x="240" y="20" width="143" height="16" uuid="32cd769f-2657-4061-830f-d3c0c2d49d1a"/>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="410" y="28" width="185" height="22" uuid="666fc4f2-379c-41f3-bf85-31e4043cf07a"/>
+				<textFieldExpression><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>
