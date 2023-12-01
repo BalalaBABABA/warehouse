@@ -2,6 +2,7 @@ package com.abc.warehouse.service.impl;
 
 import com.abc.warehouse.dto.Result;
 import com.abc.warehouse.dto.constants.PageConstants;
+import com.abc.warehouse.utils.RedisIdWorker;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -12,6 +13,9 @@ import com.abc.warehouse.service.MaterialService;
 import com.abc.warehouse.mapper.MaterialMapper;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
+import java.security.PrivateKey;
+
 /**
 * @author 吧啦
 * @description 针对表【material_208201302(物料表)】的数据库操作Service实现
@@ -21,8 +25,13 @@ import org.springframework.stereotype.Service;
 public class MaterialServiceImpl extends ServiceImpl<MaterialMapper, Material>
     implements MaterialService{
 
+    @Resource
+    private RedisIdWorker redisIdWorker;
+
     @Override
     public Result saveMaterial(Material material) {
+        long id = redisIdWorker.nextId("Material");
+        material.setId(id);
         save(material);
         return Result.ok();
     }

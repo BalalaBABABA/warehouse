@@ -6,6 +6,9 @@ import com.abc.warehouse.service.HouseService;
 import com.abc.warehouse.mapper.HouseMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 /**
 * @author 吧啦
 * @description 针对表【house_208201302】的数据库操作Service实现
@@ -15,6 +18,13 @@ import org.springframework.stereotype.Service;
 public class HouseServiceImpl extends ServiceImpl<HouseMapper, House>
     implements HouseService{
 
+    @Override
+    public List<String> searchHouseId() {
+        List<String> houseIds = list().stream()
+                .map(house -> String.valueOf(house.getHouseId()))
+                .collect(Collectors.toList());
+        return houseIds;
+    }
 }
 
 

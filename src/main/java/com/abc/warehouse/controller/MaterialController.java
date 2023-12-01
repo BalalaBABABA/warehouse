@@ -3,6 +3,7 @@ package com.abc.warehouse.controller;
 
 import com.abc.warehouse.dto.Result;
 import com.abc.warehouse.pojo.Material;
+import com.abc.warehouse.service.HouseService;
 import com.abc.warehouse.service.MaterialService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.web.PageableDefault;
@@ -13,6 +14,13 @@ import org.springframework.web.bind.annotation.*;
 public class MaterialController {
     @Autowired
     private MaterialService materialService;
+    @Autowired
+    private HouseService houseService;
+
+    @GetMapping
+    public Result enter(){
+        return Result.ok();
+    }
 
     @PostMapping("/save")
     public Result save(@RequestBody Material material){
@@ -57,5 +65,10 @@ public class MaterialController {
     @GetMapping("/searchByComments/{page}/{comments}")
     public Result searchByComments(@PathVariable("page") Integer page, @PathVariable("comments") String comments){
         return materialService.materialComments(page, comments);
+    }
+
+    @GetMapping("/searchHouseId")
+    public Result searchHouseId(){
+        return Result.ok(houseService.searchHouseId());
     }
 }

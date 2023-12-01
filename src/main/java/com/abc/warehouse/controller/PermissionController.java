@@ -16,7 +16,10 @@ public class PermissionController {
     @Autowired
     private PermissionService permissionService;
 
-
+    @GetMapping
+    public Result enter(){
+        return Result.ok();
+    }
     /**
      * 获取所有权限类型
      * @return
