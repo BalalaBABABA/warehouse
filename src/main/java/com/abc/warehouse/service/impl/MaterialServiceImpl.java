@@ -2,6 +2,8 @@ package com.abc.warehouse.service.impl;
 
 import com.abc.warehouse.dto.Result;
 import com.abc.warehouse.dto.constants.PageConstants;
+import com.abc.warehouse.utils.GenerateID;
+import com.abc.warehouse.utils.RedisIdWorker;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -12,6 +14,9 @@ import com.abc.warehouse.service.MaterialService;
 import com.abc.warehouse.mapper.MaterialMapper;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
+import java.security.PrivateKey;
+
 /**
 * @author 吧啦
 * @description 针对表【material_208201302(物料表)】的数据库操作Service实现
@@ -21,8 +26,13 @@ import org.springframework.stereotype.Service;
 public class MaterialServiceImpl extends ServiceImpl<MaterialMapper, Material>
     implements MaterialService{
 
+    @Resource
+    private GenerateID generateID;
+
     @Override
     public Result saveMaterial(Material material) {
+        long id = generateID.getId("3", "Material");
+        material.setId(id);
         save(material);
         return Result.ok();
     }
@@ -55,7 +65,7 @@ public class MaterialServiceImpl extends ServiceImpl<MaterialMapper, Material>
     @Override
     public Result materialId(Integer curPage, Long id){
         QueryWrapper<Material> wrapper = new QueryWrapper<>();
-        wrapper.eq("id", id);
+        wrapper.like("id", id);
         IPage<Material> pageQuery = new Page<>(curPage, PageConstants.MATERIAL_SEARCH_PAGE_SIZE);
         IPage<Material> page = baseMapper.selectPage(pageQuery, wrapper);
         return Result.ok(page.getRecords(), page.getPages());
@@ -64,7 +74,7 @@ public class MaterialServiceImpl extends ServiceImpl<MaterialMapper, Material>
     @Override
     public Result materialName(Integer curPage, String name){
         QueryWrapper<Material> wrapper = new QueryWrapper<>();
-        wrapper.eq("name", name);
+        wrapper.like("name", name);
         IPage<Material> pageQuery = new Page<>(curPage, PageConstants.MATERIAL_SEARCH_PAGE_SIZE);
         IPage<Material> page = baseMapper.selectPage(pageQuery, wrapper);
         return Result.ok(page.getRecords(), page.getPages());
@@ -73,7 +83,7 @@ public class MaterialServiceImpl extends ServiceImpl<MaterialMapper, Material>
     @Override
     public Result materialHouseId(Integer curPage, Long id){
         QueryWrapper<Material> wrapper = new QueryWrapper<>();
-        wrapper.eq("house_id", id);
+        wrapper.like("house_id", id);
         IPage<Material> pageQuery = new Page<>(curPage, PageConstants.MATERIAL_SEARCH_PAGE_SIZE);
         IPage<Material> page = baseMapper.selectPage(pageQuery, wrapper);
         return Result.ok(page.getRecords(), page.getPages());
