@@ -13,4 +13,5 @@ import java.util.List;
 */
 public interface HouseService extends IService<House> {
     List<String> searchHouseId();
+    List<String> searchHouseName();
 }

@@ -25,6 +25,14 @@ public class HouseServiceImpl extends ServiceImpl<HouseMapper, House>
                 .collect(Collectors.toList());
         return houseIds;
     }
+
+    @Override
+    public List<String> searchHouseName() {
+        List<String> houseName = list().stream()
+                .map(house -> house.getHouseName())
+                .collect(Collectors.toList());
+        return houseName;
+    }
 }
 
 

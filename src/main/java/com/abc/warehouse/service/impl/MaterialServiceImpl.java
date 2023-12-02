@@ -55,11 +55,6 @@ public class MaterialServiceImpl extends ServiceImpl<MaterialMapper, Material>
         IPage<Material> pageQuery = new Page<>(curPage, PageConstants.MATERIAL_SEARCH_PAGE_SIZE);
         IPage<Material> page = baseMapper.selectPage(pageQuery, wrapper);
         return Result.ok(page.getRecords(), page.getPages());
-
-//        System.out.println("当前页：" + page.getCurrent());
-//        System.out.println("每页显示条数：" + page.getSize());
-//        System.out.println("总记录数：" + page.getTotal());
-//        System.out.println("总页数：" + page.getPages());
     }
 
     @Override
@@ -81,9 +76,9 @@ public class MaterialServiceImpl extends ServiceImpl<MaterialMapper, Material>
     }
 
     @Override
-    public Result materialHouseId(Integer curPage, Long id){
+    public Result materialHouseName(Integer curPage, String name){
         QueryWrapper<Material> wrapper = new QueryWrapper<>();
-        wrapper.like("house_id", id);
+        wrapper.like("house_name", name);
         IPage<Material> pageQuery = new Page<>(curPage, PageConstants.MATERIAL_SEARCH_PAGE_SIZE);
         IPage<Material> page = baseMapper.selectPage(pageQuery, wrapper);
         return Result.ok(page.getRecords(), page.getPages());
