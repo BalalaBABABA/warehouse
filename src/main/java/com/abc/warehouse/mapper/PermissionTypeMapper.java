@@ -3,6 +3,8 @@ package com.abc.warehouse.mapper;
 import com.abc.warehouse.pojo.PermissionType;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
+import java.util.List;
+
 /**
 * @author 吧啦
 * @description 针对表【permission_type_208201302】的数据库操作Mapper
@@ -11,6 +13,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 */
 public interface PermissionTypeMapper extends BaseMapper<PermissionType> {
 
+    List<PermissionType> getSelectMap(long resourceId);
 }
 
 

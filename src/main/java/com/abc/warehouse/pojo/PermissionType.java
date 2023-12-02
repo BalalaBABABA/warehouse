@@ -49,8 +49,13 @@ public class PermissionType implements Serializable {
     public PermissionType(String type) {
         this.type = type;
     }
-    public PermissionType(Long id, Long resourceId) {
+
+    public PermissionType(Long id,String type){
         this.id = id;
-        this.resourceId = resourceId;
+        this.type = type;
     }
+//    public PermissionType(Long id, Long resourceId) {
+//        this.id = id;
+//        this.resourceId = resourceId;
+//    }
 }

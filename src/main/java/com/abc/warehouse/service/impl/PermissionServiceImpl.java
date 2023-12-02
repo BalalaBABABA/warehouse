@@ -1,6 +1,7 @@
 package com.abc.warehouse.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.abc.warehouse.dto.EncryotResult;
 import com.abc.warehouse.dto.Result;
 import com.abc.warehouse.dto.UserPermission;
 import com.abc.warehouse.dto.constants.RedisConstants;
@@ -111,7 +112,7 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
             );
             user.setPermissionList(permissons);
         });
-        return Result.ok(userPermissions);
+        return EncryotResult.ok(userPermissions);
     }
 
     @Override
@@ -156,12 +157,12 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
 
     @Override
     @Transactional
-    public Result deleteUserResource(Long userId, Long resourceId) {
+    public Result updateUserResource(Long userId, Long resourceId, Boolean flag) {
         /**
          * 1.删除用户权限缓存
          * 2.更新用户权限数据库
          */
-        if(StringUtils.isBlank(userId.toString())||StringUtils.isBlank(resourceId.toString())){
+        if(StringUtils.isBlank(userId.toString()) || StringUtils.isBlank(resourceId.toString())){
             return Result.fail("参数不能为空！");
         }
         // 删除缓存
@@ -170,20 +171,30 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
         List<Long> permissionIdList = types.stream().map(type -> type.getId()).collect(Collectors.toList());
         // 更新数据库
 
-        LambdaUpdateWrapper<Permission> updateWrapper1=new LambdaUpdateWrapper<>();
-        updateWrapper1.eq(Permission::getUserId,userId)
-                .in(Permission::getPermissionId,permissionIdList);
-        boolean remove1 = remove(updateWrapper1);
-        return remove1?Result.ok():Result.fail("取消权限失败");
+        if(!flag){
+            LambdaUpdateWrapper<Permission> updateWrapper1=new LambdaUpdateWrapper<>();
+            updateWrapper1.eq(Permission::getUserId,userId)
+                    .in(Permission::getPermissionId,permissionIdList);
+            boolean remove1 = remove(updateWrapper1);
+            return remove1?Result.ok():Result.fail("取消权限失败");
+        }else{
+            List<Permission> permissionList = new ArrayList<>();
+            for (Long permissionId :
+                    permissionIdList) {
+                Permission p = new Permission(null,userId,permissionId);
+                permissionList.add(p);
+            }
+            boolean b = saveBatch(permissionList);
+            return b?Result.ok():Result.fail("增加权限失败");
+        }
     }
 
     @Override
     public Result getPermissionTypesByResourceId(Long resourceId) {
-
         List<PermissionType> list = permissionTypeService.getTypesIsDisplayingByResourceId(resourceId);
         List<String> permissons=new ArrayList<>();
         list.forEach(i->permissons.add(i.getType()));
-        return Result.ok(permissons);
+        return EncryotResult.ok(permissons);
     }
 
     @Override
@@ -205,7 +216,7 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
 
         // 更新数据库
         permissionMapper.saveUserPermissions(userIds,permissionId);
-        permissionTypeService.updateById(new PermissionType(null,null,null,null,1));
+        permissionTypeService.updateById(new PermissionType(permissionId,null,null,null,1));
         return Result.ok();
     }
 
@@ -215,8 +226,8 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
         Long resourceId = params.getResourceId();
         String empName = params.getEmpName();
         Long userId = params.getUserId();
-        if(StringUtils.isBlank(empName)||StringUtils.isBlank(userId.toString())||StringUtils.isBlank(resourceId.toString())){
-            return Result.fail("参数不能为空！");
+        if((StringUtils.isBlank(empName)&&userId == null)||StringUtils.isBlank(resourceId.toString())){
+            return EncryotResult.fail("参数不能为空！");
         }
         Map<Long, String> types = permissionTypeService.getTypesMapByResourceId(resourceId);
         Page<UserPermission> page = new Page<>(params.getCurrentPage(),params.getPageSize());
@@ -225,6 +236,12 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
         if(records.isEmpty())records = Collections.emptyList();
         for (UserPermission permission : records) {
             List<String> permissionList = new ArrayList<>();
+            if(StringUtils.isBlank(permission.getPermissionListStr()))
+            {
+                permission.setPermissionList(permissionList);
+                permission.setPermissionListStr(null);
+                continue;
+            }
             String[] strings = permission.getPermissionListStr().split(",");
             for (String string : strings) {
                 long permissionId =Long.parseLong(string);
@@ -237,7 +254,7 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
         Map<String,Object> map = new HashMap<>();
         map.put("records",permissions.getRecords());
         map.put("totalPage",permissions.getPages());
-        return Result.ok(map);
+        return EncryotResult.ok(map);
 
     }
 
@@ -246,7 +263,7 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
         String role = params.getRole();
         Long resourceId = params.getResourceId();
         if(StringUtils.isBlank(role)||StringUtils.isBlank(resourceId.toString())){
-            return Result.fail("参数不能为空！");
+            return EncryotResult.fail("参数不能为空！");
         }
         Map<Long, String> types = permissionTypeService.getTypesMapByResourceId(resourceId);
 
@@ -256,6 +273,12 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
         if(records.isEmpty())records = Collections.emptyList();
         for (UserPermission permission : records) {
             List<String> permissionList = new ArrayList<>();
+            if(StringUtils.isBlank(permission.getPermissionListStr()))
+            {
+                permission.setPermissionList(permissionList);
+                permission.setPermissionListStr(null);
+                continue;
+            }
             String[] strings = permission.getPermissionListStr().split(",");
             for (String string : strings) {
                 long permissionId =Long.parseLong(string);
@@ -268,7 +291,7 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
         Map<String,Object> map = new HashMap<>();
         map.put("records",permissions.getRecords());
         map.put("totalPage",permissions.getPages());
-        return Result.ok(map);
+        return EncryotResult.ok(map);
     }
 
     @Override

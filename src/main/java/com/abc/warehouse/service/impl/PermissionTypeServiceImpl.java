@@ -38,6 +38,9 @@ public class PermissionTypeServiceImpl extends ServiceImpl<PermissionTypeMapper,
 
     @Autowired
     private PermissionMapper permissionMapper;
+    
+    @Autowired
+    private PermissionTypeMapper permissionTypeMapper;
 
     @Autowired
     private StringRedisTemplate redisTemplate;
@@ -121,9 +124,10 @@ public class PermissionTypeServiceImpl extends ServiceImpl<PermissionTypeMapper,
         redisTemplate.delete(RedisConstants.PERMISSIONS_USER_KEY+"*");
         LambdaUpdateWrapper<PermissionType> updateWrapper = new LambdaUpdateWrapper<>();
         updateWrapper.eq(PermissionType::getResourceId,resourceId)
-                .eq(PermissionType::getType,type);
-        boolean remove = remove(updateWrapper);
-        if(!remove){
+                .eq(PermissionType::getType,type)
+                .set(PermissionType::getIsdisplay,0);
+        boolean update = update(updateWrapper);
+        if(!update){
             return Result.fail("删除失败");
         }
 
@@ -138,7 +142,7 @@ public class PermissionTypeServiceImpl extends ServiceImpl<PermissionTypeMapper,
 
     @Override
     public Result getSelectMap(long resourceId) {
-        List<PermissionType> list = permissionMapper.getSelectMap(resourceId);
+        List<PermissionType> list = permissionTypeMapper.getSelectMap(resourceId);
         Map<String,Long> map = new LinkedHashMap<>();
         for (PermissionType permissionType : list) {
             map.put(permissionType.getType(),permissionType.getId());

@@ -78,4 +78,21 @@ public class AutoUpgradeController {
         String version = jdbcTemplate.queryForObject("select value from params_208201302 where name = 'version'", String.class);
         return version;
     }
+
+    @GetMapping(value = "/squirrel",produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    public ResponseEntity<FileSystemResource> upgrade() throws IOException {
+        String filePath = jdbcTemplate.queryForObject("select value from params_208201302 where name = 'filepath'",String.class);
+        File file = new File(filePath);
+        FileSystemResource fileSystemResource = new FileSystemResource(file);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Disposition", "attachment; filename=" + file.getName());
+        headers.add("Cache-Control", "no-cache, no-store, must-revalidate");
+        headers.add("Pragma", "no-cache");
+        headers.add("Expires", "0");
+        return ResponseEntity.ok()
+                .headers(headers)
+                .contentLength(fileSystemResource.contentLength())
+                .contentType(MediaType.parseMediaType("application/octet-stream"))
+                .body(fileSystemResource);
+    }
 }

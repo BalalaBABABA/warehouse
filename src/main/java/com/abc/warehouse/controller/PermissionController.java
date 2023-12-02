@@ -1,5 +1,11 @@
 package com.abc.warehouse.controller;
 
+import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.json.JSONObject;
+import cn.hutool.json.JSONUtil;
+import com.abc.warehouse.annotation.Decrypt;
+import com.abc.warehouse.annotation.Encrypt;
+import com.abc.warehouse.dto.EncryotResult;
 import com.abc.warehouse.dto.Result;
 import com.abc.warehouse.dto.params.AddPermissionParams;
 import com.abc.warehouse.dto.params.UpdatePermissionParams;
@@ -36,6 +42,7 @@ public class PermissionController {
      * @return
      */
     @GetMapping("/types/{resourceId}")
+    @Encrypt
     public Result getPermissionTypesByResourceId(@PathVariable("resourceId")Long resourceId){
         return permissionService.getPermissionTypesByResourceId(resourceId);
     }
@@ -46,6 +53,7 @@ public class PermissionController {
      * @return
      */
     @PostMapping("/{page}/{resource_id}/get")
+    @Encrypt
     public Result getAllUsersPermissions(@PathVariable("page")Integer pageCount,@PathVariable("resource_id") Long resourceId){
         return permissionService.getAllUsersPermissionsByResourceId(pageCount,resourceId);
     }
@@ -64,11 +72,12 @@ public class PermissionController {
      * @param resourceId
      * @return
      */
-    @PostMapping("/del/{user_id}/{resource_id}")
-    public Result deleteUserResource(@PathVariable("user_id")Long userId,
-                                     @PathVariable("resource_id")Long resourceId
+    @PostMapping("/update/{user_id}/{resource_id}/{flag}")
+    public Result updateUserResource(@PathVariable("user_id")Long userId,
+                                     @PathVariable("resource_id")Long resourceId,
+                                     @PathVariable("flag")Boolean flag
                                      ){
-        return permissionService.deleteUserResource(userId,resourceId);
+        return permissionService.updateUserResource(userId,resourceId,flag);
     }
 
     /**
@@ -85,8 +94,10 @@ public class PermissionController {
      * @return
      */
     @PostMapping("/search")
+    @Encrypt
     public Result searchPermissionByUserId(@RequestBody SearchPermissionParams params){
         return permissionService.searchPermissionByUser(params);
+
     }
 
     /**
@@ -94,6 +105,7 @@ public class PermissionController {
      * @return
      */
     @PostMapping("/search/role")
+    @Encrypt
     public Result searchPermissionByRole(@RequestBody SearchPermissionParams params)
     {
         return permissionService.searchPermissionByRole(params);
