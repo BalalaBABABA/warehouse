@@ -7,5 +7,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import java.util.List;
 
 public interface MaterialTypeService extends IService<MaterialType> {
-    public List<String> typeName();
+    List<String> typeName();
 }

@@ -1,6 +1,7 @@
 package com.abc.warehouse.controller;
 
 
+import cn.hutool.core.date.DateTime;
 import com.abc.warehouse.dto.Result;
 import com.abc.warehouse.pojo.Material;
 import com.abc.warehouse.service.HouseService;
@@ -27,6 +28,7 @@ public class MaterialController {
 
     @PostMapping("/save")
     public Result save(@RequestBody Material material){
+        material.setCreateTime(null);
         return materialService.saveMaterial(material);
     }
 
@@ -37,6 +39,7 @@ public class MaterialController {
 
     @PostMapping("/update")
     public Result update(@RequestBody Material material){
+        material.setCreateTime(null);
         return materialService.updateMaterial(material);
     }
 
