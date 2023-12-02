@@ -27,9 +27,9 @@ public class Material implements Serializable {
     private String name;
 
     /**
-     * 仓库代码
+     * 仓库名称
      */
-    private Long houseId;
+    private String houseName;
 
     /**
      * 规格型号

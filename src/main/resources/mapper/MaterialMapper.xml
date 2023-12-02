@@ -7,7 +7,7 @@
     <resultMap id="BaseResultMap" type="com.abc.warehouse.pojo.Material">
             <id property="id" column="id" jdbcType="BIGINT"/>
             <result property="name" column="name" jdbcType="VARCHAR"/>
-            <result property="houseId" column="house_id" jdbcType="BIGINT"/>
+            <result property="houseName" column="house_name" jdbcType="VARCHAR"/>
             <result property="type" column="type" jdbcType="VARCHAR"/>
             <result property="unit" column="unit" jdbcType="VARCHAR"/>
             <result property="stock" column="stock" jdbcType="INTEGER"/>
@@ -16,7 +16,7 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-        id,name,house_id,
+        id,name,house_name,
         type,unit,stock,
         comments,create_time
     </sql>
