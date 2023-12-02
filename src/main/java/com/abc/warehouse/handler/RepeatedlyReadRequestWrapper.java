@@ -11,7 +11,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import java.io.*;
 
-
+/**
+ * 避免出现数据流重复读而报错
+ */
 public class RepeatedlyReadRequestWrapper extends HttpServletRequestWrapper {
 
     private final String body;

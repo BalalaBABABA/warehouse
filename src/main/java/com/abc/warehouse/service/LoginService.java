@@ -10,4 +10,6 @@ public interface LoginService {
     Result logout(String token);
 
     UserPermission checkToken(String token);
+
+    String createToken(User user);
 }

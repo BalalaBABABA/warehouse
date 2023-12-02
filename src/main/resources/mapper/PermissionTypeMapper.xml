@@ -20,4 +20,18 @@
         select id,type from permission_type_208201302
         where resource_id = #{resourceId} and id not in (select permission_id from permission_208201302 group by permission_id);
     </select>
+
+
+    <resultMap id="TypeUriMap" type="com.abc.warehouse.dto.TypeUri">
+        <id property="id" column="id" jdbcType="BIGINT"/>
+        <result property="uri" column="uri" jdbcType="VARCHAR"/>
+<!--        <result property="userId" column="user_id" jdbcType="BIGINT"/>-->
+    </resultMap>
+    
+    <select id="getTypeUriMap" resultType="com.abc.warehouse.dto.TypeUri">
+        select type.id,uri.uri from
+        permission_type_208201302 type,permission_type_uri_208201302 uri
+        where type.id = uri.type_id
+        order by type.id;
+    </select>
 </mapper>

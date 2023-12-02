@@ -1,13 +1,16 @@
 package com.abc.warehouse.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.json.JSONUtil;
 import com.abc.warehouse.dto.EncryotResult;
 import com.abc.warehouse.dto.Result;
+import com.abc.warehouse.dto.TypeUri;
 import com.abc.warehouse.dto.UserPermission;
 import com.abc.warehouse.dto.constants.RedisConstants;
 import com.abc.warehouse.dto.params.AddPermissionParams;
 import com.abc.warehouse.dto.params.SearchPermissionParams;
 import com.abc.warehouse.dto.params.UpdatePermissionParams;
+import com.abc.warehouse.mapper.PermissionTypeMapper;
 import com.abc.warehouse.pojo.PermissionType;
 import com.abc.warehouse.pojo.Resource;
 import com.abc.warehouse.pojo.User;
@@ -29,8 +32,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import static com.abc.warehouse.dto.constants.RedisConstants.PERMISSIONS_USER_TTL;
 import static com.abc.warehouse.utils.SystemConstants.DEFAULT_PAGE_SIZE;
 
 /**
@@ -51,6 +56,9 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
     private PermissionMapper permissionMapper;
     @Autowired
     private PermissionTypeService permissionTypeService;
+
+    @Autowired
+    private PermissionTypeMapper permissionTypeMapper;
     @Autowired
     private UserService userService;
     @Override
@@ -301,6 +309,31 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
         List<Permission> list = list(queryWrapper);
         return list;
     }
+
+    @Override
+    public List<String> getPermissionCacheById(long userId) {
+        //先查该用户权限缓存
+        String permissionsJson = redisTemplate.opsForValue().get(RedisConstants.PERMISSIONS_USER_KEY + userId);
+        List<String> permissions = JSONUtil.toList(permissionsJson, String.class);
+        Map<Long, PermissionType> typesMap = permissionTypeService.getAllTypesMap();
+        //缓存没有，查询数据库,重建缓存
+        if(permissions.isEmpty()){
+            //TODO 修改
+            //1. 查询数据库
+            List<String> permissionList =permissionMapper.getUserTypeUriList(userId);
+            //2. 设置缓存
+            redisTemplate.opsForValue().set(RedisConstants.PERMISSIONS_USER_KEY+userId,JSONUtil.toJsonStr(permissionList), PERMISSIONS_USER_TTL);
+        }
+        return permissions;
+    }
+
+    @Override
+    public List<String> getAllPermissionUri(){
+        List<TypeUri> typeUriMap = permissionTypeMapper.getTypeUriMap();
+        List<String> permissionUris = typeUriMap.stream().map(i -> i.getUri()).collect(Collectors.toList());
+        return permissionUris;
+    }
+
 
 
 }

@@ -2,6 +2,7 @@ package com.abc.warehouse.controller;
 
 import com.abc.warehouse.annotation.Decrypt;
 import com.abc.warehouse.annotation.Encrypt;
+import com.abc.warehouse.annotation.JsonParam;
 import com.abc.warehouse.dto.EncryotResult;
 import com.abc.warehouse.dto.Result;
 import com.abc.warehouse.utils.RsaUtil;
@@ -34,7 +35,9 @@ public class RSAController {
     }
 
     @PostMapping("/test1")
-    public EncryotResult test1(){
+    @Encrypt
+    @Decrypt
+    public EncryotResult test1(@JsonParam("id")Long id,@JsonParam("name")String name){
         List<String> list = new ArrayList<>();
         list.add("add");
         list.add("del");

@@ -7,7 +7,7 @@ import java.util.*;
 
 public class JwtUtils {
     private static final  int KEY_LENGTH = 32;
-    //密钥
+    //随机密钥
     private static String secretKey = generateRandomKey();
 
 //    public static String getSecretKey(){

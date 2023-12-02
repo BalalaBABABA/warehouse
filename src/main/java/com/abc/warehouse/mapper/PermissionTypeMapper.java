@@ -1,5 +1,6 @@
 package com.abc.warehouse.mapper;
 
+import com.abc.warehouse.dto.TypeUri;
 import com.abc.warehouse.pojo.PermissionType;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
@@ -14,6 +15,9 @@ import java.util.List;
 public interface PermissionTypeMapper extends BaseMapper<PermissionType> {
 
     List<PermissionType> getSelectMap(long resourceId);
+
+
+    List<TypeUri> getTypeUriMap();
 }
 
 

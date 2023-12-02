@@ -1,6 +1,8 @@
 package com.abc.warehouse.aspect;
 
 import cn.hutool.json.JSONObject;
+import cn.hutool.json.JSONUtil;
+import com.abc.warehouse.annotation.JsonParam;
 import com.abc.warehouse.dto.EncryotResult;
 import com.abc.warehouse.dto.Result;
 import com.abc.warehouse.annotation.Decrypt;
@@ -71,6 +73,9 @@ public class EncryptedAspect {
             //方法的形参参数
             Object[] args = pjp.getArgs();
 
+            //方法的形参参数类型
+            Class<?>[] argsTypes = method.getParameterTypes();
+
 
             MethodSignature signature = (MethodSignature) pjp.getSignature();
 
@@ -118,22 +123,12 @@ public class EncryptedAspect {
                 String data="";
                 String aesKey="";
 
-                if("post".equals(httpMethod)){
-                    //AES加密后的数据
-                    data = json.getStr("data");
-                    //后端RSA公钥加密后的AES的key
-                    aesKey = json.getStr("aesKey");
-                    //前端公钥
-                    publicKey = json.getStr("publicKey");
-                }else{
-                    //AES加密后的数据
-                    data = request.getParameter("data");
-                    //后端RSA公钥加密后的AES的key
-                    aesKey = request.getParameter("aesKey");
-                    //前端公钥
-                    publicKey = request.getParameter("publicKey");
-                }
-
+                //AES加密后的数据
+                data = json.getStr("data");
+                //后端RSA公钥加密后的AES的key
+                aesKey = json.getStr("aesKey");
+                //前端公钥
+                publicKey = json.getStr("publicKey");
 
 
                 System.out.println("前端公钥：" + publicKey);
@@ -149,11 +144,36 @@ public class EncryptedAspect {
                 String decrypt = AesUtil.aesDecrypt(data, aesKey);
                 System.out.println("解密出来的data数据：" + decrypt);
 
-                //设置到方法的形参中，目前只能设置只有一个参数的情况
+                // 将解密后的数据转换为JSON对象
+                JSONObject decryptedJson = new JSONObject(decrypt);
+
+//                //设置到方法的形参中，目前只能设置只有一个参数的情况
+//                mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+//
+//                if(args.length > 0){
+//                    args[0] = mapper.readValue(decrypt, args[0].getClass());
+//                }
+                // 设置到方法的形参中
                 mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
-                if(args.length > 0){
-                    args[0] = mapper.readValue(decrypt, args[0].getClass());
+                if (args.length > 0) {
+                    for (int i = 0; i < args.length; i++) {
+                        Annotation[] argsAnnotations = method.getParameterAnnotations()[i];
+                        for (Annotation annotation : argsAnnotations) {
+                            if (annotation instanceof JsonParam) {
+                                String paramName = ((JsonParam) annotation).value();
+                                Object paramValue = decryptedJson.get(paramName);
+                                if (paramValue!=null) {
+                                    if(argsTypes[i].isAssignableFrom(String.class))
+                                        // 如果参数类型是 String 或其子类，直接赋值
+                                        args[i] = (String) paramValue;
+                                    } else {
+                                        // 否则进行 JSON 反序列化操作
+                                        args[i] = mapper.readValue(paramValue.toString(), argsTypes[i]);
+                                    }
+                            }
+                        }
+                    }
                 }
             }
 

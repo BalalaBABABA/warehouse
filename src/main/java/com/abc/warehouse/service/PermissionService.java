@@ -29,4 +29,8 @@ public interface PermissionService extends IService<Permission> {
     Result searchPermissionByRole(SearchPermissionParams params);
 
     List<Permission> getByUserId(Long userId);
+
+    List<String> getPermissionCacheById(long userId);
+
+    List<String> getAllPermissionUri();
 }
