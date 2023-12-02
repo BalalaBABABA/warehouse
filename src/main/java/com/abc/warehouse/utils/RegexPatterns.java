@@ -1,8 +1,6 @@
 package com.abc.warehouse.utils;
 
-/**
- * @author 虎哥
- */
+
 public abstract class RegexPatterns {
     /**
      * 手机号正则
@@ -20,5 +18,11 @@ public abstract class RegexPatterns {
      * 验证码正则, 6位数字或字母
      */
     public static final String VERIFY_CODE_REGEX = "^[a-zA-Z\\d]{6}$";
+
+    /**
+     * 身份证正则，
+     * 编码规则顺序从左至右依次为6位数字地址码，8位数字出生年份日期码，3位数字顺序码，1位数字校验码（可为x）。
+     */
+    public static final String ID_NUMBER_REGEX="^[1-9]\\d{5}(18|19|([23]\\d))\\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\\d{3}[0-9Xx]$";
 
 }

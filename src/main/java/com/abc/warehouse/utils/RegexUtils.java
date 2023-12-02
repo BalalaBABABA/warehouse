@@ -2,9 +2,7 @@ package com.abc.warehouse.utils;
 
 import cn.hutool.core.util.StrUtil;
 
-/**
- * @author 虎哥
- */
+
 public class RegexUtils {
     /**
      * 是否是无效手机格式
@@ -33,6 +31,15 @@ public class RegexUtils {
     }
 
     /**
+     * 是否是无效身份证格式
+     * @param idNumber 要校验的身份证
+     * @return true:符合，false：不符合
+     */
+    public static boolean isIdNumberInvalid(String idNumber){
+        return mismatch(idNumber, RegexPatterns.ID_NUMBER_REGEX);
+    }
+
+    /**
      * 是否是无效验证码格式
      * @param code 要校验的验证码
      * @return true:符合，false：不符合
@@ -41,6 +48,8 @@ public class RegexUtils {
         return mismatch(code, RegexPatterns.VERIFY_CODE_REGEX);
     }
 
+
+
     // 校验是否不符合正则格式
     private static boolean mismatch(String str, String regex){
         if (StrUtil.isBlank(str)) {
@@ -48,4 +57,7 @@ public class RegexUtils {
         }
         return !str.matches(regex);
     }
+
+
+
 }

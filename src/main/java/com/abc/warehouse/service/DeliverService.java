@@ -9,5 +9,4 @@ import com.baomidou.mybatisplus.extension.service.IService;
 * @createDate 2023-09-23 17:51:32
 */
 public interface DeliverService extends IService<Deliver> {
-
 }

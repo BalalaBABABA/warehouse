@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 
+
 @Component
 public class RedisIdWorker {
     private static  final long BEGIN_TIMESTAMP = 1672531200L;  //开始时间戳
