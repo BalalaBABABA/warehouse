@@ -16,11 +16,11 @@ spring:
   # mysql
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://127.0.0.1:3306/wms?useSSL=false&serverTimezone=UTC
+    url: jdbc:mysql://127.0.0.1:3307/wms?useSSL=false&serverTimezone=UTC
     username: root
     password: 123456
   redis:
-    host: 192.168.200.137
+    host: 192.168.17.131
     port: 6379
     password: 123321
     lettuce:

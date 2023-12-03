@@ -1,6 +1,7 @@
 package com.abc.warehouse.service.impl;
 import com.abc.warehouse.dto.Result;
 import com.abc.warehouse.dto.constants.PageConstants;
+import com.abc.warehouse.utils.GenerateID;
 import com.abc.warehouse.utils.RegexUtils;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -12,6 +13,8 @@ import com.abc.warehouse.service.UserService;
 import com.abc.warehouse.mapper.UserMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
+
+import javax.annotation.Resource;
 import java.util.List;
 
 
@@ -26,8 +29,13 @@ import static com.abc.warehouse.utils.SystemConstants.DEFAULT_PAGE_SIZE;
 public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         implements UserService{
 
+    @Resource
+    private GenerateID generateID;
+
     @Override
     public Result saveUser(User user) {
+        long id = generateID.getId("2", "User");
+        user.setId(id);
         user.setPassword(DigestUtils.md5DigestAsHex("123456".getBytes()));
         if(RegexUtils.isIdNumberInvalid(user.getIdNumber())||RegexUtils.isPhoneInvalid(user.getPhone()))
         {
@@ -94,6 +102,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         }
         updateById(user);
         return Result.ok();
+    }
+
+    @Override
+    public Result resetPassword(User user)
+    {
+        user.setPassword(DigestUtils.md5DigestAsHex("123456".getBytes()));
+        boolean b = updateById(user);
+        return b?Result.ok():Result.fail("重置失败");
     }
 
 }

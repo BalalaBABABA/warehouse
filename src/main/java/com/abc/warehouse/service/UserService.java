@@ -26,4 +26,6 @@ public interface UserService extends IService<User> {
     Result searchById(Integer curPage, Long id);
 
     Result updateUser(User user);
+
+    Result resetPassword(User user);
 }
