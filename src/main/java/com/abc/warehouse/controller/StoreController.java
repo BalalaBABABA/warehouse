@@ -17,6 +17,7 @@ public class StoreController {
     public Result enter(){
         return Result.ok();
     }
+
     @GetMapping("/{id}")
     public Result getAll(@PathVariable("id")Integer id){
         return Result.ok(storeService.list());
