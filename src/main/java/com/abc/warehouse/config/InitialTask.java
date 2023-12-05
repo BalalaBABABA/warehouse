@@ -27,8 +27,8 @@ public class InitialTask {
     /**
      * 应用启动后，将所有权限uri加入redis缓存
      */
-    @PostConstruct
-    public void initPermissionTypes() {
-        permissionTypeService.createRedisCache();
-    }
+//    @PostConstruct
+//    public void initPermissionTypes() {
+//        permissionTypeService.createRedisCache();
+//    }
 }
