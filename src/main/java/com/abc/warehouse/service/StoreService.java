@@ -1,5 +1,7 @@
 package com.abc.warehouse.service;
 
+import com.abc.warehouse.dto.EncryotResult;
+import com.abc.warehouse.dto.Result;
 import com.abc.warehouse.pojo.Store;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -9,5 +11,10 @@ import com.baomidou.mybatisplus.extension.service.IService;
 * @createDate 2023-12-02 16:59:21
 */
 public interface StoreService extends IService<Store> {
+    Result storePage(Integer page);
+
+    Result del_store(Long id);
+
+    Result update_store(Store store);
 
 }

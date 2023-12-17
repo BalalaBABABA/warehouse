@@ -2,6 +2,9 @@ package com.abc.warehouse.mapper;
 
 import com.abc.warehouse.pojo.Store;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Param;
+import java.util.Date;
+import java.util.List;
 
 /**
 * @author 吧啦
@@ -10,6 +13,13 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 * @Entity com.abc.warehouse.pojo.Store
 */
 public interface StoreMapper extends BaseMapper<Store> {
+    List<Store> selectByCondition(@Param("storeNo") Long storeNo,
+                                  @Param("materialId") Long materialId,
+                                  @Param("houseName") String houseName,
+                                  @Param("startTime") Date startTime,
+                                  @Param("endTime") Date endTime,
+                                  @Param("userId") Long userId,
+                                  @Param("notes") String notes);
 
 }
 
