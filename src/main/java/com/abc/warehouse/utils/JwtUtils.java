@@ -45,11 +45,12 @@ public class JwtUtils {
     }
 
 
-    public static Object getUserIdFromToken(String token){
+    public static Long getUserIdFromToken(String token){
         try {
             Jwt parse = Jwts.parser().setSigningKey(secretKey).parse(token);
             Map<String, Object> map = (Map<String, Object>) parse.getBody();
-            return map.get("userId");
+            Integer userId = (Integer) map.get("userId");
+            return userId.longValue();
         }catch (Exception e){
             e.printStackTrace();
         }

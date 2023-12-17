@@ -119,15 +119,14 @@ public class LoginInterceptor implements HandlerInterceptor {
         Object userObj = objectMap.get("user");
         UserDTO userDTO = BeanUtil.toBean(userObj, UserDTO.class);
         Long userId = userDTO.getId();
-//        String role = userDTO.getRole();
+        String role = userDTO.getRole();
 
-//        //如果是amdin，直接放行
-//        if(role == "amdin"){
-//
-//            //放入ThreadLocal
-//            UserHolder.saveUser(userDTO);
-//            return true;
-//        }
+        //如果是amdin，直接放行
+        if(role.equals("admin")){
+            //放入ThreadLocal
+            UserHolder.saveUser(userDTO);
+            return true;
+        }
 
         //先查该用户权限缓存
         List<String> permissions = permissionService.getPermissionCacheById(userId);

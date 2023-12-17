@@ -50,4 +50,9 @@
     </select>
 
 
+    <select id="getFreeUriList" resultType="java.lang.String">
+        select uri from free_uri_208201302;
+    </select>
+
+
 </mapper>

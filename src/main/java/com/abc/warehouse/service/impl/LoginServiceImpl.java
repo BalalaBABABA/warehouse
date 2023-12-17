@@ -120,6 +120,11 @@ public class LoginServiceImpl implements LoginService {
     }
 
     @Override
+    public List<String> getFreeUriList() {
+        return permissionMapper.getFreeUriList();
+    }
+
+    @Override
     public Result logout(String token) {
         redisTemplate.delete(RedisConstants.LOGIN_USER_KEY + token);
         return Result.ok();

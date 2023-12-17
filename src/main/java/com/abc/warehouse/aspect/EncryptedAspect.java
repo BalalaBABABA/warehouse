@@ -160,6 +160,7 @@ public class EncryptedAspect {
                     for (int i = 0; i < args.length; i++) {
                         Annotation[] argsAnnotations = method.getParameterAnnotations()[i];
                         for (Annotation annotation : argsAnnotations) {
+
                             if (annotation instanceof JsonParam) {
                                 String paramName = ((JsonParam) annotation).value();
                                 Object paramValue = decryptedJson.get(paramName);

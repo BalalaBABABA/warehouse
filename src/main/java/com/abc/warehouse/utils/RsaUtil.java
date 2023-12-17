@@ -19,18 +19,12 @@ public class RsaUtil {
     public static String UTF8 = "UTF-8";
 
     public static KeyStore keyStore;
-    static {
-        try {
-            createKeys();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+
 
     /**
      * 创建公钥私钥
      */
-    public static KeyStore createKeys() throws Exception {
+    public static void createKeys() throws Exception {
         KeyPairGenerator keyPairGeno = KeyPairGenerator.getInstance(RSA_ALGORITHM);
         keyPairGeno.initialize(1024);
         KeyPair keyPair = keyPairGeno.generateKeyPair();
@@ -41,7 +35,7 @@ public class RsaUtil {
         keyStore = new KeyStore();
         keyStore.setPublicKey(Base64.encodeBase64String(publicKey.getEncoded()));
         keyStore.setPrivateKey(Base64.encodeBase64String(privateKey.getEncoded()));
-        return keyStore;
+//        return keyStore;
     }
 
     /**

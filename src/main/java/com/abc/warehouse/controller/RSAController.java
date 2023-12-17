@@ -32,10 +32,9 @@ public class RSAController {
         return EncryotResult.ok(list);
     }
 
-    @PostMapping("/test1")
+    @GetMapping("/test1/{id}")
     @Encrypt
-    @Decrypt
-    public EncryotResult test1(@JsonParam("id")Long id,@JsonParam("name")String name){
+    public EncryotResult test1(@PathVariable("id") Long id){
         List<String> list = new ArrayList<>();
         list.add("add");
         list.add("del");

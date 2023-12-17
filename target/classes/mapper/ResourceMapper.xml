@@ -15,4 +15,15 @@
     <sql id="Base_Column_List">
         id,name,uri_name,icon,page
     </sql>
+    <select id="getUserResources" resultType="com.abc.warehouse.pojo.Resource">
+        SELECT *
+        FROM resource_208201302
+        WHERE uri_name IN (
+            SELECT uri.uri
+            FROM permission_type_uri_208201302 uri, permission_208201302 p, permission_type_208201302 pt
+            WHERE uri.type_id = pt.id AND pt.id = p.permission_id
+              AND uri.uri COLLATE utf8mb4_general_ci REGEXP '^[^/]*\/[^/]*$'
+          AND user_id = #{userId}
+            );
+    </select>
 </mapper>
