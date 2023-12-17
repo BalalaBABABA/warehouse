@@ -2,7 +2,7 @@ package com.abc.warehouse.dto.constants;
 
 public enum ErrorCode {
     PARAMS_ERROR(10001,"参数有误"),
-    ACCOUNT_PWD_NOT_EXIST(10002,"用户名或密码不存在"),
+    ACCOUNT_PWD_NOT_EXIST(10002,"用户名或密码不正确"),
     TOKEN_ILLEGAL_EXIST(10003,"token不合法"),
     ACCOUNT_EXISTS(10004,"账户已存在"),
     NO_PERMISSION(70001,"无访问权限"),

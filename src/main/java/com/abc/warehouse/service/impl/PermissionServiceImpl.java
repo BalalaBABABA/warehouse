@@ -32,7 +32,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static com.abc.warehouse.dto.constants.RedisConstants.PERMISSIONS_USER_TTL;
@@ -125,7 +124,7 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
 
     @Override
     @Transactional
-    public Result updateUserPermission(UpdatePermissionParams params, Boolean flag) {
+    public Result updateUserPermission(UpdatePermissionParams params) {
         /**
          * 1.删除用户权限缓存
          * 2.更新用户权限数据库
@@ -133,9 +132,10 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
         Long userId = params.getUserId();
         Long resourceId = params.getResourceId();
         String type =  params.getType();
+        Boolean flag = params.getFlag();
 
         if(StringUtils.isBlank(userId.toString()) || StringUtils.isBlank(resourceId.toString())||StringUtils.isBlank(type)){
-            return Result.fail("参数不能为空");
+            return EncryotResult.fail("参数不能为空");
         }
         LambdaUpdateWrapper<PermissionType> qw=new LambdaUpdateWrapper<>();
         qw.eq(PermissionType::getResourceId,resourceId)
@@ -151,7 +151,7 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
         if(flag)
         {
             boolean save = save(new Permission(null, userId, permissionId));
-            return save?Result.ok():Result.fail("增加权限失败");
+            return save?EncryotResult.ok():EncryotResult.fail("增加权限失败");
         }
         else{
             LambdaUpdateWrapper<Permission> updateWrapper=new LambdaUpdateWrapper<>();
@@ -159,9 +159,9 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
                     .eq(Permission::getPermissionId,permissionId);
             boolean remove = remove(updateWrapper);
 
-            return remove?Result.ok():Result.fail("取消权限失败");
+            return remove?EncryotResult.ok():EncryotResult.fail("取消权限失败");
         }
-    }//哈哈哈哈哈音乐会很过分发货后
+    }
 
     @Override
     @Transactional
@@ -171,7 +171,7 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
          * 2.更新用户权限数据库
          */
         if(StringUtils.isBlank(userId.toString()) || StringUtils.isBlank(resourceId.toString())){
-            return Result.fail("参数不能为空！");
+            return EncryotResult.fail("参数不能为空！");
         }
         // 删除缓存
         redisTemplate.delete(RedisConstants.PERMISSIONS_USER_KEY+userId);
@@ -184,7 +184,7 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
             updateWrapper1.eq(Permission::getUserId,userId)
                     .in(Permission::getPermissionId,permissionIdList);
             boolean remove1 = remove(updateWrapper1);
-            return remove1?Result.ok():Result.fail("取消权限失败");
+            return remove1?EncryotResult.ok():EncryotResult.fail("取消权限失败");
         }else{
             List<Permission> permissionList = new ArrayList<>();
             for (Long permissionId :
@@ -193,7 +193,7 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
                 permissionList.add(p);
             }
             boolean b = saveBatch(permissionList);
-            return b?Result.ok():Result.fail("增加权限失败");
+            return b?EncryotResult.ok():EncryotResult.fail("增加权限失败");
         }
     }
 
@@ -209,13 +209,15 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
     @Transactional
     public Result addOneUserPermission(AddPermissionParams permission) {
         List<Long> userIds = permission.getUserIds();
-        List<String> userIdList = userIds.stream().map(userid -> RedisConstants.PERMISSIONS_USER_KEY + userid).collect(Collectors.toList());
+        List<String> userIdList;
         Long permissionId = permission.getPermissionId();
         String type = permission.getType();
-
-        if(userIds.isEmpty() || permissionId == null || StringUtils.isBlank(type)||StringUtils.isBlank(type)){
+        if(permissionId == null || StringUtils.isBlank(type)){
             return Result.fail("参数不能为空！");
         }
+        if(userIds.isEmpty()) userIdList = Collections.emptyList();
+        else userIdList = userIds.stream().map(userid -> RedisConstants.PERMISSIONS_USER_KEY + userid).collect(Collectors.toList());
+
         // 删除缓存
         redisTemplate.delete(userIdList);
 //        LambdaUpdateWrapper<PermissionType> queryWrapper=new LambdaUpdateWrapper<>();
@@ -223,8 +225,10 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
 //        permissionTypeService.save(newType);
 
         // 更新数据库
-        permissionMapper.saveUserPermissions(userIds,permissionId);
         permissionTypeService.updateById(new PermissionType(permissionId,null,null,null,1));
+        if(!userIds.isEmpty()){
+            permissionMapper.saveUserPermissions(userIds,permissionId);
+        }
         return Result.ok();
     }
 

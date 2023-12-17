@@ -5,6 +5,7 @@ import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.abc.warehouse.annotation.Decrypt;
 import com.abc.warehouse.annotation.Encrypt;
+import com.abc.warehouse.annotation.JsonParam;
 import com.abc.warehouse.dto.EncryotResult;
 import com.abc.warehouse.dto.Result;
 import com.abc.warehouse.dto.params.AddPermissionParams;
@@ -52,7 +53,7 @@ public class PermissionController {
      * @param resourceId
      * @return
      */
-    @PostMapping("/{page}/{resource_id}/get")
+    @GetMapping("/get/{page}/{resource_id}")
     @Encrypt
     public Result getAllUsersPermissions(@PathVariable("page")Integer pageCount,@PathVariable("resource_id") Long resourceId){
         return permissionService.getAllUsersPermissionsByResourceId(pageCount,resourceId);
@@ -61,9 +62,17 @@ public class PermissionController {
     /**
      * 根据权限类型，更新用户的某个权限
      */
-    @PostMapping("/update/{flag}")
-    public Result updateUserPermission(@RequestBody UpdatePermissionParams params, @PathVariable("flag")Boolean flag){
-        return permissionService.updateUserPermission(params,flag);
+    @PostMapping("/update")
+    @Decrypt
+    @Encrypt
+    public Result updateUserPermission(
+            @JsonParam("userId") Long userId,
+            @JsonParam("resourceId")Long resourceId,
+            @JsonParam("type")String type,
+            @JsonParam("flag")Boolean flag
+            ){
+        UpdatePermissionParams params = new UpdatePermissionParams(userId,resourceId,type,flag);
+        return permissionService.updateUserPermission(params);
     }
 
     /**
@@ -72,10 +81,12 @@ public class PermissionController {
      * @param resourceId
      * @return
      */
-    @PostMapping("/update/{user_id}/{resource_id}/{flag}")
-    public Result updateUserResource(@PathVariable("user_id")Long userId,
-                                     @PathVariable("resource_id")Long resourceId,
-                                     @PathVariable("flag")Boolean flag
+    @PostMapping("/update/all")
+    @Decrypt
+    @Encrypt
+    public Result updateUserResource(@JsonParam("userId") Long userId,
+                                     @JsonParam("resourceId")Long resourceId,
+                                     @JsonParam("flag")Boolean flag
                                      ){
         return permissionService.updateUserResource(userId,resourceId,flag);
     }

@@ -23,6 +23,7 @@ import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.core.DefaultParameterNameDiscoverer;
 import org.springframework.core.ParameterNameDiscoverer;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -115,7 +116,7 @@ public class EncryptedAspect {
                     buffer.append(line);
                 }
                 String Jsondata = buffer.toString();
-
+                System.out.println(Jsondata);
                 // 使用JSONObject解析JSON字符串
                 JSONObject json = new JSONObject(Jsondata);
 
@@ -140,7 +141,6 @@ public class EncryptedAspect {
                 System.out.println("解密出来的AES的key：" + aesKey);
 
                 //AES解密得到明文data数据
-                // TODO 解决，decrypt中断问题
                 String decrypt = AesUtil.aesDecrypt(data, aesKey);
                 System.out.println("解密出来的data数据：" + decrypt);
 
@@ -160,17 +160,20 @@ public class EncryptedAspect {
                     for (int i = 0; i < args.length; i++) {
                         Annotation[] argsAnnotations = method.getParameterAnnotations()[i];
                         for (Annotation annotation : argsAnnotations) {
+
                             if (annotation instanceof JsonParam) {
                                 String paramName = ((JsonParam) annotation).value();
                                 Object paramValue = decryptedJson.get(paramName);
                                 if (paramValue!=null) {
-                                    if(argsTypes[i].isAssignableFrom(String.class))
+                                    if (argsTypes[i].isAssignableFrom(String.class))
                                         // 如果参数类型是 String 或其子类，直接赋值
                                         args[i] = (String) paramValue;
-                                    } else {
+                                    else {
                                         // 否则进行 JSON 反序列化操作
                                         args[i] = mapper.readValue(paramValue.toString(), argsTypes[i]);
                                     }
+                                }
+
                             }
                         }
                     }

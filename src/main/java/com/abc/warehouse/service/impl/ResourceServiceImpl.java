@@ -1,10 +1,14 @@
 package com.abc.warehouse.service.impl;
 
 import com.abc.warehouse.dto.Result;
+import com.abc.warehouse.dto.UserDTO;
+import com.abc.warehouse.utils.JwtUtils;
+import com.abc.warehouse.utils.UserHolder;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.abc.warehouse.pojo.Resource;
 import com.abc.warehouse.service.ResourceService;
 import com.abc.warehouse.mapper.ResourceMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -21,6 +25,9 @@ import java.util.Map;
 public class ResourceServiceImpl extends ServiceImpl<ResourceMapper, Resource>
     implements ResourceService{
 
+    @Autowired
+    private ResourceMapper resourceMapper;
+
     @Override
     public Result getAllResources() {
         List<Resource> list = list();
@@ -35,6 +42,21 @@ public class ResourceServiceImpl extends ServiceImpl<ResourceMapper, Resource>
     public Result getAllResourcesInfo() {
         List<Resource> list = list();
         Map<String,Object> map=new LinkedHashMap<>();
+        list.forEach(resource -> {
+            map.put(resource.getName(),resource);
+        });
+        return Result.ok(map);
+    }
+
+    @Override
+    public Result getUserResourcesInfo(String token) {
+        Long userId = JwtUtils.getUserIdFromToken(token);
+        List<Resource> list ;
+        if(userId == 9797){
+            list = list();
+        }
+        else list = resourceMapper.getUserResources(userId);
+        Map<String,Object> map=new HashMap<>();
         list.forEach(resource -> {
             map.put(resource.getName(),resource);
         });
