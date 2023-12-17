@@ -21,7 +21,7 @@
         user_id,notes
     </sql>
 
-    <select id="selectByCondition" resultMap="store">
+    <select id="selectByCondition" resultType="com.abc.warehouse.pojo.Store">
         select * from store_208201302 where 1 = 1
         <if test="storeNo != null and storeNo != ''">
             and store_no = #{storeNo}
