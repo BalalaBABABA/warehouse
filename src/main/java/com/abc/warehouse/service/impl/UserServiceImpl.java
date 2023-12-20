@@ -14,8 +14,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 import java.util.List;
 
+import static com.abc.warehouse.dto.constants.PageConstants.PERMISSION_SEARCH_PAGE_SIZE;
 
-import static com.abc.warehouse.utils.SystemConstants.DEFAULT_PAGE_SIZE;
+
 
 /**
  * @author 吧啦
@@ -40,7 +41,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     @Override
     public long getTotalPage() {
         //设置分页参数
-        Page<User> page =new Page<>(1, DEFAULT_PAGE_SIZE);
+        Page<User> page =new Page<>(1, PERMISSION_SEARCH_PAGE_SIZE);
         page(page, null);
         return page.getPages();
     }

@@ -117,9 +117,14 @@ public class PermissionTypeServiceImpl extends ServiceImpl<PermissionTypeMapper,
     @Override
     @Transactional
     public Result delPermissionType(Long resourceId, String type) {
+        //获取删除的权限类型id
         PermissionType permissionType = getPermissionTypeByResourceIdAndType(resourceId, type);
         Long permissionId = permissionType.getId();
-        redisTemplate.delete(RedisConstants.PERMISSIONS_USER_KEY+"*");
+        //TODO 删除了权限，没有必要删除所有key，及时key的value中包含这条权限也没有影响，这样会造成雪崩
+//        redisTemplate.delete(RedisConstants.PERMISSIONS_USER_KEY+"*");
+        //添加与权限有关的uri到free_uri中
+        permissionMapper.AddUriToFreeUri(permissionId);
+        //更新数据库
         LambdaUpdateWrapper<PermissionType> updateWrapper = new LambdaUpdateWrapper<>();
         updateWrapper.eq(PermissionType::getResourceId,resourceId)
                 .eq(PermissionType::getType,type)

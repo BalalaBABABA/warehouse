@@ -20,6 +20,14 @@ public class RsaUtil {
 
     public static KeyStore keyStore;
 
+    static {
+        try {
+            createKeys();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 
     /**
      * 创建公钥私钥

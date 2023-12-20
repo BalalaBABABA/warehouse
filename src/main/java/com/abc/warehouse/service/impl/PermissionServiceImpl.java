@@ -34,8 +34,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.abc.warehouse.dto.constants.PageConstants.PERMISSION_SEARCH_PAGE_SIZE;
 import static com.abc.warehouse.dto.constants.RedisConstants.PERMISSIONS_USER_TTL;
-import static com.abc.warehouse.utils.SystemConstants.DEFAULT_PAGE_SIZE;
+
 
 /**
  * @author 吧啦
@@ -93,7 +94,7 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
     @Override
     public Result getAllUsersPermissionsByResourceId(Integer pageCount, Long resourceId) {
         //设置分页参数
-        Page<User> page =new Page<>(pageCount, DEFAULT_PAGE_SIZE);
+        Page<User> page =new Page<>(pageCount, PERMISSION_SEARCH_PAGE_SIZE);
         List<User> userList = userService.page(page, null).getRecords();
 
         //获取所有用户
@@ -215,20 +216,20 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
         if(permissionId == null || StringUtils.isBlank(type)){
             return Result.fail("参数不能为空！");
         }
+        // TODO redis缓存雪崩如何解决？大量key同时失效
         if(userIds.isEmpty()) userIdList = Collections.emptyList();
         else userIdList = userIds.stream().map(userid -> RedisConstants.PERMISSIONS_USER_KEY + userid).collect(Collectors.toList());
 
         // 删除缓存
         redisTemplate.delete(userIdList);
-//        LambdaUpdateWrapper<PermissionType> queryWrapper=new LambdaUpdateWrapper<>();
-//        PermissionType newType=new PermissionType(null,resourceId,type,uri);
-//        permissionTypeService.save(newType);
-
         // 更新数据库
         permissionTypeService.updateById(new PermissionType(permissionId,null,null,null,1));
         if(!userIds.isEmpty()){
             permissionMapper.saveUserPermissions(userIds,permissionId);
         }
+        //删除free_uri中该权限对应的所有uri
+        permissionMapper.deleteFromFreeUri(permissionId);
+
         return Result.ok();
     }
 
