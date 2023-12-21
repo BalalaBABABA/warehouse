@@ -2,6 +2,7 @@ package com.abc.warehouse.service.impl;
 import com.abc.warehouse.dto.Result;
 import com.abc.warehouse.dto.constants.PageConstants;
 import com.abc.warehouse.utils.GenerateID;
+import com.abc.warehouse.utils.PasswordEncoder;
 import com.abc.warehouse.utils.RegexUtils;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -32,6 +33,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     @Resource
     private GenerateID generateID;
 
+    private static final String salt = "wms@#!";
     @Override
     public Result saveUser(User user) {
         long id = generateID.getId("2", "User");
@@ -107,7 +109,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     @Override
     public Result resetPassword(User user)
     {
-        user.setPassword(DigestUtils.md5DigestAsHex("123456".getBytes()));
+        String password = PasswordEncoder.encode("123456",salt);
+        user.setPassword(password);
         boolean b = updateById(user);
         return b?Result.ok():Result.fail("重置失败");
     }

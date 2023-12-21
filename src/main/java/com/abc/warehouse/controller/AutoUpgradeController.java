@@ -23,7 +23,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/autoupgrade")
 @Slf4j
-public class AutoUpgradeController {
+public class shenchAutoUpgradeController {
     @Value("${server.version}")
     private String version;
 

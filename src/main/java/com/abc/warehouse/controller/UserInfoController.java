@@ -19,5 +19,4 @@ public class UserInfoController {
         return Result.ok(UserHolder.getUser());
     }
 
-
 }

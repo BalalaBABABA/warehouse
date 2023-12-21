@@ -57,5 +57,8 @@ public class Deliver implements Serializable {
     private String notes;
 
     @TableField(exist = false)
+    private Integer stock;
+
+    @TableField(exist = false)
     private static final long serialVersionUID = 1L;
 }
