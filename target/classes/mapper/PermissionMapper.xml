@@ -19,6 +19,8 @@
             (#{userId} , #{permissionId})
         </foreach>
     </insert>
+
+
     <select id="searchPermissionByRole" resultType="com.abc.warehouse.dto.UserPermission">
         SELECT u.id, u.name AS name, u.role AS role, GROUP_CONCAT(p.permission_id) AS permissionListStr
         FROM user_208201302 u
@@ -39,7 +41,39 @@
         where resource_id = #{resourceId} and id not in (select permission_id from permission_208201302 group by permission_id);
     </select>
 
+    <select id="getUserTypeUriList" resultType="string">
+        select uri.uri from
+                           permission_type_208201302 type,
+                           permission_type_uri_208201302 uri,
+                           permission_208201302 p
+        where  type.id = uri.type_id and type.id = p.permission_id
+        and p.user_id = #{userId}
+        order by type.id;
+    </select>
 
 
+    <select id="getFreeUriList" resultType="java.lang.String">
+        select uri from free_uri_208201302;
+    </select>
 
+    <delete id="deleteFromFreeUri">
+        delete from free_uri_208201302
+        where uri in (
+            select uri.uri from
+                               permission_type_208201302 pt,permission_type_uri_208201302 uri
+            where pt.id =uri.type_id
+              and pt.id = #{permissionId}
+        )
+    </delete>
+
+
+    <insert id="AddUriToFreeUri">
+        insert into free_uri_208201302(uri)
+            (
+                select uri.uri from
+                                   permission_type_208201302 pt,permission_type_uri_208201302 uri
+                where pt.id =uri.type_id
+                  and pt.id = #{permissionId}
+            )
+    </insert>
 </mapper>

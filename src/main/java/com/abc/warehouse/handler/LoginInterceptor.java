@@ -7,6 +7,7 @@ import com.abc.warehouse.dto.Result;
 import com.abc.warehouse.dto.UserDTO;
 import com.abc.warehouse.dto.constants.ErrorCode;
 import com.abc.warehouse.dto.constants.RedisConstants;
+import com.abc.warehouse.mapper.PermissionMapper;
 import com.abc.warehouse.pojo.Permission;
 import com.abc.warehouse.pojo.PermissionType;
 import com.abc.warehouse.pojo.User;
@@ -48,7 +49,7 @@ public class LoginInterceptor implements HandlerInterceptor {
     @Autowired
     private StringRedisTemplate redisTemplate;
     @Autowired
-    private PermissionService  permissionService;
+    private PermissionService permissionService;
     @Autowired
     private PermissionTypeService permissionTypeService;
     private static final String PERMISSION_URI_REGEX = "(/\\w+)+";
@@ -121,29 +122,32 @@ public class LoginInterceptor implements HandlerInterceptor {
         String role = userDTO.getRole();
 
         //如果是amdin，直接放行
-        if(role == "amdin"){
-
+        if(role.equals("admin")){
             //放入ThreadLocal
             UserHolder.saveUser(userDTO);
             return true;
         }
 
-        //先查权限缓存
-        String permissionsJson = redisTemplate.opsForValue().get(RedisConstants.PERMISSIONS_USER_KEY + userId);
-        List<String> permissions = JSONUtil.toList(permissionsJson, String.class);
-
-
-        Map<Long, PermissionType> typesMap = permissionTypeService.getAllTypesMap();
-        //缓存没有，查询数据库,并加入缓存
-        if(permissions.isEmpty()){
-            //1. 查询数据库
-            List<Permission> permissionList = permissionService.getByUserId(userId);
-            permissions = permissionList.stream().map(permission -> typesMap.get(permission.getPermissionId()).getUri()).collect(Collectors.toList());
-            //2. 设置缓存
-            redisTemplate.opsForValue().set(RedisConstants.PERMISSIONS_USER_KEY+userId,JSONUtil.toJsonStr(permissions), PERMISSIONS_USER_TTL);
-        }
-        //刷新有效期
+        //先查该用户权限缓存
+        List<String> permissions = permissionService.getPermissionCacheById(userId);
+//        String permissionsJson = redisTemplate.opsForValue().get(RedisConstants.PERMISSIONS_USER_KEY + userId);
+//        List<String> permissions = JSONUtil.toList(permissionsJson, String.class);
+//
+//
+//        Map<Long, PermissionType> typesMap = permissionTypeService.getAllTypesMap();
+//        //缓存没有，查询数据库,并加入缓存
+//        if(permissions.isEmpty()){
+//            //TODO 修改
+//            //1. 查询数据库
+//            List<String> permissionList =permissionMapper.getUserTypeUriList(userId);
+////            List<Permission> permissionList = permissionService.getByUserId(userId);
+////            permissions = permissionList.stream().map(permission -> typesMap.get(permission.getPermissionId()).getUri()).collect(Collectors.toList());
+//            //2. 设置缓存
+//            redisTemplate.opsForValue().set(RedisConstants.PERMISSIONS_USER_KEY+userId,JSONUtil.toJsonStr(permissionList), PERMISSIONS_USER_TTL);
+//        }
+        //刷新用户权限uri有效期
         redisTemplate.expire(RedisConstants.PERMISSIONS_USER_KEY + userId,PERMISSIONS_USER_TTL,TimeUnit.SECONDS);
+        //刷新token有效期
         redisTemplate.expire(RedisConstants.LOGIN_USER_KEY + token,PERMISSIONS_USER_TTL,TimeUnit.SECONDS);
 
         AntPathMatcher pathMatcher = new AntPathMatcher();

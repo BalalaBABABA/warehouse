@@ -1,6 +1,7 @@
 package com.abc.warehouse.service.impl;
 
 import com.abc.warehouse.dto.Result;
+import com.abc.warehouse.dto.TypeUri;
 import com.abc.warehouse.dto.constants.RedisConstants;
 import com.abc.warehouse.mapper.PermissionMapper;
 import com.abc.warehouse.mapper.ResourceMapper;
@@ -17,10 +18,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -119,9 +117,14 @@ public class PermissionTypeServiceImpl extends ServiceImpl<PermissionTypeMapper,
     @Override
     @Transactional
     public Result delPermissionType(Long resourceId, String type) {
+        //获取删除的权限类型id
         PermissionType permissionType = getPermissionTypeByResourceIdAndType(resourceId, type);
         Long permissionId = permissionType.getId();
-        redisTemplate.delete(RedisConstants.PERMISSIONS_USER_KEY+"*");
+        //TODO 删除了权限，没有必要删除所有key，及时key的value中包含这条权限也没有影响，这样会造成雪崩
+//        redisTemplate.delete(RedisConstants.PERMISSIONS_USER_KEY+"*");
+        //添加与权限有关的uri到free_uri中
+        permissionMapper.AddUriToFreeUri(permissionId);
+        //更新数据库
         LambdaUpdateWrapper<PermissionType> updateWrapper = new LambdaUpdateWrapper<>();
         updateWrapper.eq(PermissionType::getResourceId,resourceId)
                 .eq(PermissionType::getType,type)
@@ -149,6 +152,50 @@ public class PermissionTypeServiceImpl extends ServiceImpl<PermissionTypeMapper,
         }
         return Result.ok(map);
     }
+
+    public Map<Long, String> getRedisCache() {
+//        //检查Redis是否有key
+//        Boolean b = redisTemplate.hasKey(RedisConstants.PERMISSIONS_SET_KEY);
+//        //不存在key
+//        if(!b)
+//        {
+//            //查找数据库，重建缓存
+//            createRedisCache();
+//
+//        }
+//        //查找key，返回map
+//        Map<Object, Object> map = redisTemplate.opsForHash().entries(RedisConstants.PERMISSIONS_SET_KEY);
+        Map<Long, String> resultMap = new HashMap<>();
+//        for (Map.Entry<Object, Object> entry : map.entrySet()) {
+//            Long key = Long.valueOf(entry.getKey().toString());
+//            String value = entry.getValue().toString();
+//            resultMap.put(key, value);
+//        }
+        return resultMap;
+    }
+
+    @Override
+    public void createRedisCache() {
+//         清空key对应的数据
+        redisTemplate.delete(RedisConstants.PERMISSIONS_SET_KEY);
+        List<TypeUri> typeUriMap = permissionTypeMapper.getTypeUriMap();
+        for(TypeUri uri:typeUriMap){
+            redisTemplate.opsForSet().add(RedisConstants.PERMISSIONS_SET_KEY,uri.getUri());
+        }
+//        // 清空key对应的数据
+//        redisTemplate.delete(RedisConstants.PERMISSIONS_SET_KEY);
+//
+//        LambdaQueryWrapper<PermissionType> queryWrapper = new LambdaQueryWrapper<>();
+//        queryWrapper.select(PermissionType::getId, PermissionType::getUri);
+//        List<PermissionType> list = list(queryWrapper);
+//
+//        for (PermissionType type : list) {
+//            //向 Redis 中添加数据
+//            redisTemplate.opsForHash().put(RedisConstants.PERMISSIONS_SET_KEY, type.getId().toString(), type.getUri());
+//        }
+    }
+
+
 }
 
 

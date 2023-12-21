@@ -14,4 +14,6 @@ public interface ResourceService extends IService<Resource> {
     Result getAllResources();
 
     Result getAllResourcesInfo();
+
+    Result getUserResourcesInfo(String token);
 }

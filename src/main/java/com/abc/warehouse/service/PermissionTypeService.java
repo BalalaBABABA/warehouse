@@ -27,4 +27,8 @@ public interface PermissionTypeService extends IService<PermissionType> {
      Result delPermissionType(Long resourceId, String type);
 
     Result getSelectMap(long resourceId);
+
+    Map<Long, String> getRedisCache();
+
+    void createRedisCache();
 }

@@ -7,7 +7,6 @@ import com.abc.warehouse.service.HouseService;
 import com.abc.warehouse.service.MaterialService;
 import com.abc.warehouse.service.MaterialTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -27,6 +26,7 @@ public class MaterialController {
 
     @PostMapping("/save")
     public Result save(@RequestBody Material material){
+        material.setCreateTime(null);
         return materialService.saveMaterial(material);
     }
 
@@ -37,6 +37,7 @@ public class MaterialController {
 
     @PostMapping("/update")
     public Result update(@RequestBody Material material){
+        material.setCreateTime(null);
         return materialService.updateMaterial(material);
     }
 
@@ -55,9 +56,9 @@ public class MaterialController {
         return materialService.materialName(page, name);
     }
 
-    @GetMapping("/searchByHouseId/{page}/{house_id}")
-    public Result searchByHouseId(@PathVariable("page") Integer page, @PathVariable("house_id") Long house_id){
-        return materialService.materialHouseId(page, house_id);
+    @GetMapping("/searchByHouseName/{page}/{house_name}")
+    public Result searchByHouseName(@PathVariable("page") Integer page, @PathVariable("house_name") String house_name){
+        return materialService.materialHouseName(page, house_name);
     }
 
     @GetMapping("/searchByType/{page}/{type}")
@@ -70,9 +71,9 @@ public class MaterialController {
         return materialService.materialComments(page, comments);
     }
 
-    @GetMapping("/searchHouseId")
-    public Result searchHouseId(){
-        return Result.ok(houseService.searchHouseId());
+    @GetMapping("/searchHouseName")
+    public Result searchHouseName(){
+        return Result.ok(houseService.searchHouseName());
     }
 
     @GetMapping("/typeName")

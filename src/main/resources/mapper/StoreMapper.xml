@@ -6,8 +6,9 @@
 
     <resultMap id="BaseResultMap" type="com.abc.warehouse.pojo.Store">
             <id property="storeId" column="store_id" jdbcType="BIGINT"/>
-            <result property="houseId" column="house_id" jdbcType="BIGINT"/>
-            <result property="storeTime" column="store_time" jdbcType="TIMESTAMP"/>
+            <result property="storeNo" column="store_no" jdbcType="BIGINT"/>
+            <result property="houseName" column="house_name" jdbcType="VARCHAR"/>
+            <result property="storeTime" column="store_time" jdbcType="DATE"/>
             <result property="materialId" column="material_id" jdbcType="BIGINT"/>
             <result property="storeCount" column="store_count" jdbcType="INTEGER"/>
             <result property="userId" column="user_id" jdbcType="BIGINT"/>
@@ -15,8 +16,30 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-        store_id,house_id,store_time,
-        material_id,store_count,user_id,
-        notes
+        store_id,store_no,house_name,
+        store_time,material_id,store_count,
+        user_id,notes
     </sql>
+
+    <select id="selectByCondition" resultType="com.abc.warehouse.pojo.Store">
+        select * from store_208201302 where 1 = 1
+        <if test="storeNo != null and storeNo != ''">
+            and store_no = #{storeNo}
+        </if>
+        <if test="materialId != null and materialId = ''">
+            and material_id = #{materialId}
+        </if>
+        <if test="houseName != null and houseName != ''">
+            and house_name like '%${houseName}%'
+        </if>
+        <if test="startTime != null and endTime != null">
+            and (store_time BETWEEN #{startTime} AND #{endTime})
+        </if>
+        <if test="userId != null and userId != ''">
+            AND user_id = #{userId}
+        </if>
+        <if test="notes != null and notes != ''">
+            and notes like '%${notes}%'
+        </if>
+    </select>
 </mapper>

@@ -36,6 +36,14 @@ public interface PermissionMapper extends BaseMapper<Permission> {
 
 
     List<PermissionType> getSelectMap(@Param("resourceId")long resourceId);
+
+    List<String> getUserTypeUriList(@Param("userId")Long userId);
+
+    List<String> getFreeUriList();
+
+    boolean deleteFromFreeUri( @Param("permissionId")Long permissionId);
+
+    boolean AddUriToFreeUri( @Param("permissionId")Long permissionId);
 }
 
 

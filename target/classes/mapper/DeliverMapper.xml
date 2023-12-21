@@ -6,8 +6,9 @@
 
     <resultMap id="BaseResultMap" type="com.abc.warehouse.pojo.Deliver">
             <id property="deliverId" column="deliver_id" jdbcType="BIGINT"/>
-            <result property="houseId" column="house_id" jdbcType="BIGINT"/>
-            <result property="deliverTime" column="deliver_time" jdbcType="TIMESTAMP"/>
+            <result property="deliverNo" column="deliver_no" jdbcType="BIGINT"/>
+            <result property="houseName" column="house_name" jdbcType="VARCHAR"/>
+            <result property="deliverTime" column="deliver_time" jdbcType="DATE"/>
             <result property="materialId" column="material_id" jdbcType="BIGINT"/>
             <result property="deliverCount" column="deliver_count" jdbcType="INTEGER"/>
             <result property="userId" column="user_id" jdbcType="BIGINT"/>
@@ -15,8 +16,8 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-        deliver_id,house_id,deliver_time,
-        material_id,deliver_count,user_id,
-        notes
+        deliver_id,deliver_no,house_name,
+        deliver_time,material_id,deliver_count,
+        user_id,notes
     </sql>
 </mapper>

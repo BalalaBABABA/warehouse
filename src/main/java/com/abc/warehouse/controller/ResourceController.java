@@ -18,6 +18,11 @@ public class ResourceController {
         return resourceService.getAllResources();
     }
 
+    @GetMapping("/get")
+    public Result getUserResourcesInfo(@RequestHeader("Authorization")String token){
+        return resourceService.getUserResourcesInfo(token);
+    }
+
     @GetMapping("/all")
     public Result getAllResourcesInfo()
     {

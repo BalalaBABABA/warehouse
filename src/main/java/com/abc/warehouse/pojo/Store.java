@@ -16,15 +16,20 @@ import lombok.Data;
 @Data
 public class Store implements Serializable {
     /**
+     * id
+     */
+    @TableId(type = IdType.AUTO)
+    private Long storeId;
+
+    /**
      * 进仓单号
      */
-//    @TableId(type = IdType.AUTO)
-    private Long storeId;
+    private Long storeNo;
 
     /**
      * 仓库代码
      */
-    private Long houseId;
+    private String houseName;
 
     /**
      * 进仓时间
@@ -53,4 +58,15 @@ public class Store implements Serializable {
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
+
+    public Store(Long storeId, Long storeNo, String houseName, Date storeTime, Long materialId, Integer storeCount, Long userId, String notes) {
+        this.storeId = storeId;
+        this.storeNo = storeNo;
+        this.houseName = houseName;
+        this.storeTime = storeTime;
+        this.materialId = materialId;
+        this.storeCount = storeCount;
+        this.userId = userId;
+        this.notes = notes;
+    }
 }

@@ -3,7 +3,6 @@ package com.abc.warehouse.service.impl;
 import com.abc.warehouse.dto.Result;
 import com.abc.warehouse.dto.constants.PageConstants;
 import com.abc.warehouse.utils.GenerateID;
-import com.abc.warehouse.utils.RedisIdWorker;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -15,13 +14,7 @@ import com.abc.warehouse.mapper.MaterialMapper;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.security.PrivateKey;
 
-/**
-* @author 吧啦
-* @description 针对表【material_208201302(物料表)】的数据库操作Service实现
-* @createDate 2023-09-23 16:58:22
-*/
 @Service
 public class MaterialServiceImpl extends ServiceImpl<MaterialMapper, Material>
     implements MaterialService{
@@ -55,11 +48,6 @@ public class MaterialServiceImpl extends ServiceImpl<MaterialMapper, Material>
         IPage<Material> pageQuery = new Page<>(curPage, PageConstants.MATERIAL_SEARCH_PAGE_SIZE);
         IPage<Material> page = baseMapper.selectPage(pageQuery, wrapper);
         return Result.ok(page.getRecords(), page.getPages());
-
-//        System.out.println("当前页：" + page.getCurrent());
-//        System.out.println("每页显示条数：" + page.getSize());
-//        System.out.println("总记录数：" + page.getTotal());
-//        System.out.println("总页数：" + page.getPages());
     }
 
     @Override
@@ -81,9 +69,9 @@ public class MaterialServiceImpl extends ServiceImpl<MaterialMapper, Material>
     }
 
     @Override
-    public Result materialHouseId(Integer curPage, Long id){
+    public Result materialHouseName(Integer curPage, String name){
         QueryWrapper<Material> wrapper = new QueryWrapper<>();
-        wrapper.like("house_id", id);
+        wrapper.like("house_name", name);
         IPage<Material> pageQuery = new Page<>(curPage, PageConstants.MATERIAL_SEARCH_PAGE_SIZE);
         IPage<Material> page = baseMapper.selectPage(pageQuery, wrapper);
         return Result.ok(page.getRecords(), page.getPages());

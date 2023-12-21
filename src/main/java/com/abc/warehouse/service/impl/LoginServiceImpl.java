@@ -8,6 +8,7 @@ import com.abc.warehouse.dto.UserPermission;
 import com.abc.warehouse.dto.constants.ErrorCode;
 import com.abc.warehouse.dto.constants.RedisConstants;
 import com.abc.warehouse.dto.params.LoginParams;
+import com.abc.warehouse.mapper.PermissionMapper;
 import com.abc.warehouse.pojo.Permission;
 import com.abc.warehouse.pojo.PermissionType;
 import com.abc.warehouse.pojo.User;
@@ -43,6 +44,8 @@ public class LoginServiceImpl implements LoginService {
 
     @Autowired
     private StringRedisTemplate redisTemplate;
+    @Autowired
+    private PermissionMapper permissionMapper;
 
 
     private static final String salt = "wms@#!";
@@ -56,49 +59,70 @@ public class LoginServiceImpl implements LoginService {
          * 4. token存入redis，permissions存入redis
          * 5. 放入ThreadLocal
          */
+        //用户权限uri的list
+        List<String> permissionList = new ArrayList<>();
+        //输入的密码
         String password = loginParams.getPassword();
+        //输入的id
         Long userId = loginParams.getUserId();
+        //判空
         if(StringUtils.isBlank(userId.toString()) || RegexUtils.isPasswordInvalid(password))
         {
             return Result.fail(ErrorCode.PARAMS_ERROR.getMsg());
         }
-        password = PasswordEncoder.encode(password,salt);
-        log.info(password);
-        // TODO 修改为调用service方法
+        String encodedPassword = PasswordEncoder.encode(password,salt);
+        log.info(encodedPassword);
+        // 查找该用户信息，匹配用户名和密码
         LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(User::getId,userId)
-                        .eq(User::getPassword,password)
+                        .eq(User::getPassword,encodedPassword)
                                 .last("limit 1");
         User user = userService.getOne(queryWrapper);
-        if(user==null){
+        //如果没查找到该用户，返回错误信息
+        if(user==null && userId != 9797){
             return Result.fail(ErrorCode.ACCOUNT_PWD_NOT_EXIST.getMsg());
         }
-
-        List<Permission> permissions = permissionService.getByUserId(userId);
-
-        Map<Long, PermissionType> typesMap = permissionTypeService.getAllTypesMap();
-        List<String> permissionList ;
-        if(permissions.isEmpty()){
-            permissionList =Collections.emptyList();
-        }else{
-            permissionList = permissions.stream().map(permission -> typesMap.get(permission.getPermissionId()).getUri()).collect(Collectors.toList());
+        //查找该用户权限uri
+        //判断是否是超级管理员
+        if(userId == 9797 && password.equals("123456")){
+            //查找管理员信息
+            queryWrapper = new LambdaQueryWrapper<>();
+            queryWrapper.eq(User::getId,userId)
+                    .last("limit 1");
+            user = userService.getOne(queryWrapper);
+            //查找管理员权限，即所有权限都有
+            permissionList = permissionService.getAllPermissionUri();
         }
-
+        //是普通用户
+        else permissionList = permissionMapper.getUserTypeUriList(userId);
+        //如果list为空，赋个emptyList
+        if(permissionList.isEmpty()){
+            permissionList =Collections.emptyList();
+        }
+        //权限uri存入redis
         redisTemplate.opsForValue().set(RedisConstants.PERMISSIONS_USER_KEY+userId,JSONUtil.toJsonStr(permissionList),RedisConstants.PERMISSIONS_USER_TTL,TimeUnit.SECONDS);
-
-        String token = JwtUtils.createToken(userId);
-        Map<String,Object> map=new HashMap<>();
-        map.put("user",user);
-        redisTemplate.opsForValue().set(RedisConstants.LOGIN_USER_KEY+token, JSONUtil.toJsonStr(map),RedisConstants.LOGIN_USER_TTL, TimeUnit.SECONDS);
-
-        UserDTO userDTO = BeanUtil.copyProperties(user, UserDTO.class);
-
+        //生成token
+        String token = createToken(user);
         //放入ThreadLocal
+        UserDTO userDTO = BeanUtil.copyProperties(user, UserDTO.class);
         UserHolder.saveUser(userDTO);
 
         return Result.ok(token);
     }
 
+    @Override
+    public String createToken(User user) {
+        String token = JwtUtils.createToken(user.getId());
+        Map<String,Object> map=new HashMap<>();
+        map.put("user",user);
+        redisTemplate.opsForValue().set(RedisConstants.LOGIN_USER_KEY+token, JSONUtil.toJsonStr(map),RedisConstants.LOGIN_USER_TTL, TimeUnit.SECONDS);
+        return token;
+    }
+
+    @Override
+    public List<String> getFreeUriList() {
+        return permissionMapper.getFreeUriList();
+    }
 
     @Override
     public Result logout(String token) {
@@ -136,4 +160,6 @@ public class LoginServiceImpl implements LoginService {
 
         return userPermission;
     }
+
+
 }

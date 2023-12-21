@@ -34,4 +34,6 @@ public class PermissionTypesController {
     public Result getSelectMap(@PathVariable("resourceId")long resourceId){
         return permissionTypeService.getSelectMap(resourceId);
     }
+
+
 }

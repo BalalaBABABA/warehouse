@@ -6,10 +6,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
 import java.util.Date;
-
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 /**
  * 
@@ -17,19 +14,22 @@ import lombok.NoArgsConstructor;
  */
 @TableName(value ="deliver_208201302")
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
 public class Deliver implements Serializable {
+    /**
+     * id
+     */
+    @TableId(type = IdType.AUTO)
+    private Long deliverId;
+
     /**
      * 出仓单号
      */
-//    @TableId(type = IdType.AUTO)
-    private Long deliverId;
+    private Long deliverNo;
 
     /**
      * 仓库代码
      */
-    private Long houseId;
+    private String houseName;
 
     /**
      * 出仓时间

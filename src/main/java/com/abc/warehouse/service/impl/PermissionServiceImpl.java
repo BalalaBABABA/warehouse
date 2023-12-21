@@ -1,13 +1,16 @@
 package com.abc.warehouse.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.json.JSONUtil;
 import com.abc.warehouse.dto.EncryotResult;
 import com.abc.warehouse.dto.Result;
+import com.abc.warehouse.dto.TypeUri;
 import com.abc.warehouse.dto.UserPermission;
 import com.abc.warehouse.dto.constants.RedisConstants;
 import com.abc.warehouse.dto.params.AddPermissionParams;
 import com.abc.warehouse.dto.params.SearchPermissionParams;
 import com.abc.warehouse.dto.params.UpdatePermissionParams;
+import com.abc.warehouse.mapper.PermissionTypeMapper;
 import com.abc.warehouse.pojo.PermissionType;
 import com.abc.warehouse.pojo.Resource;
 import com.abc.warehouse.pojo.User;
@@ -31,7 +34,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.abc.warehouse.utils.SystemConstants.DEFAULT_PAGE_SIZE;
+import static com.abc.warehouse.dto.constants.PageConstants.PERMISSION_SEARCH_PAGE_SIZE;
+import static com.abc.warehouse.dto.constants.RedisConstants.PERMISSIONS_USER_TTL;
+
 
 /**
  * @author 吧啦
@@ -51,6 +56,9 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
     private PermissionMapper permissionMapper;
     @Autowired
     private PermissionTypeService permissionTypeService;
+
+    @Autowired
+    private PermissionTypeMapper permissionTypeMapper;
     @Autowired
     private UserService userService;
     @Override
@@ -86,7 +94,7 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
     @Override
     public Result getAllUsersPermissionsByResourceId(Integer pageCount, Long resourceId) {
         //设置分页参数
-        Page<User> page =new Page<>(pageCount, DEFAULT_PAGE_SIZE);
+        Page<User> page =new Page<>(pageCount, PERMISSION_SEARCH_PAGE_SIZE);
         List<User> userList = userService.page(page, null).getRecords();
 
         //获取所有用户
@@ -117,7 +125,7 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
 
     @Override
     @Transactional
-    public Result updateUserPermission(UpdatePermissionParams params, Boolean flag) {
+    public Result updateUserPermission(UpdatePermissionParams params) {
         /**
          * 1.删除用户权限缓存
          * 2.更新用户权限数据库
@@ -125,9 +133,10 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
         Long userId = params.getUserId();
         Long resourceId = params.getResourceId();
         String type =  params.getType();
+        Boolean flag = params.getFlag();
 
         if(StringUtils.isBlank(userId.toString()) || StringUtils.isBlank(resourceId.toString())||StringUtils.isBlank(type)){
-            return Result.fail("参数不能为空");
+            return EncryotResult.fail("参数不能为空");
         }
         LambdaUpdateWrapper<PermissionType> qw=new LambdaUpdateWrapper<>();
         qw.eq(PermissionType::getResourceId,resourceId)
@@ -143,7 +152,7 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
         if(flag)
         {
             boolean save = save(new Permission(null, userId, permissionId));
-            return save?Result.ok():Result.fail("增加权限失败");
+            return save?EncryotResult.ok():EncryotResult.fail("增加权限失败");
         }
         else{
             LambdaUpdateWrapper<Permission> updateWrapper=new LambdaUpdateWrapper<>();
@@ -151,9 +160,9 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
                     .eq(Permission::getPermissionId,permissionId);
             boolean remove = remove(updateWrapper);
 
-            return remove?Result.ok():Result.fail("取消权限失败");
+            return remove?EncryotResult.ok():EncryotResult.fail("取消权限失败");
         }
-    }//哈哈哈哈哈音乐会很过分发货后
+    }
 
     @Override
     @Transactional
@@ -163,7 +172,7 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
          * 2.更新用户权限数据库
          */
         if(StringUtils.isBlank(userId.toString()) || StringUtils.isBlank(resourceId.toString())){
-            return Result.fail("参数不能为空！");
+            return EncryotResult.fail("参数不能为空！");
         }
         // 删除缓存
         redisTemplate.delete(RedisConstants.PERMISSIONS_USER_KEY+userId);
@@ -176,7 +185,7 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
             updateWrapper1.eq(Permission::getUserId,userId)
                     .in(Permission::getPermissionId,permissionIdList);
             boolean remove1 = remove(updateWrapper1);
-            return remove1?Result.ok():Result.fail("取消权限失败");
+            return remove1?EncryotResult.ok():EncryotResult.fail("取消权限失败");
         }else{
             List<Permission> permissionList = new ArrayList<>();
             for (Long permissionId :
@@ -185,7 +194,7 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
                 permissionList.add(p);
             }
             boolean b = saveBatch(permissionList);
-            return b?Result.ok():Result.fail("增加权限失败");
+            return b?EncryotResult.ok():EncryotResult.fail("增加权限失败");
         }
     }
 
@@ -201,22 +210,26 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
     @Transactional
     public Result addOneUserPermission(AddPermissionParams permission) {
         List<Long> userIds = permission.getUserIds();
-        List<String> userIdList = userIds.stream().map(userid -> RedisConstants.PERMISSIONS_USER_KEY + userid).collect(Collectors.toList());
+        List<String> userIdList;
         Long permissionId = permission.getPermissionId();
         String type = permission.getType();
-
-        if(userIds.isEmpty() || permissionId == null || StringUtils.isBlank(type)||StringUtils.isBlank(type)){
+        if(permissionId == null || StringUtils.isBlank(type)){
             return Result.fail("参数不能为空！");
         }
+        // TODO redis缓存雪崩如何解决？大量key同时失效
+        if(userIds.isEmpty()) userIdList = Collections.emptyList();
+        else userIdList = userIds.stream().map(userid -> RedisConstants.PERMISSIONS_USER_KEY + userid).collect(Collectors.toList());
+
         // 删除缓存
         redisTemplate.delete(userIdList);
-//        LambdaUpdateWrapper<PermissionType> queryWrapper=new LambdaUpdateWrapper<>();
-//        PermissionType newType=new PermissionType(null,resourceId,type,uri);
-//        permissionTypeService.save(newType);
-
         // 更新数据库
-        permissionMapper.saveUserPermissions(userIds,permissionId);
         permissionTypeService.updateById(new PermissionType(permissionId,null,null,null,1));
+        if(!userIds.isEmpty()){
+            permissionMapper.saveUserPermissions(userIds,permissionId);
+        }
+        //删除free_uri中该权限对应的所有uri
+        permissionMapper.deleteFromFreeUri(permissionId);
+
         return Result.ok();
     }
 
@@ -301,6 +314,31 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
         List<Permission> list = list(queryWrapper);
         return list;
     }
+
+    @Override
+    public List<String> getPermissionCacheById(long userId) {
+        //先查该用户权限缓存
+        String permissionsJson = redisTemplate.opsForValue().get(RedisConstants.PERMISSIONS_USER_KEY + userId);
+        List<String> permissions = JSONUtil.toList(permissionsJson, String.class);
+        Map<Long, PermissionType> typesMap = permissionTypeService.getAllTypesMap();
+        //缓存没有，查询数据库,重建缓存
+        if(permissions.isEmpty()){
+            //TODO 修改
+            //1. 查询数据库
+            List<String> permissionList =permissionMapper.getUserTypeUriList(userId);
+            //2. 设置缓存
+            redisTemplate.opsForValue().set(RedisConstants.PERMISSIONS_USER_KEY+userId,JSONUtil.toJsonStr(permissionList), PERMISSIONS_USER_TTL);
+        }
+        return permissions;
+    }
+
+    @Override
+    public List<String> getAllPermissionUri(){
+        List<TypeUri> typeUriMap = permissionTypeMapper.getTypeUriMap();
+        List<String> permissionUris = typeUriMap.stream().map(i -> i.getUri()).collect(Collectors.toList());
+        return permissionUris;
+    }
+
 
 
 }

@@ -16,11 +16,11 @@ spring:
   # mysql
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://127.0.0.1:3307/wms?useSSL=false&serverTimezone=UTC
+    url: jdbc:mysql://127.0.0.1:3306/wms?useSSL=false&serverTimezone=UTC
     username: root
     password: 123456
   redis:
-    host: 192.168.17.131
+    host: 192.168.200.145
     port: 6379
     password: 123321
     lettuce:
@@ -29,7 +29,7 @@ spring:
         max-idle: 10
         min-idle: 1
         time-between-eviction-runs: 10s
-    database: 3
+    database: 4
   jackson:
     default-property-inclusion: non_null # JSON处理时忽略非空字段
 

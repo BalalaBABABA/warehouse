@@ -17,16 +17,26 @@ public class EncryotResult extends Result{
         public EncryotResult() {
         }
 
+        public EncryotResult(Boolean success) {
+            this.success = success;
+        }
+
         public EncryotResult(Boolean success, Object data) {
             this.success = success;
             this.data = data;
         }
+
         public EncryotResult(Boolean success, String errorMsg, Object data, Long total) {
             this.success = success;
             this.errorMsg = errorMsg;
             this.data = data;
             this.total = total;
         }
+        public static EncryotResult ok(){
+
+                return new EncryotResult(true);
+        }
+
         public static EncryotResult ok(Object data){
                 return new EncryotResult(true, data);
         }
