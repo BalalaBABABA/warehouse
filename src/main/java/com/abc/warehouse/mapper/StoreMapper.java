@@ -14,12 +14,14 @@ import java.util.List;
 */
 public interface StoreMapper extends BaseMapper<Store> {
     List<Store> selectByCondition(@Param("storeNo") Long storeNo,
-                                  @Param("materialId") Long materialId,
                                   @Param("houseName") String houseName,
                                   @Param("startTime") Date startTime,
                                   @Param("endTime") Date endTime,
+                                  @Param("materialId") Long materialId,
                                   @Param("userId") Long userId,
-                                  @Param("notes") String notes);
+                                  @Param("notes") String notes,
+                                  @Param("pageNum")Integer pageNum,
+                                  @Param("pageSize")Integer pageSize);
 
 }
 
