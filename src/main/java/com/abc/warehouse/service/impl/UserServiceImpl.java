@@ -1,9 +1,11 @@
 package com.abc.warehouse.service.impl;
 import com.abc.warehouse.dto.Result;
+import com.abc.warehouse.dto.UserDTO;
 import com.abc.warehouse.dto.constants.PageConstants;
 import com.abc.warehouse.utils.GenerateID;
 import com.abc.warehouse.utils.PasswordEncoder;
 import com.abc.warehouse.utils.RegexUtils;
+import com.abc.warehouse.utils.UserHolder;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -115,7 +117,21 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         boolean b = updateById(user);
         return b?Result.ok():Result.fail("重置失败");
     }
+    @Override
+    public Result updatePassword(String newPassword) {
+        UserDTO user0 = UserHolder.getUser();
+        Long userId=user0.getId();
+        // 获取用户信息
+        User user = getById(userId);
 
+        // 进行密码修改
+        String encryptedPassword = PasswordEncoder.encode(newPassword, salt);
+        user.setPassword(encryptedPassword);
+
+        // 更新用户信息
+        boolean updateResult = updateById(user);
+        return updateResult ? Result.ok() : Result.fail("密码修改失败");
+    }
 }
 
 

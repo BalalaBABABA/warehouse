@@ -28,4 +28,5 @@ public interface UserService extends IService<User> {
     Result updateUser(User user);
 
     Result resetPassword(User user);
+    Result updatePassword(String newPassword);
 }
