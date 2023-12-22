@@ -11,6 +11,7 @@ import com.abc.warehouse.mapper.PermissionMapper;
 import com.abc.warehouse.pojo.Permission;
 import com.abc.warehouse.pojo.PermissionType;
 import com.abc.warehouse.pojo.User;
+import com.abc.warehouse.service.FreeUriService;
 import com.abc.warehouse.service.PermissionService;
 import com.abc.warehouse.service.PermissionTypeService;
 import com.abc.warehouse.utils.JwtUtils;
@@ -32,6 +33,7 @@ import org.springframework.web.util.UriTemplate;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -51,9 +53,10 @@ public class LoginInterceptor implements HandlerInterceptor {
     @Autowired
     private PermissionService permissionService;
     @Autowired
+    private FreeUriService freeUriService;
+    @Autowired
     private PermissionTypeService permissionTypeService;
     private static final String PERMISSION_URI_REGEX = "(/\\w+)+";
-
     @Override
     @Transactional
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -83,6 +86,16 @@ public class LoginInterceptor implements HandlerInterceptor {
         log.info("=================request end===========================");
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
+        //获取放行uri,如果有匹配的就直接放行
+        List<String> freeUriList = freeUriService.getFreeUriList();
+        AntPathMatcher pathMatcher = new AntPathMatcher();
+        for (String freeUri : freeUriList) {
+            if (pathMatcher.match(freeUri, requestURI)) {
+                return true;
+            }
+        }
+
+        // 判断token是否为空
         if(StringUtils.isBlank(token)){
             log.warn("token为空");
             result.setSuccess(false);
@@ -130,27 +143,12 @@ public class LoginInterceptor implements HandlerInterceptor {
 
         //先查该用户权限缓存
         List<String> permissions = permissionService.getPermissionCacheById(userId);
-//        String permissionsJson = redisTemplate.opsForValue().get(RedisConstants.PERMISSIONS_USER_KEY + userId);
-//        List<String> permissions = JSONUtil.toList(permissionsJson, String.class);
-//
-//
-//        Map<Long, PermissionType> typesMap = permissionTypeService.getAllTypesMap();
-//        //缓存没有，查询数据库,并加入缓存
-//        if(permissions.isEmpty()){
-//            //TODO 修改
-//            //1. 查询数据库
-//            List<String> permissionList =permissionMapper.getUserTypeUriList(userId);
-////            List<Permission> permissionList = permissionService.getByUserId(userId);
-////            permissions = permissionList.stream().map(permission -> typesMap.get(permission.getPermissionId()).getUri()).collect(Collectors.toList());
-//            //2. 设置缓存
-//            redisTemplate.opsForValue().set(RedisConstants.PERMISSIONS_USER_KEY+userId,JSONUtil.toJsonStr(permissionList), PERMISSIONS_USER_TTL);
-//        }
         //刷新用户权限uri有效期
         redisTemplate.expire(RedisConstants.PERMISSIONS_USER_KEY + userId,PERMISSIONS_USER_TTL,TimeUnit.SECONDS);
         //刷新token有效期
         redisTemplate.expire(RedisConstants.LOGIN_USER_KEY + token,PERMISSIONS_USER_TTL,TimeUnit.SECONDS);
 
-        AntPathMatcher pathMatcher = new AntPathMatcher();
+//        AntPathMatcher pathMatcher = new AntPathMatcher();
         for (String permissionUri : permissions) {
             if (pathMatcher.match(permissionUri, requestURI)) {
                 //放入ThreadLocal

@@ -7,6 +7,7 @@ import com.abc.warehouse.mapper.PermissionMapper;
 import com.abc.warehouse.mapper.ResourceMapper;
 import com.abc.warehouse.pojo.Permission;
 import com.abc.warehouse.pojo.Resource;
+import com.abc.warehouse.service.FreeUriService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -39,6 +40,9 @@ public class PermissionTypeServiceImpl extends ServiceImpl<PermissionTypeMapper,
     
     @Autowired
     private PermissionTypeMapper permissionTypeMapper;
+
+    @Autowired
+    private FreeUriService freeUriService;
 
     @Autowired
     private StringRedisTemplate redisTemplate;
@@ -123,7 +127,7 @@ public class PermissionTypeServiceImpl extends ServiceImpl<PermissionTypeMapper,
         //TODO 删除了权限，没有必要删除所有key，及时key的value中包含这条权限也没有影响，这样会造成雪崩
 //        redisTemplate.delete(RedisConstants.PERMISSIONS_USER_KEY+"*");
         //添加与权限有关的uri到free_uri中
-        permissionMapper.AddUriToFreeUri(permissionId);
+        freeUriService.AddUriToFreeUri(permissionId);
         //更新数据库
         LambdaUpdateWrapper<PermissionType> updateWrapper = new LambdaUpdateWrapper<>();
         updateWrapper.eq(PermissionType::getResourceId,resourceId)

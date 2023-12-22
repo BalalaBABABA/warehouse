@@ -12,10 +12,7 @@ import com.abc.warehouse.mapper.PermissionMapper;
 import com.abc.warehouse.pojo.Permission;
 import com.abc.warehouse.pojo.PermissionType;
 import com.abc.warehouse.pojo.User;
-import com.abc.warehouse.service.LoginService;
-import com.abc.warehouse.service.PermissionService;
-import com.abc.warehouse.service.PermissionTypeService;
-import com.abc.warehouse.service.UserService;
+import com.abc.warehouse.service.*;
 import com.abc.warehouse.utils.*;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
@@ -46,6 +43,8 @@ public class LoginServiceImpl implements LoginService {
     private StringRedisTemplate redisTemplate;
     @Autowired
     private PermissionMapper permissionMapper;
+    @Autowired
+    private FreeUriService freeUriService;
 
 
     private static final String salt = "wms@#!";
@@ -121,9 +120,9 @@ public class LoginServiceImpl implements LoginService {
 
     @Override
     public List<String> getFreeUriList() {
-        return permissionMapper.getFreeUriList();
+        return freeUriService.getFreeUriList();
     }
-
+    
     @Override
     public Result logout(String token) {
         redisTemplate.delete(RedisConstants.LOGIN_USER_KEY + token);

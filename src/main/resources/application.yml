@@ -4,7 +4,7 @@ server:
   # 安装包版本
   version: 1.0.4
   # 安装包名字
-  upgrade-zip: upgrade.zip
+
 spring:
   # 设置颜色
   output:
