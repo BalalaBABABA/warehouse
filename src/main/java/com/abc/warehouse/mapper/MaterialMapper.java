@@ -2,6 +2,9 @@ package com.abc.warehouse.mapper;
 
 import com.abc.warehouse.pojo.Material;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
 * @author 吧啦
@@ -10,7 +13,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 * @Entity com.abc.warehouse.pojo.Material
 */
 public interface MaterialMapper extends BaseMapper<Material> {
-
+    List<Material> selectByTypeAndName(@Param("type") String type, @Param("name") String name);
 }
 
 
