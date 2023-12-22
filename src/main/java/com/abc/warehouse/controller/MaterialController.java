@@ -1,13 +1,20 @@
 package com.abc.warehouse.controller;
 
 
+import com.abc.warehouse.annotation.Decrypt;
+import com.abc.warehouse.annotation.Encrypt;
+import com.abc.warehouse.annotation.JsonParam;
 import com.abc.warehouse.dto.Result;
+import com.abc.warehouse.mapper.MaterialMapper;
 import com.abc.warehouse.pojo.Material;
+import com.abc.warehouse.pojo.Store;
 import com.abc.warehouse.service.HouseService;
 import com.abc.warehouse.service.MaterialService;
 import com.abc.warehouse.service.MaterialTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/material")
@@ -18,6 +25,8 @@ public class MaterialController {
     private HouseService houseService;
     @Autowired
     private MaterialTypeService materialTypeService;
+    @Autowired
+    private MaterialMapper materialMapper;
 
     @GetMapping
     public Result enter(){
@@ -80,4 +89,24 @@ public class MaterialController {
     public Result typeName(){
         return Result.ok(materialTypeService.typeName());
     }
+
+    @PostMapping("/typeMaterial")
+    @Encrypt
+    public Result getMaterialByType(@JsonParam("typeName") String typeName){
+        return Result.ok(materialService.getMaterialByType(typeName));
+    }
+
+    @PostMapping("/searchByTypeAndName")
+    @Encrypt
+    @Decrypt
+    public Result getMaterialByTypeAndName(@JsonParam("type") String type, @JsonParam("name") String name){
+        List<Material> materiaList = materialMapper.selectByTypeAndName(type, name);
+        if(materiaList != null){
+            return new Result(true, "0", materiaList, Long.valueOf(materiaList.size()));
+        }else{
+            return new Result(false, "Failed", null, 0L);
+        }
+    }
+
+//通过类名查询相应所有物料，选中物料查询所在仓库和库存
 }

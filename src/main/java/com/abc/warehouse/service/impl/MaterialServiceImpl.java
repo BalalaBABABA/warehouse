@@ -14,6 +14,8 @@ import com.abc.warehouse.mapper.MaterialMapper;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class MaterialServiceImpl extends ServiceImpl<MaterialMapper, Material>
@@ -97,6 +99,14 @@ public class MaterialServiceImpl extends ServiceImpl<MaterialMapper, Material>
         IPage<Material> pageQuery = new Page<>(curPage, PageConstants.MATERIAL_SEARCH_PAGE_SIZE);
         IPage<Material> page = baseMapper.selectPage(pageQuery, wrapper);
         return Result.ok(page.getRecords(), page.getPages());
+    }
+
+    @Override
+    public List<String> getMaterialByType(String type) {
+        QueryWrapper<Material> wrapper = new QueryWrapper<>();
+        wrapper.eq("type", type);
+        List<Material>  materials = baseMapper.selectList(wrapper);
+        return materials.stream().map(Material::getName).collect(Collectors.toList());
     }
 
 }

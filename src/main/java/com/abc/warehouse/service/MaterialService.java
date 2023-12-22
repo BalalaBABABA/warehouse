@@ -4,6 +4,8 @@ import com.abc.warehouse.dto.Result;
 import com.abc.warehouse.pojo.Material;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import java.util.List;
+
 public interface MaterialService extends IService<Material> {
     Result saveMaterial(Material material);
     Result delMaterial(Long id);
@@ -14,4 +16,5 @@ public interface MaterialService extends IService<Material> {
     Result materialHouseName(Integer curPage, String name);
     Result materialType(Integer curPage, String type);
     Result materialComments(Integer curPage, String comments);
+    List<String> getMaterialByType(String type);
 }
