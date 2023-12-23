@@ -7,7 +7,6 @@ import com.abc.warehouse.annotation.JsonParam;
 import com.abc.warehouse.dto.Result;
 import com.abc.warehouse.mapper.MaterialMapper;
 import com.abc.warehouse.pojo.Material;
-import com.abc.warehouse.pojo.Store;
 import com.abc.warehouse.service.HouseService;
 import com.abc.warehouse.service.MaterialService;
 import com.abc.warehouse.service.MaterialTypeService;
