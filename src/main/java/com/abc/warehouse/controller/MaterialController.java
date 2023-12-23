@@ -92,6 +92,7 @@ public class MaterialController {
     @PostMapping("/typeMaterial")
     @Encrypt
     public Result getMaterialByType(@JsonParam("typeName") String typeName){
+        System.out.println(typeName);
         return Result.ok(materialService.getMaterialByType(typeName));
     }
 
