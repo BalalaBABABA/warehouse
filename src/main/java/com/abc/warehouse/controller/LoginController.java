@@ -1,5 +1,7 @@
 package com.abc.warehouse.controller;
 
+import com.abc.warehouse.annotation.Decrypt;
+import com.abc.warehouse.annotation.JsonParam;
 import com.abc.warehouse.dto.Result;
 import com.abc.warehouse.dto.params.LoginParams;
 import com.abc.warehouse.service.LoginService;
@@ -22,8 +24,10 @@ public class LoginController {
      * @return
      */
     @PostMapping
-    public Result login(@RequestBody LoginParams loginParams){
-        return loginService.login(loginParams);
+    @Decrypt
+    public Result login(@JsonParam("userId")Long userId,
+                        @JsonParam("password")String password){
+        return loginService.login(userId,password);
     }
 
 

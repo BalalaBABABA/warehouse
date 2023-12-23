@@ -50,7 +50,7 @@ public class LoginServiceImpl implements LoginService {
     private static final String salt = "wms@#!";
     @Override
     @Transactional
-    public Result login(LoginParams loginParams) {
+    public Result login(Long userId,String password) {
         /**
          * 1. 检查参数是否合法
          * 2. 查询数据库用户和密码，是否存在
@@ -60,10 +60,6 @@ public class LoginServiceImpl implements LoginService {
          */
         //用户权限uri的list
         List<String> permissionList = new ArrayList<>();
-        //输入的密码
-        String password = loginParams.getPassword();
-        //输入的id
-        Long userId = loginParams.getUserId();
         //判空
         if(StringUtils.isBlank(userId.toString()) || RegexUtils.isPasswordInvalid(password))
         {
