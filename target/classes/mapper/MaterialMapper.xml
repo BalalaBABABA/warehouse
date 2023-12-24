@@ -21,8 +21,4 @@
         comments,create_time
     </sql>
 
-    <select id="selectByTypeAndName" resultType="com.abc.warehouse.pojo.Material">
-        select * from material_208201302
-        where type = #{type} and name = #{name}
-    </select>
 </mapper>

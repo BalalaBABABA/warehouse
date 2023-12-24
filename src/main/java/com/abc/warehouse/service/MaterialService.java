@@ -16,5 +16,7 @@ public interface MaterialService extends IService<Material> {
     Result materialHouseName(Integer curPage, String name);
     Result materialType(Integer curPage, String type);
     Result materialComments(Integer curPage, String comments);
-    List<String> getMaterialByType(String type);
+    List<String> getMaterialNameByType(String type);
+    List<String> getHouseByMaterialName(String name);
+    Material getMaterialByNameAndHouse(String name, String house);
 }

@@ -30,6 +30,8 @@ public class StoreServiceImpl extends ServiceImpl<StoreMapper, Store>
     @Override
     public Result storePage(Integer curPage) {
         LambdaQueryWrapper<Store> wrapper = new LambdaQueryWrapper<>();  //查询条件构造器
+        wrapper.orderByDesc(Store::getStoreTime);
+        wrapper.orderByDesc(Store::getStoreNo);
         IPage<Store> pageQuery = new Page<>(curPage, PageConstants.STORE_SEARCH_PAGE_SIZE);
         IPage<Store> page = baseMapper.selectPage(pageQuery, wrapper);
         return Result.ok(page.getRecords(), page.getPages());

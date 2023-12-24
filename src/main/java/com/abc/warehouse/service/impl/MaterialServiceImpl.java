@@ -102,12 +102,32 @@ public class MaterialServiceImpl extends ServiceImpl<MaterialMapper, Material>
     }
 
     @Override
-    public List<String> getMaterialByType(String type) {
+    public List<String> getMaterialNameByType(String type) {
         QueryWrapper<Material> wrapper = new QueryWrapper<>();
         wrapper.eq("type", type);
-        List<Material>  materials = baseMapper.selectList(wrapper);
-        return materials.stream().map(Material::getName).collect(Collectors.toList());
+        List<Material> materials = baseMapper.selectList(wrapper);
+        List<String> names = materials.stream().map(Material::getName).distinct().collect(Collectors.toList());
+        return names;
     }
+
+    @Override
+    public List<String> getHouseByMaterialName(String name) {
+        QueryWrapper<Material> wrapper = new QueryWrapper<>();
+        wrapper.eq("name", name);
+        List<Material> materials = baseMapper.selectList(wrapper);
+        List<String> houseName = materials.stream().map(Material::getHouseName).distinct().collect(Collectors.toList());
+        return houseName;
+    }
+
+    @Override
+    public Material getMaterialByNameAndHouse(String name, String house) {
+        QueryWrapper<Material> wrapper = new QueryWrapper<>();
+        wrapper.eq("name", name)
+                .eq("house_name", house);
+        Material material = baseMapper.selectOne(wrapper);
+        return material;
+    }
+
 
 }
 

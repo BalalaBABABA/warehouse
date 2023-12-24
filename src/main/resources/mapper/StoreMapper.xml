@@ -41,6 +41,7 @@
         <if test="notes != null and notes != ''">
             and notes like '%${notes}%'
         </if>
+        ORDER BY store_time DESC, store_no DESC
         limit #{pageSize} offset ${(pageNum - 1) * pageSize}
     </select>
 </mapper>

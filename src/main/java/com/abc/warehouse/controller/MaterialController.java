@@ -1,9 +1,11 @@
 package com.abc.warehouse.controller;
 
 
+import cn.hutool.json.JSONObject;
 import com.abc.warehouse.annotation.Decrypt;
 import com.abc.warehouse.annotation.Encrypt;
 import com.abc.warehouse.annotation.JsonParam;
+import com.abc.warehouse.dto.EncryotResult;
 import com.abc.warehouse.dto.Result;
 import com.abc.warehouse.mapper.MaterialMapper;
 import com.abc.warehouse.pojo.Material;
@@ -89,24 +91,25 @@ public class MaterialController {
         return Result.ok(materialTypeService.typeName());
     }
 
-    @PostMapping("/typeMaterial")
+    @PostMapping("/getMaterialNameByType")
     @Encrypt
-    public Result getMaterialByType(@JsonParam("typeName") String typeName){
-        System.out.println(typeName);
-        return Result.ok(materialService.getMaterialByType(typeName));
+    public Result getMaterialNameByType(@RequestBody String typeName){
+        JSONObject json = new JSONObject(typeName);
+        String name = json.getStr("typeName");
+        return EncryotResult.ok(materialService.getMaterialNameByType(name));
     }
 
-    @PostMapping("/searchByTypeAndName")
+    @PostMapping("/getHouseByMaterialName")
     @Encrypt
     @Decrypt
-    public Result getMaterialByTypeAndName(@JsonParam("type") String type, @JsonParam("name") String name){
-        List<Material> materiaList = materialMapper.selectByTypeAndName(type, name);
-        if(materiaList != null){
-            return new Result(true, "0", materiaList, Long.valueOf(materiaList.size()));
-        }else{
-            return new Result(false, "Failed", null, 0L);
-        }
+    public Result getHouseByMaterialName(@JsonParam("name") String name){
+        return EncryotResult.ok(materialService.getHouseByMaterialName(name));
     }
 
-//通过类名查询相应所有物料，选中物料查询所在仓库和库存
+    @PostMapping("/getMaterialByNameAndHouse")
+    @Encrypt
+    @Decrypt
+    public Result getMaterialByNameAndHouse(@JsonParam("name") String name, @JsonParam("house") String house){
+        return EncryotResult.ok(materialService.getMaterialByNameAndHouse(name, house));
+    }
 }
