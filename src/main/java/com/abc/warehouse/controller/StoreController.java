@@ -20,6 +20,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/store")
@@ -91,5 +92,11 @@ public class StoreController {
         }else{
             return new Result(false, null, null, 0L);
         }
+    }
+
+    @PostMapping("/simpleStore")
+    public Result simpleStore(@RequestBody Map<String, Object> params){
+        storeMapper.callSimpleStore(params);
+        return Result.ok();
     }
 }

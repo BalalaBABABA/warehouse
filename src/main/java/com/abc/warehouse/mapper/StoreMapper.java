@@ -2,9 +2,14 @@ package com.abc.warehouse.mapper;
 
 import com.abc.warehouse.pojo.Store;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.mapping.StatementType;
+
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
 * @author 吧啦
@@ -23,8 +28,13 @@ public interface StoreMapper extends BaseMapper<Store> {
                                   @Param("pageNum")Integer pageNum,
                                   @Param("pageSize")Integer pageSize);
 
+    @Select("{call simpleStore_208201302(#{no, mode=IN, jdbcType=BIGINT}, #{hname, mode=IN, jdbcType=VARCHAR}," +
+            " #{time, mode=IN, jdbcType=DATE}, #{mid, mode=IN, jdbcType=BIGINT}, #{storenum, mode=IN, jdbcType=INTEGER}, " +
+            "#{uid, mode=IN, jdbcType=BIGINT}, #{note, mode=IN, jdbcType=VARCHAR})}")
+    @Options(statementType = StatementType.CALLABLE)
+    void callSimpleStore(Map<String, Object> params);
 }
-
-
-
-
+//查类别
+//根据类别查对应所有物料名，物料名要唯一，只返回名字，
+//根据物料名查所在的仓库，只返回仓库名
+//根据名字和仓库，返回物料id和库存（material）

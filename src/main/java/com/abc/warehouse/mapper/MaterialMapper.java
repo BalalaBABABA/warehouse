@@ -13,7 +13,7 @@ import java.util.List;
 * @Entity com.abc.warehouse.pojo.Material
 */
 public interface MaterialMapper extends BaseMapper<Material> {
-    List<Material> selectByTypeAndName(@Param("type") String type, @Param("name") String name);
+
 }
 
 
