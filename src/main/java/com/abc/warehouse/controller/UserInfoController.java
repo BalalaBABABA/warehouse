@@ -5,10 +5,7 @@ import com.abc.warehouse.dto.UserDTO;
 import com.abc.warehouse.service.UserService;
 import com.abc.warehouse.utils.UserHolder;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/userInfo")
@@ -30,4 +27,11 @@ public class UserInfoController {
     public Result updatePassword(@PathVariable("newPassword") String newPassword){
         return userService.updatePassword(newPassword);
     }
+    @GetMapping("/updatePhone/{newPhone}")
+    public Result updatePhone(@PathVariable("newPhone") String newPhone,@RequestHeader("Authorization")String token){
+        System.out.println("updatePhone");
+        return userService.updatePhone(newPhone,token);
+    }
+
+
 }

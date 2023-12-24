@@ -38,7 +38,7 @@ public class StoreController {
     //@Decrypt 解密
 
     @GetMapping("/searchAll/{page}")
-    @Encrypt
+
     public Result getAll(@PathVariable("page") Integer page){
         return storeService.storePage(page);
     }

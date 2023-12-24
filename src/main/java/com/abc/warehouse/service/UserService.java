@@ -4,6 +4,8 @@ import com.abc.warehouse.dto.Result;
 import com.abc.warehouse.pojo.User;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import java.util.List;
+
 /**
  * @author 吧啦
  * @description 针对表【user_208201302(人员表)】的数据库操作Service
@@ -29,4 +31,8 @@ public interface UserService extends IService<User> {
 
     Result resetPassword(User user);
     Result updatePassword(String newPassword);
+
+    Result updatePhone(String newPhone,String token);
+
+    List<String> findAllUserName();
 }

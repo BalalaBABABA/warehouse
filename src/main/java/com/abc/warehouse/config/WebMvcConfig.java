@@ -16,11 +16,11 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Autowired
     private LoginService loginService;
 
-    @Override
-    public void addInterceptors(InterceptorRegistry registry) {
-        List<String> freeUri = loginService.getFreeUriList();
-        registry.addInterceptor(loginInterceptor)
-                .addPathPatterns("/**")
-                .excludePathPatterns(freeUri);
-    }
+//    @Override
+//    public void addInterceptors(InterceptorRegistry registry) {
+//        List<String> freeUri = loginService.getFreeUriList();
+//        registry.addInterceptor(loginInterceptor)
+//                .addPathPatterns("/**")
+//                .excludePathPatterns(freeUri);
+//    }
 }

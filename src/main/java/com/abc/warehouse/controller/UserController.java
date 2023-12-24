@@ -25,9 +25,6 @@ public class UserController {
         return Result.ok();
     }
 
-
-
-
     @PostMapping("/save")
     public Result save(@RequestBody User user){
         return userService.saveUser(user);
@@ -60,11 +57,6 @@ public class UserController {
         return userService.userPage(page);
     }
 
-//    @PostMapping("/{id}")
-//    public Result getAllUser(@PathVariable("id") Long id){
-//        return userService.deleteUser(id);
-//    }
-
     @GetMapping("/searchByName/{page}/{name}")
     public Result searchByName(@PathVariable("page") Integer page, @PathVariable("name") String name){
         return userService.searchByName(page, name);
@@ -84,5 +76,8 @@ public class UserController {
     public Result resetPassword(@RequestBody User user){
         return userService.resetPassword(user);
     }
-
+    @GetMapping("/findAllUserName")
+    public Result findAllUserName(){
+        return Result.ok(userService.findAllUserName());
+    }
 }

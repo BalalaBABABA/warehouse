@@ -2,10 +2,7 @@ package com.abc.warehouse.service.impl;
 import com.abc.warehouse.dto.Result;
 import com.abc.warehouse.dto.UserDTO;
 import com.abc.warehouse.dto.constants.PageConstants;
-import com.abc.warehouse.utils.GenerateID;
-import com.abc.warehouse.utils.PasswordEncoder;
-import com.abc.warehouse.utils.RegexUtils;
-import com.abc.warehouse.utils.UserHolder;
+import com.abc.warehouse.utils.*;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -19,9 +16,10 @@ import org.springframework.util.DigestUtils;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.abc.warehouse.dto.constants.PageConstants.PERMISSION_SEARCH_PAGE_SIZE;
-
+import static net.sf.jsqlparser.util.validation.metadata.NamedObject.user;
 
 
 /**
@@ -131,6 +129,28 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         // 更新用户信息
         boolean updateResult = updateById(user);
         return updateResult ? Result.ok() : Result.fail("密码修改失败");
+    }
+
+    @Override
+    public Result updatePhone(String newPhone,String token) {
+        Long userId = JwtUtils.getUserIdFromToken(token);
+        // 获取用户信息
+        User user = getById(userId);
+
+        user.setPhone(newPhone);
+
+        // 更新用户信息
+        boolean updateResult = updateById(user);
+        return updateResult ? Result.ok() : Result.fail("手机号修改失败");
+    }
+
+
+    @Override
+    public List<String> findAllUserName() {
+        List<String> userName = list().stream()
+                .map(user -> user.getName())
+                .collect(Collectors.toList());
+        return userName;
     }
 }
 

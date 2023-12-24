@@ -1,9 +1,11 @@
 package com.abc.warehouse.controller;
 
 
+import cn.hutool.json.JSONObject;
 import com.abc.warehouse.annotation.Decrypt;
 import com.abc.warehouse.annotation.Encrypt;
 import com.abc.warehouse.annotation.JsonParam;
+import com.abc.warehouse.dto.EncryotResult;
 import com.abc.warehouse.dto.Result;
 import com.abc.warehouse.mapper.MaterialMapper;
 import com.abc.warehouse.pojo.Material;
@@ -92,15 +94,16 @@ public class MaterialController {
 
     @PostMapping("/typeMaterial")
     @Encrypt
-    public Result getMaterialByType(@JsonParam("typeName") String typeName){
-        System.out.println(typeName);
-        return Result.ok(materialService.getMaterialByType(typeName));
+    public Result getMaterialByType(@RequestBody String typeName){
+        JSONObject json = new JSONObject(typeName);
+        String name = json.getStr("typeName");
+        return EncryotResult.ok(materialService.getMaterialByType(name));
     }
 
     @PostMapping("/searchByTypeAndName")
     @Encrypt
     @Decrypt
-    public Result getMaterialByTypeAndName(@JsonParam("type") String type, @JsonParam("name") String name){
+    public Result getMaterialByTypeAndName(@JsonParam("type") String type, @JsonParam("name")String name){
         List<Material> materiaList = materialMapper.selectByTypeAndName(type, name);
         if(materiaList != null){
             return new Result(true, "0", materiaList, Long.valueOf(materiaList.size()));

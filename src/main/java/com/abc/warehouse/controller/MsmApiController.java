@@ -43,7 +43,7 @@ public class MsmApiController {
         boolean isSend = msmService.send(param,phone);
         if(isSend) {
             //往redis中设置数据：key、value、过期值、过期时间单位  MINUTES代表分钟
-            redisTemplate.opsForValue().set(phone, code,5, TimeUnit.MINUTES);
+            redisTemplate.opsForValue().set(phone, code,20, TimeUnit.MINUTES);
             return Result.ok();
         } else {
             return Result.fail("发送验证码失败");
@@ -58,6 +58,7 @@ public class MsmApiController {
         //根据key值查询
         String redisCode = value.get(key);
         if (code.equals(redisCode)){
+            System.out.println("通过");
             return Result.ok("验证通过");
         }
 
