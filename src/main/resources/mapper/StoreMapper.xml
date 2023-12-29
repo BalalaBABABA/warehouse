@@ -44,4 +44,33 @@
         ORDER BY store_time DESC, store_no DESC
         limit #{pageSize} offset ${(pageNum - 1) * pageSize}
     </select>
+    
+    <select id="selectStoreByDate" resultMap="storeResult">
+        select s.*, m.*
+        from store_208201302 s
+        right join material_208201302 m on s.material_id = m.id
+        where (s.store_time between #{startDate} and #{endDate})
+        order by s.store_no asc
+    </select>
+
+    <resultMap id="storeResult" type="com.abc.warehouse.pojo.Store">
+        <id column="store_id" property="storeId"/>
+        <result column="store_no" property="storeNo"/>
+        <result column="house_name" property="houseName"/>
+        <result column="store_time" property="storeTime"/>
+        <result column="material_id" property="materialId"/>
+        <result column="store_count" property="storeCount"/>
+        <result column="user_id" property="userId"/>
+        <result column="notes" property="notes"/>
+        <association property="material" javaType="com.abc.warehouse.pojo.Material">
+            <id column="id" property="id"/>
+            <result column="name" property="name"/>
+            <result column="house_name" property="houseName"/>
+            <result column="type" property="type"/>
+            <result column="unit" property="unit"/>
+            <result column="stock" property="stock"/>
+            <result column="comments" property="comments"/>
+            <result column="create_time" property="createTime"/>
+        </association>
+    </resultMap>
 </mapper>

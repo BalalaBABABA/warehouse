@@ -33,8 +33,6 @@ public interface StoreMapper extends BaseMapper<Store> {
             "#{uid, mode=IN, jdbcType=BIGINT}, #{note, mode=IN, jdbcType=VARCHAR})}")
     @Options(statementType = StatementType.CALLABLE)
     void callSimpleStore(Map<String, Object> params);
+
+    List<Store> selectStoreByDate(@Param("startDate") Date startDate, @Param("endDate") Date endDate);
 }
-//查类别
-//根据类别查对应所有物料名，物料名要唯一，只返回名字，
-//根据物料名查所在的仓库，只返回仓库名
-//根据名字和仓库，返回物料id和库存（material）

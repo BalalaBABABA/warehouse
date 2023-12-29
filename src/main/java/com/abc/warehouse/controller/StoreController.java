@@ -1,7 +1,5 @@
 package com.abc.warehouse.controller;
 
-import cn.hutool.json.JSONNull;
-import cn.hutool.json.JSONUtil;
 import com.abc.warehouse.annotation.Decrypt;
 import com.abc.warehouse.annotation.Encrypt;
 import com.abc.warehouse.annotation.JsonParam;
@@ -10,9 +8,7 @@ import com.abc.warehouse.dto.constants.PageConstants;
 import com.abc.warehouse.mapper.StoreMapper;
 import com.abc.warehouse.pojo.Store;
 import com.abc.warehouse.service.StoreService;
-import io.netty.handler.codec.serialization.ObjectEncoder;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.junit4.statements.SpringFailOnTimeout;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
@@ -39,7 +35,7 @@ public class StoreController {
     //@Decrypt 解密
 
     @GetMapping("/searchAll/{page}")
-
+    @Encrypt
     public Result getAll(@PathVariable("page") Integer page){
         return storeService.storePage(page);
     }
@@ -99,4 +95,25 @@ public class StoreController {
         storeMapper.callSimpleStore(params);
         return Result.ok();
     }
+
+    @PostMapping("/selectStoreByDate")
+    @Encrypt
+    @Decrypt//序号，入库单号，物料名（物料id），物料类型，仓库名，数量，单位，入库时间，操作人员id，备注
+    public Result selectStoreByDate(@JsonParam("year") String year, @JsonParam("month") String month){
+        System.out.println("year:" + year + " month:" + month);
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Integer.parseInt(year), Integer.parseInt(month) - 1, 1);
+        Date startDate = calendar.getTime();
+        calendar.add(Calendar.MONTH, 1);
+        calendar.add(Calendar.DATE, -1);
+        Date endDate = calendar.getTime();
+
+        List<Store> result = storeMapper.selectStoreByDate(startDate, endDate);
+        if(result != null){
+            return new Result(true, "0", result, Long.valueOf(result.size()));
+        }else{
+            return new Result(false, null, null, 0L);
+        }
+    }
+
 }
