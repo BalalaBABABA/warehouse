@@ -80,4 +80,6 @@ public class UserController {
     public Result findAllUserName(){
         return Result.ok(userService.findAllUserName());
     }
+
+
 }

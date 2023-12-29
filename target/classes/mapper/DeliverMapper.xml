@@ -15,9 +15,26 @@
             <result property="notes" column="notes" jdbcType="VARCHAR"/>
     </resultMap>
 
+
+
     <sql id="Base_Column_List">
         deliver_id,deliver_no,house_name,
         deliver_time,material_id,deliver_count,
         user_id,notes
     </sql>
+    
+
+    <select id="findCountByNameBetweenDates" resultType="java.util.Map">
+        SELECT
+            m.name AS materialName,
+            CAST(SUM(d.deliver_count) AS SIGNED) AS totalDeliverCount
+        FROM
+            material_208201302 m
+                INNER JOIN deliver_208201302 d ON m.id = d.material_id
+        WHERE
+            d.deliver_time BETWEEN #{startTime} AND #{endTime}
+        GROUP BY
+            m.name
+        ORDER BY totalDeliverCount ASC
+    </select>
 </mapper>

@@ -32,6 +32,4 @@ public class UserInfoController {
         System.out.println("updatePhone");
         return userService.updatePhone(newPhone,token);
     }
-
-
 }
