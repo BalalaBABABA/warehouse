@@ -81,7 +81,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     @Override
     public Result searchByName(Integer curPage, String name) {
         QueryWrapper<User> wrapper = new QueryWrapper();
-        wrapper.eq("name", name);
+        wrapper.like("name", name);
         IPage<User> pageQuery = new Page((long)curPage, (long) PageConstants.MATERIAL_SEARCH_PAGE_SIZE);
         IPage<User> page = ((UserMapper)this.baseMapper).selectPage(pageQuery, wrapper);
         return Result.ok(page.getRecords(), page.getPages());

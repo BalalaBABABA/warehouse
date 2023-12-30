@@ -87,6 +87,19 @@ public class DeliverServiceImpl extends ServiceImpl<DeliverMapper, Deliver>
 
     }
 
+    public Result MultiDelivery(List<Deliver> deliverList) {
+        String resultMessage=" ";
+        // 调用存储过程
+        deliverMapper.callMultiDelivery(deliverList, resultMessage);
+        if(resultMessage.equals("出库成功"))
+        {
+            return Result.ok(resultMessage);
+        }
+        else {
+            return Result.fail(resultMessage);
+        }
+    }
+
 }
 
 

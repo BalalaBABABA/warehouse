@@ -37,4 +37,13 @@
             m.name
         ORDER BY totalDeliverCount ASC
     </select>
+
+
+
+    <select id="callMultiDelivery" statementType="CALLABLE">
+        {call MultiDelivery_208201302(
+                #{deliverList, mode=IN, jdbcType=ARRAY, javaType=java.util.List, jdbcTypeName=JSON},
+                #{resultMessage, mode=OUT, jdbcType=VARCHAR}
+              )}
+    </select>
 </mapper>

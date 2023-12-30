@@ -22,7 +22,7 @@
         deliver_time,material_id,deliver_count,
         user_id,notes
     </sql>
-    
+
 
     <select id="findCountByNameBetweenDates" resultType="java.util.Map">
         SELECT
@@ -36,5 +36,14 @@
         GROUP BY
             m.name
         ORDER BY totalDeliverCount ASC
+    </select>
+
+
+
+    <select id="callMultiDelivery" statementType="CALLABLE">
+        {call MultiDelivery_208201302(
+                #{deliverList, mode=IN, jdbcType=ARRAY, javaType=java.util.List, jdbcTypeName=JSON},
+                #{resultMessage, mode=OUT, jdbcType=VARCHAR}
+              )}
     </select>
 </mapper>

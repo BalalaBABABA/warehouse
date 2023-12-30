@@ -7,6 +7,7 @@ import com.abc.warehouse.annotation.Encrypt;
 import com.abc.warehouse.annotation.JsonParam;
 import com.abc.warehouse.dto.Result;
 import com.abc.warehouse.mapper.StoreMapper;
+import com.abc.warehouse.pojo.Deliver;
 import com.abc.warehouse.pojo.User;
 import com.abc.warehouse.service.DeliverService;
 import com.abc.warehouse.service.StoreService;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
 import java.util.Date;
+import java.util.List;
 
 @RequestMapping("/deliver")
 @RestController
@@ -54,5 +56,11 @@ public class DeliverController {
 
         return deliverService.findCountByNameBetweenDates(startTime, endTime);
     }
+    @PostMapping("/multiDelivery")
+    public Result MultiDelivery(@RequestBody List<Deliver> deliverList) {
+
+        return deliverService.MultiDelivery(deliverList);
+    }
+
 }
 

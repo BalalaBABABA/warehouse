@@ -16,22 +16,15 @@ import java.util.Map;
 * @Entity com.abc.warehouse.pojo.Deliver
 */
 public interface DeliverMapper extends BaseMapper<Deliver> {
-    List<String> findMaterialNamesByDeliverTime(
-            @Param("startTime") Date startTime,
-            @Param("endTime") Date endTime
-
-    );
-
-    //    List<Integer> findCountByNameBetweenDates(
-//            @Param("startTime") Date startTime,
-//            @Param("endTime") Date endTime
-//    );
 
         @MapKey("materialName")
         List<Map<String, Object>> findCountByNameBetweenDates(
                 @Param("startTime") Date startTime,
                 @Param("endTime") Date endTime
         );
+
+        void callMultiDelivery(@Param("deliverList") List<Deliver> deliverList, @Param("resultMessage") String resultMessage);
+
 
 }
 
