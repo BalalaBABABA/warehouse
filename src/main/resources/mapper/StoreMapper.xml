@@ -26,14 +26,14 @@
         <if test="storeNo != null and storeNo != ''">
             and store_no = #{storeNo}
         </if>
-        <if test="materialId != null and materialId = ''">
-            and material_id = #{materialId}
-        </if>
         <if test="houseName != null and houseName != ''">
             and house_name like '%${houseName}%'
         </if>
         <if test="startTime != null and endTime != null">
             and (store_time BETWEEN #{startTime} AND #{endTime})
+        </if>
+        <if test="materialId != null and materialId != ''">
+            and material_id = #{materialId}
         </if>
         <if test="userId != null and userId != ''">
             AND user_id = #{userId}
@@ -41,5 +41,7 @@
         <if test="notes != null and notes != ''">
             and notes like '%${notes}%'
         </if>
+        ORDER BY store_time DESC, store_no DESC
+        limit #{pageSize} offset ${(pageNum - 1) * pageSize}
     </select>
 </mapper>

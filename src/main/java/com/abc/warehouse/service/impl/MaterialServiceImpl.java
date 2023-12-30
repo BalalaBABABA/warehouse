@@ -14,6 +14,8 @@ import com.abc.warehouse.mapper.MaterialMapper;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class MaterialServiceImpl extends ServiceImpl<MaterialMapper, Material>
@@ -98,6 +100,34 @@ public class MaterialServiceImpl extends ServiceImpl<MaterialMapper, Material>
         IPage<Material> page = baseMapper.selectPage(pageQuery, wrapper);
         return Result.ok(page.getRecords(), page.getPages());
     }
+
+    @Override
+    public List<String> getMaterialNameByType(String type) {
+        QueryWrapper<Material> wrapper = new QueryWrapper<>();
+        wrapper.eq("type", type);
+        List<Material> materials = baseMapper.selectList(wrapper);
+        List<String> names = materials.stream().map(Material::getName).distinct().collect(Collectors.toList());
+        return names;
+    }
+
+    @Override
+    public List<String> getHouseByMaterialName(String name) {
+        QueryWrapper<Material> wrapper = new QueryWrapper<>();
+        wrapper.eq("name", name);
+        List<Material> materials = baseMapper.selectList(wrapper);
+        List<String> houseName = materials.stream().map(Material::getHouseName).distinct().collect(Collectors.toList());
+        return houseName;
+    }
+
+    @Override
+    public Material getMaterialByNameAndHouse(String name, String house) {
+        QueryWrapper<Material> wrapper = new QueryWrapper<>();
+        wrapper.eq("name", name)
+                .eq("house_name", house);
+        Material material = baseMapper.selectOne(wrapper);
+        return material;
+    }
+
 
 }
 

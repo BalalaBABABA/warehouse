@@ -1,13 +1,21 @@
 package com.abc.warehouse.controller;
 
 
+import cn.hutool.json.JSONObject;
+import com.abc.warehouse.annotation.Decrypt;
+import com.abc.warehouse.annotation.Encrypt;
+import com.abc.warehouse.annotation.JsonParam;
+import com.abc.warehouse.dto.EncryotResult;
 import com.abc.warehouse.dto.Result;
+import com.abc.warehouse.mapper.MaterialMapper;
 import com.abc.warehouse.pojo.Material;
 import com.abc.warehouse.service.HouseService;
 import com.abc.warehouse.service.MaterialService;
 import com.abc.warehouse.service.MaterialTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/material")
@@ -18,6 +26,8 @@ public class MaterialController {
     private HouseService houseService;
     @Autowired
     private MaterialTypeService materialTypeService;
+    @Autowired
+    private MaterialMapper materialMapper;
 
     @GetMapping
     public Result enter(){
@@ -79,5 +89,27 @@ public class MaterialController {
     @GetMapping("/typeName")
     public Result typeName(){
         return Result.ok(materialTypeService.typeName());
+    }
+
+    @PostMapping("/getMaterialNameByType")
+    @Encrypt
+    public Result getMaterialNameByType(@RequestBody String typeName){
+        JSONObject json = new JSONObject(typeName);
+        String name = json.getStr("typeName");
+        return EncryotResult.ok(materialService.getMaterialNameByType(name));
+    }
+
+    @PostMapping("/getHouseByMaterialName")
+    @Encrypt
+    @Decrypt
+    public Result getHouseByMaterialName(@JsonParam("name") String name){
+        return EncryotResult.ok(materialService.getHouseByMaterialName(name));
+    }
+
+    @PostMapping("/getMaterialByNameAndHouse")
+    @Encrypt
+    @Decrypt
+    public Result getMaterialByNameAndHouse(@JsonParam("name") String name, @JsonParam("house") String house){
+        return EncryotResult.ok(materialService.getMaterialByNameAndHouse(name, house));
     }
 }

@@ -20,4 +20,5 @@
         type,unit,stock,
         comments,create_time
     </sql>
+
 </mapper>

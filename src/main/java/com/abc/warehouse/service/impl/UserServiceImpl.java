@@ -1,7 +1,8 @@
 package com.abc.warehouse.service.impl;
 import com.abc.warehouse.dto.Result;
+import com.abc.warehouse.dto.UserDTO;
 import com.abc.warehouse.dto.constants.PageConstants;
-import com.abc.warehouse.utils.RegexUtils;
+import com.abc.warehouse.utils.*;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -12,10 +13,13 @@ import com.abc.warehouse.service.UserService;
 import com.abc.warehouse.mapper.UserMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
+
+import javax.annotation.Resource;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.abc.warehouse.dto.constants.PageConstants.PERMISSION_SEARCH_PAGE_SIZE;
-
+import static net.sf.jsqlparser.util.validation.metadata.NamedObject.user;
 
 
 /**
@@ -27,8 +31,14 @@ import static com.abc.warehouse.dto.constants.PageConstants.PERMISSION_SEARCH_PA
 public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         implements UserService{
 
+    @Resource
+    private GenerateID generateID;
+
+    private static final String salt = "wms@#!";
     @Override
     public Result saveUser(User user) {
+        long id = generateID.getId("2", "User");
+        user.setId(id);
         user.setPassword(DigestUtils.md5DigestAsHex("123456".getBytes()));
         if(RegexUtils.isIdNumberInvalid(user.getIdNumber())||RegexUtils.isPhoneInvalid(user.getPhone()))
         {
@@ -97,6 +107,51 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         return Result.ok();
     }
 
+    @Override
+    public Result resetPassword(User user)
+    {
+        String password = PasswordEncoder.encode("123456",salt);
+        user.setPassword(password);
+        boolean b = updateById(user);
+        return b?Result.ok():Result.fail("重置失败");
+    }
+    @Override
+    public Result updatePassword(String newPassword) {
+        UserDTO user0 = UserHolder.getUser();
+        Long userId=user0.getId();
+        // 获取用户信息
+        User user = getById(userId);
+
+        // 进行密码修改
+        String encryptedPassword = PasswordEncoder.encode(newPassword, salt);
+        user.setPassword(encryptedPassword);
+
+        // 更新用户信息
+        boolean updateResult = updateById(user);
+        return updateResult ? Result.ok() : Result.fail("密码修改失败");
+    }
+
+    @Override
+    public Result updatePhone(String newPhone,String token) {
+        Long userId = JwtUtils.getUserIdFromToken(token);
+        // 获取用户信息
+        User user = getById(userId);
+
+        user.setPhone(newPhone);
+
+        // 更新用户信息
+        boolean updateResult = updateById(user);
+        return updateResult ? Result.ok() : Result.fail("手机号修改失败");
+    }
+
+
+    @Override
+    public List<String> findAllUserName() {
+        List<String> userName = list().stream()
+                .map(user -> user.getName())
+                .collect(Collectors.toList());
+        return userName;
+    }
 }
 
 

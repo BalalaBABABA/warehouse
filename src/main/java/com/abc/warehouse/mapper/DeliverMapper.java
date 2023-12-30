@@ -2,6 +2,12 @@ package com.abc.warehouse.mapper;
 
 import com.abc.warehouse.pojo.Deliver;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.MapKey;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
 * @author 吧啦
@@ -10,6 +16,22 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 * @Entity com.abc.warehouse.pojo.Deliver
 */
 public interface DeliverMapper extends BaseMapper<Deliver> {
+    List<String> findMaterialNamesByDeliverTime(
+            @Param("startTime") Date startTime,
+            @Param("endTime") Date endTime
+
+    );
+
+    //    List<Integer> findCountByNameBetweenDates(
+//            @Param("startTime") Date startTime,
+//            @Param("endTime") Date endTime
+//    );
+
+        @MapKey("materialName")
+        List<Map<String, Object>> findCountByNameBetweenDates(
+                @Param("startTime") Date startTime,
+                @Param("endTime") Date endTime
+        );
 
 }
 
