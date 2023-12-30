@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.abc.backend_server.mapper.ResourceMapper" >
+  <resultMap id="BaseResultMap" type="com.abc.backend_server.pojo.Resource" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="uri_name" property="uri" jdbcType="VARCHAR" />
+    <result column="icon" property="icon" jdbcType="VARCHAR"></result>
+    <result column="page" property="page" jdbcType="VARCHAR"></result>
+  </resultMap>
+    <insert id="addResource">
+      INSERT INTO resource_208201302 (name,uri_name,icon,page)
+      VALUES (#{name},#{uriName},#{icon},#{page});
+
+    </insert>
+    <update id="updateResource">
+      UPDATE resource_208201302
+      <set>
+        <if test="name != null">name = #{name},</if>
+        <if test="uri != null">uri_name = #{uri},</if>
+        <if test="icon != null">icon = #{icon},</if>
+        <if test="page != null">page = #{page},</if>
+      </set>
+      WHERE id = #{id}
+    </update>
+    <delete id="delResource">
+    delete from resource_208201302 where id = #{resourceId};
+  </delete>
+  <select id="listAll" resultType="com.abc.backend_server.pojo.Resource">
+    select id,name,uri_name as uri,icon,page from resource_208201302;
+  </select>
+
+
+</mapper>

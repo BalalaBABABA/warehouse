@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.abc.backend_server.mapper.PermissionTypeUriMapper" >
+  <resultMap id="BaseResultMap" type="com.abc.backend_server.pojo.PermissionTypeUri" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="uri" property="name" jdbcType="VARCHAR" />
+  </resultMap>
+  <insert id="addUri">
+    insert into permission_type_uri_208201302(type_id,uri) values(#{typeId},#{uri})
+  </insert>
+  <update id="updateUri">
+    update permission_type_uri_208201302 set uri=#{name} where id = #{id}
+  </update>
+  <delete id="delById">
+      delete from permission_type_uri_208201302 where id =#{id}
+    </delete>
+    <delete id="delByTypeId">
+      delete from permission_type_uri_208201302 where type_id =#{typeId}
+    </delete>
+    <select id="listByTypeId" resultType="com.abc.backend_server.pojo.PermissionTypeUri">
+      select uri.id as id,uri.uri as name from
+                              permission_type_208201302 pt,permission_type_uri_208201302 uri
+      where pt.id = uri.type_id
+        and pt.id = #{typeId};
+    </select>
+</mapper>

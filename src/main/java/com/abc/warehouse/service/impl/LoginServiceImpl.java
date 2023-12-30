@@ -64,7 +64,7 @@ public class LoginServiceImpl implements LoginService {
          * 6. 返回token
          */
         //参数判空
-        if(StringUtils.isBlank(userId.toString()) || RegexUtils.isPasswordInvalid(password))
+        if(userId==null || RegexUtils.isPasswordInvalid(password))
         {
             return Result.fail(ErrorCode.PARAMS_ERROR.getMsg());
         }
