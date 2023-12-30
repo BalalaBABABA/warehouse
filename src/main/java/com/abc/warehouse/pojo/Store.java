@@ -57,6 +57,9 @@ public class Store implements Serializable {
     private String notes;
 
     @TableField(exist = false)
+    private Material material;
+
+    @TableField(exist = false)
     private static final long serialVersionUID = 1L;
 
     public Store(Long storeId, Long storeNo, String houseName, Date storeTime, Long materialId, Integer storeCount, Long userId, String notes) {

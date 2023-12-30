@@ -51,6 +51,12 @@ public class MaterialController {
         return materialService.updateMaterial(material);
     }
 
+    @GetMapping("/searchAll")
+    @Encrypt
+    public Result searchAll(){
+        return materialService.searchAll();
+    }
+
     @GetMapping("/search/{page}")
     public Result search(@PathVariable("page") Integer page){
         return materialService.materialPage(page);

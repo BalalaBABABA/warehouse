@@ -1,5 +1,6 @@
 package com.abc.warehouse.service.impl;
 
+import com.abc.warehouse.dto.EncryotResult;
 import com.abc.warehouse.dto.Result;
 import com.abc.warehouse.dto.constants.PageConstants;
 import com.abc.warehouse.utils.GenerateID;
@@ -42,6 +43,13 @@ public class MaterialServiceImpl extends ServiceImpl<MaterialMapper, Material>
     public Result updateMaterial(Material material) {
         updateById(material);
         return Result.ok();
+    }
+
+    @Override
+    public Result searchAll() {
+        QueryWrapper<Material> wrapper = new QueryWrapper<>();
+        List<Material> list = list(wrapper);
+        return EncryotResult.ok(list);
     }
 
     @Override
