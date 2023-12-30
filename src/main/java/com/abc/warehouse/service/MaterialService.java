@@ -10,6 +10,7 @@ public interface MaterialService extends IService<Material> {
     Result saveMaterial(Material material);
     Result delMaterial(Long id);
     Result updateMaterial(Material material);
+    Result updateEqualType(Material material);
     Result searchAll();
     Result materialPage(Integer curPage);
     Result materialId(Integer curPage, Long id);

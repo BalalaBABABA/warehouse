@@ -58,4 +58,14 @@ public class Material implements Serializable {
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
+
+    public Material(Long id, String name, String houseName, String type, String unit, Integer stock, String comments) {
+        this.id = id;
+        this.name = name;
+        this.houseName = houseName;
+        this.type = type;
+        this.unit = unit;
+        this.stock = stock;
+        this.comments = comments;
+    }
 }

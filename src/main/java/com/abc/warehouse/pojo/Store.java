@@ -46,6 +46,8 @@ public class Store implements Serializable {
      */
     private Integer storeCount;
 
+    private Integer remainCount;
+
     /**
      * 操作人员代码
      */

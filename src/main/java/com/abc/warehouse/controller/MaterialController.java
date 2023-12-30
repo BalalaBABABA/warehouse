@@ -46,9 +46,26 @@ public class MaterialController {
     }
 
     @PostMapping("/update")
-    public Result update(@RequestBody Material material){
+    @Encrypt
+    @Decrypt
+    public Result update(@JsonParam("id") Long id, @JsonParam("name") String name,
+                         @JsonParam("houseName") String houseName, @JsonParam("type") String type,
+                         @JsonParam("unit") String unit, @JsonParam("stock") Integer stock,
+                         @JsonParam("comments") String comments){
+        Material material = new Material(id, name, houseName, type, unit, stock, comments);
         material.setCreateTime(null);
         return materialService.updateMaterial(material);
+    }
+
+    @PostMapping("/updateEqualType")
+    @Encrypt
+    @Decrypt
+    public Result updateEqualType(@JsonParam("id") Long id, @JsonParam("name") String name,
+                                  @JsonParam("houseName") String houseName, @JsonParam("type") String type,
+                                  @JsonParam("unit") String unit, @JsonParam("stock") Integer stock,
+                                  @JsonParam("comments") String comments){
+        Material material = new Material(id, name, houseName, type, unit, stock, comments);
+        return materialService.updateEqualType(material);
     }
 
     @GetMapping("/searchAll")

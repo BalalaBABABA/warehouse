@@ -42,7 +42,22 @@ public class MaterialServiceImpl extends ServiceImpl<MaterialMapper, Material>
     @Override
     public Result updateMaterial(Material material) {
         updateById(material);
-        return Result.ok();
+        return EncryotResult.ok();
+    }
+
+    @Override
+    public Result updateEqualType(Material material) {
+        updateById(material);
+        QueryWrapper wrapper = new QueryWrapper();
+        wrapper.eq("name", material.getName());
+        List<Material> materials = list(wrapper);
+        for(Material m : materials){
+            if(!m.getHouseName().equals(material.getHouseName())){
+                m.setType(material.getType());
+                updateById(m);
+            }
+        }
+        return EncryotResult.ok();
     }
 
     @Override
