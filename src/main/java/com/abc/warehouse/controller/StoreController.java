@@ -8,6 +8,9 @@ import com.abc.warehouse.dto.constants.PageConstants;
 import com.abc.warehouse.mapper.StoreMapper;
 import com.abc.warehouse.pojo.Store;
 import com.abc.warehouse.service.StoreService;
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.injector.methods.SelectCount;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -37,7 +40,14 @@ public class StoreController {
     @GetMapping("/searchAll/{page}")
     @Encrypt
     public Result getAll(@PathVariable("page") Integer page){
-        return storeService.storePage(page);
+        List<Store> result = storeMapper.searchAll(page, PageConstants.STORE_SEARCH_PAGE_SIZE);
+        if(result != null){
+            QueryWrapper<Store> wrapper = new QueryWrapper<>();
+            Long totalPage = (storeMapper.selectCount(wrapper) + PageConstants.STORE_SEARCH_PAGE_SIZE - 1) / PageConstants.STORE_SEARCH_PAGE_SIZE ;
+            return new Result(true, "0", result, totalPage);
+        }else{
+            return new Result(false, "1", null, 0L);
+        }
     }
 
     @GetMapping("/del/{id}")
@@ -73,7 +83,6 @@ public class StoreController {
         }
         if(endTime != null && !endTime.isEmpty()){
             end = sdf.parse(endTime);
-
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(end);
             calendar.add(Calendar.DATE, 1);
@@ -84,7 +93,9 @@ public class StoreController {
                 end, materialId, userId, notes, page, PageConstants.STORE_SEARCH_PAGE_SIZE);
 
         if(result != null){
-            return new Result(true, "0", result, Long.valueOf(result.size()));
+            Long totalNum = storeMapper.totalNum(storeNo, houseName, start, end, materialId, userId, notes);
+            Long totalPage = (totalNum + PageConstants.STORE_SEARCH_PAGE_SIZE - 1) / PageConstants.STORE_SEARCH_PAGE_SIZE ;
+            return new Result(true, "0", result, totalPage);
         }else{
             return new Result(false, null, null, 0L);
         }
@@ -98,7 +109,7 @@ public class StoreController {
 
     @PostMapping("/selectStoreByDate")
     @Encrypt
-    @Decrypt//序号，入库单号，物料名（物料id），物料类型，仓库名，数量，单位，入库时间，操作人员id，备注
+    @Decrypt
     public Result selectStoreByDate(@JsonParam("year") String year, @JsonParam("month") String month){
         System.out.println("year:" + year + " month:" + month);
         Calendar calendar = Calendar.getInstance();

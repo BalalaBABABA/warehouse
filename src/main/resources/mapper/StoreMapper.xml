@@ -45,6 +45,37 @@
         limit #{pageSize} offset ${(pageNum - 1) * pageSize}
     </select>
     
+    <select id="totalNum" resultType="Long">
+        select count(*) from store_208201302 where 1 = 1
+        <if test="storeNo != null and storeNo != ''">
+            and store_no = #{storeNo}
+        </if>
+        <if test="houseName != null and houseName != ''">
+            and house_name like '%${houseName}%'
+        </if>
+        <if test="startTime != null and endTime != null">
+            and (store_time BETWEEN #{startTime} AND #{endTime})
+        </if>
+        <if test="materialId != null and materialId != ''">
+            and material_id = #{materialId}
+        </if>
+        <if test="userId != null and userId != ''">
+            AND user_id = #{userId}
+        </if>
+        <if test="notes != null and notes != ''">
+            and notes like '%${notes}%'
+        </if>
+    </select>
+
+    <select id="searchAll" resultMap="storeResult">
+        select s.*, m.*
+        from store_208201302 s
+        right join material_208201302 m on s.material_id = m.id
+        where IFNULL(s.store_time, '') != ''
+        order by s.store_time desc, s.store_no desc
+        limit #{pageSize} offset ${(pageNum - 1) * pageSize}
+    </select>
+
     <select id="selectStoreByDate" resultMap="storeResult">
         select s.*, m.*
         from store_208201302 s
