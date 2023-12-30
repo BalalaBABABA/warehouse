@@ -35,9 +35,26 @@ public class MaterialController {
     }
 
     @PostMapping("/save")
-    public Result save(@RequestBody Material material){
+    @Encrypt
+    @Decrypt
+    public Result save(@JsonParam("id") Long id, @JsonParam("name") String name,
+                       @JsonParam("houseName") String houseName, @JsonParam("type") String type,
+                       @JsonParam("unit") String unit, @JsonParam("stock") Integer stock,
+                       @JsonParam("comments") String comments){
+        Material material = new Material(id, name, houseName, type, unit, stock, comments);
         material.setCreateTime(null);
         return materialService.saveMaterial(material);
+    }
+
+    @PostMapping("/saveEqual")
+    @Encrypt
+    @Decrypt
+    public Result saveEqual(@JsonParam("id") Long id, @JsonParam("name") String name,
+                            @JsonParam("houseName") String houseName, @JsonParam("type") String type,
+                            @JsonParam("unit") String unit, @JsonParam("stock") Integer stock,
+                            @JsonParam("comments") String comments){
+        Material material = new Material(id, name, houseName, type, unit, stock, comments);
+        return materialService.saveMaterialEqual(material);
     }
 
     @GetMapping("/del/{id}")

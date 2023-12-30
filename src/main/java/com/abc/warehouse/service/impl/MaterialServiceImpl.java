@@ -12,6 +12,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.abc.warehouse.pojo.Material;
 import com.abc.warehouse.service.MaterialService;
 import com.abc.warehouse.mapper.MaterialMapper;
+import org.jfree.chart.needle.LongNeedle;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -27,10 +28,19 @@ public class MaterialServiceImpl extends ServiceImpl<MaterialMapper, Material>
 
     @Override
     public Result saveMaterial(Material material) {
-        long id = generateID.getId("3", "Material");
+        Long id = generateID.getId("3", "Material");
         material.setId(id);
         save(material);
-        return Result.ok();
+        return EncryotResult.ok();
+    }
+
+    @Override
+    public Result saveMaterialEqual(Material material) {
+        Long id = generateID.getId("3", "Material");
+        material.setId(id);
+        save(material);
+        updateEqual(material);
+        return EncryotResult.ok();
     }
 
     @Override
@@ -48,6 +58,11 @@ public class MaterialServiceImpl extends ServiceImpl<MaterialMapper, Material>
     @Override
     public Result updateEqualType(Material material) {
         updateById(material);
+        updateEqual(material);
+        return EncryotResult.ok();
+    }
+
+    private void updateEqual(Material material){
         QueryWrapper wrapper = new QueryWrapper();
         wrapper.eq("name", material.getName());
         List<Material> materials = list(wrapper);
@@ -57,7 +72,7 @@ public class MaterialServiceImpl extends ServiceImpl<MaterialMapper, Material>
                 updateById(m);
             }
         }
-        return EncryotResult.ok();
+
     }
 
     @Override

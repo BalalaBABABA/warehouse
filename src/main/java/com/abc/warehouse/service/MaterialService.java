@@ -8,6 +8,7 @@ import java.util.List;
 
 public interface MaterialService extends IService<Material> {
     Result saveMaterial(Material material);
+    Result saveMaterialEqual(Material material);
     Result delMaterial(Long id);
     Result updateMaterial(Material material);
     Result updateEqualType(Material material);
