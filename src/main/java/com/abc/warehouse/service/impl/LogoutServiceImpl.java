@@ -23,8 +23,13 @@ public class LogoutServiceImpl implements LogoutService {
     @Transactional
     public Result logout(String token) {
         /**
-         * 1.清除token
-         * 2.清除permission
+         * 1. 判断token是否为”null“
+         *      1. 是,说明还未登录,也不用管退出,直接返回ok
+         *      2. 否,继续
+         * 2. 从缓存中获得token
+         * 3. 清除token的缓存
+         * 4. 解析token中的userId
+         * 5. 根据userId清除该用户权限信息缓存
          */
         if(token.equals("null"))return Result.ok();
         String tokenJson = redisTemplate.opsForValue().getAndDelete(RedisConstants.LOGIN_USER_KEY + token);

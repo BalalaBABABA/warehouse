@@ -9,11 +9,6 @@ import java.util.List;
 
 public interface LoginService {
     Result login(Long userId,String password);
-    Result logout(String token);
-
-    UserPermission checkToken(String token);
-
     String createToken(User user);
 
-    List<String> getFreeUriList();
 }

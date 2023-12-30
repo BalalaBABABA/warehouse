@@ -7,8 +7,6 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 
 @Data
-@NoArgsConstructor
-//@AllArgsConstructor
 public class Result {
     private Boolean success;
     private int code;
@@ -17,7 +15,7 @@ public class Result {
     private Long total;
     private String aesKey;
 
-
+    public Result (){}
 
     public Result(Boolean success, String errorMsg, Object data, Long total) {
         this.success = success;
@@ -30,6 +28,14 @@ public class Result {
         this.success = success;
         this.data = data;
         this.aesKey = aesKey;
+    }
+
+    public Result(boolean success, int code, String errorMsg,Object data, Long total) {
+        this.success = success;
+        this.code = code;
+        this.errorMsg = errorMsg;
+        this.data = data;
+        this.total = total;
     }
 
     public void setAesKey(String aesKey) {
@@ -46,13 +52,7 @@ public class Result {
         return new Result(true, null, data, total);
     }
 
-//    public static Result ok(Object data,String aesKey,String publicKey){
-//        Result result = new Result();
-//        result.setSuccess(true);
-//        result.setData(data);
-//        result.setAesKey(aesKey);
-//        return result;
-//    }
+    public static Result fail(int code,String errorMsg) {return new Result(false,code,errorMsg,null,null);}
     public static Result fail(String errorMsg){
         return new Result(false, errorMsg, null, null);
     }

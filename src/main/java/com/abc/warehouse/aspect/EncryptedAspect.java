@@ -48,14 +48,28 @@ public class EncryptedAspect {
      * 匹配com.abc.warehouse.controller包下面的所有方法
      */
     @Pointcut(value = "execution(public * com.abc.warehouse.controller.*.*(..))")
-    public void safetyAspect() {
-    }
+    public void safetyAspect() {}
 
     /**
      * 环绕通知
      */
     @Around(value = "safetyAspect()")
     public Object around(ProceedingJoinPoint pjp) {
+        /**
+         * 1.判断方法是否标注 @Decrypt 或 @Encrypt
+         * （@Decrypt表示执行方法前要解密，@Encrypt表示执行方法后返回结果前要加密）
+         * 2.判断，如果是post请求且需要执行方法前解密
+         *      1.读取请求体中加密的data、加密的aesKey、前端RSA公钥
+         *      2.用后端RSA私钥解密被加密的aesKey,得到aesKey
+         *      3.用aesKey解密被加密的data
+         *      4.将data中的参数数据设置到方法的形参中
+         * 3.执行方法
+         * 4.判断，如果需要返回结果前加密
+         *      1.随机获取AES的key
+         *      2.用key加密data返回的数据
+         *      3.用前端RSA公钥加密key
+         *      4.返回结果
+         */
         try {
             ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
             assert attributes != null;
@@ -76,12 +90,6 @@ public class EncryptedAspect {
 
             //方法的形参参数类型
             Class<?>[] argsTypes = method.getParameterTypes();
-
-
-            MethodSignature signature = (MethodSignature) pjp.getSignature();
-
-            //获取到请求参数
-            Map<String, Object> fieldsName = getFieldsName(pjp);
 
             //前端公钥
             String publicKey = request.getHeader("PublicKey");
@@ -135,8 +143,6 @@ public class EncryptedAspect {
                 System.out.println("前端公钥：" + publicKey);
 
                 //后端私钥解密的到AES的key
-//                byte[] plaintext = RsaUtil.decryptByPrivateKey(Base64.decodeBase64(aesKey), RsaUtil.getPrivateKey());
-//                byte[] plaintext = RsaUtil.decryptByPrivateKey(aesKey, RsaUtil.keyStore.getPrivateKey());
                 aesKey = RsaUtil.decryptByPrivateKey(aesKey, RsaUtil.keyStore.getPrivateKey());
                 System.out.println("解密出来的AES的key：" + aesKey);
 
@@ -147,12 +153,6 @@ public class EncryptedAspect {
                 // 将解密后的数据转换为JSON对象
                 JSONObject decryptedJson = new JSONObject(decrypt);
 
-//                //设置到方法的形参中，目前只能设置只有一个参数的情况
-//                mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-//
-//                if(args.length > 0){
-//                    args[0] = mapper.readValue(decrypt, args[0].getClass());
-//                }
                 // 设置到方法的形参中
                 mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
@@ -180,11 +180,13 @@ public class EncryptedAspect {
                 }
             }
 
-            //执行并替换最新形参参数   PS：这里有一个需要注意的地方，method方法必须是要public修饰的才能设置值，private的设置不了
+            //执行并替换最新形参参数
+            //PS：这里有一个需要注意的地方，method方法必须是要public修饰的才能设置值，private的设置不了
             Object o = pjp.proceed(args);
 
             //返回结果之前加密
             if (hasEncrypt) {
+                //忽略在反序列化过程中遇到未知属性（JSON 中存在但目标对象没有对应字段）时抛出的异常。
                 mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
                 //每次响应之前随机获取AES的key，加密data数据
                 String key = AesUtil.getKey();
@@ -193,7 +195,6 @@ public class EncryptedAspect {
                 System.out.println("需要加密的data数据：" + dataString);
                 String data = AesUtil.aesEncrypt(dataString, key);
                 System.out.println("加密后的data数据：" + data);
-                //用前端的公钥来解密AES的key，并转成Base64
                 //用前端的公钥来加密AES的key，并转成Base64
                 String aesKey = RsaUtil.encryptByPublicKey(key, publicKey);
                 aesKey = aesKey.replaceAll("\\r|\\n", "");
@@ -204,7 +205,6 @@ public class EncryptedAspect {
                 result.setAesKey(aesKey);
                 o = result;
 
-//                o = Result.ok(mapper.readValue("{\"data\":\"" + data + "\",\"aesKey\":\"" + aesKey + "\"}", Object.class));
             }
 
             //返回
@@ -213,51 +213,8 @@ public class EncryptedAspect {
         } catch (Throwable e) {
             System.err.println(pjp.getSignature());
             e.printStackTrace();
-            return Result.fail("加解密异常：" + e.getMessage());
+            return Result.fail("异常：" + e.getMessage());
         }
-    }
-    /**
-     * 获取参数列表
-     *
-     * @param joinPoint
-     * @return
-     * @throws ClassNotFoundException
-     * @throws NoSuchMethodException
-     */
-    private static Map<String, Object> getFieldsName(ProceedingJoinPoint joinPoint) {
-        // 参数值
-        Object[] args = joinPoint.getArgs();
-        ParameterNameDiscoverer pnd = new DefaultParameterNameDiscoverer();
-        MethodSignature signature = (MethodSignature) joinPoint.getSignature();
-        Method method = signature.getMethod();
-        String[] parameterNames = pnd.getParameterNames(method);
-        Map<String, Object> paramMap = new HashMap<>(32);
-        for (int i = 0; i < parameterNames.length; i++) {
-            if (args[i] != null && isCustomClass(args[i].getClass())) {
-                paramMap.putAll(getFieldsAsMap(args[i]));
-            } else {
-                paramMap.put(parameterNames[i], args[i]);
-            }
-        }
-        return paramMap;
-    }
-
-    private static boolean isCustomClass(Class<?> clazz) {
-        return !clazz.getName().startsWith("java.lang");
-    }
-
-    private static Map<String, Object> getFieldsAsMap(Object obj) {
-        Map<String, Object> fieldMap = new HashMap<>();
-        Field[] fields = obj.getClass().getDeclaredFields();
-        for (Field field : fields) {
-            field.setAccessible(true);
-            try {
-                fieldMap.put(field.getName(), field.get(obj));
-            } catch (IllegalAccessException e) {
-                // 处理异常
-            }
-        }
-        return fieldMap;
     }
 
 }

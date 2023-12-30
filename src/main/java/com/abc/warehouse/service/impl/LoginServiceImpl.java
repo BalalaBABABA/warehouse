@@ -52,33 +52,42 @@ public class LoginServiceImpl implements LoginService {
     @Transactional
     public Result login(Long userId,String password) {
         /**
-         * 1. 检查参数是否合法
-         * 2. 查询数据库用户和密码，是否存在
-         * 3. 存在，查询该用户的权限，生成token，不存在，登录失败
-         * 4. token存入redis，permissions存入redis
-         * 5. 放入ThreadLocal
+         * 1. 参数判空
+         * 2. 密码加密，查询用户和密码是否匹配
+         *      1.不存在，返回账户或密码不匹配消息
+         *      2.存在，继续
+         * 3. 判断是否是超级管理员
+         *      1.超级管理员,权限list赋值为所有权限
+         *      2.普通用户,查询该用户权限,为权限list赋值,如果无权限,为权限list赋值为空list
+         * 4. 用户权限信息,存入redis
+         * 5. 生成token,存入redis
+         * 6. 返回token
          */
-        //用户权限uri的list
-        List<String> permissionList = new ArrayList<>();
-        //判空
+        //参数判空
         if(StringUtils.isBlank(userId.toString()) || RegexUtils.isPasswordInvalid(password))
         {
             return Result.fail(ErrorCode.PARAMS_ERROR.getMsg());
         }
+
+        //用户权限uri的list
+        List<String> permissionList = new ArrayList<>();
+
+        //输入密码通过算法加密
         String encodedPassword = PasswordEncoder.encode(password,salt);
-        log.info(encodedPassword);
-        // 查找该用户信息，匹配用户名和密码
+        //查找该用户信息，匹配用户名和密码
         LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(User::getId,userId)
                         .eq(User::getPassword,encodedPassword)
                                 .last("limit 1");
         User user = userService.getOne(queryWrapper);
-        //如果没查找到该用户，返回错误信息
+
+        //如果账号密码不匹配，返回错误信息
         if(user==null && userId != 9797){
             return Result.fail(ErrorCode.ACCOUNT_PWD_NOT_EXIST.getMsg());
         }
-        //查找该用户权限uri
-        //判断是否是超级管理员
+
+        //判断用户身份
+        //是超级管理员
         if(userId == 9797 && password.equals("123456")){
             //查找管理员信息
             queryWrapper = new LambdaQueryWrapper<>();
@@ -90,17 +99,16 @@ public class LoginServiceImpl implements LoginService {
         }
         //是普通用户
         else permissionList = permissionMapper.getUserTypeUriList(userId);
+
         //如果list为空，赋个emptyList
         if(permissionList.isEmpty()){
             permissionList =Collections.emptyList();
         }
+
         //权限uri存入redis
         redisTemplate.opsForValue().set(RedisConstants.PERMISSIONS_USER_KEY+userId,JSONUtil.toJsonStr(permissionList),RedisConstants.PERMISSIONS_USER_TTL,TimeUnit.SECONDS);
         //生成token
         String token = createToken(user);
-        //放入ThreadLocal
-        UserDTO userDTO = BeanUtil.copyProperties(user, UserDTO.class);
-        UserHolder.saveUser(userDTO);
 
         return Result.ok(token);
     }
@@ -113,48 +121,5 @@ public class LoginServiceImpl implements LoginService {
         redisTemplate.opsForValue().set(RedisConstants.LOGIN_USER_KEY+token, JSONUtil.toJsonStr(map),RedisConstants.LOGIN_USER_TTL, TimeUnit.SECONDS);
         return token;
     }
-
-    @Override
-    public List<String> getFreeUriList() {
-        return freeUriService.getFreeUriList();
-    }
-    
-    @Override
-    public Result logout(String token) {
-        redisTemplate.delete(RedisConstants.LOGIN_USER_KEY + token);
-        return Result.ok();
-    }
-
-    @Override
-    public UserPermission checkToken(String token) {
-        /**
-         * 1.token为空返回
-         * 2.解析失败返回
-         * 3.如果成功，从redis中读取json数据，返回UserPermission对象
-         */
-        if(StringUtils.isBlank(token))
-        {
-            return null;
-        }
-
-        Map<String,Object> stringObjectMap = JwtUtils.checkToken(token);
-
-        //解析失败
-        if(stringObjectMap==null){
-            return null;
-        }
-        //如果成功
-        String json = redisTemplate.opsForValue().get(RedisConstants.LOGIN_USER_KEY+token);
-
-        if(StringUtils.isBlank(json))
-        {
-            return null;
-        }
-
-        UserPermission userPermission = JSONUtil.toBean(json, UserPermission.class);
-
-        return userPermission;
-    }
-
 
 }
