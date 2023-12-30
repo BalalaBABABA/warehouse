@@ -81,5 +81,8 @@ public class UserController {
         return Result.ok(userService.findAllUserName());
     }
 
-
+    @GetMapping("/getAll")
+    public Result getAllUser(){
+        return Result.ok(userService.getAllUser());
+    }
 }

@@ -152,6 +152,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
                 .collect(Collectors.toList());
         return userName;
     }
+
+    @Override
+    public List<User> getAllUser() {
+        return list();
+    }
 }
 
 
