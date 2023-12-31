@@ -38,7 +38,6 @@ public class UserController {
 
     @GetMapping("/{id}")
     public Result getUserById(@PathVariable("id")Long id){
-        // 调用userService的方法实现
         return Result.ok("你好");
     }
 
@@ -56,6 +55,7 @@ public class UserController {
     public Result search(@PathVariable("page") Integer page){
         return userService.userPage(page);
     }
+
 
     @GetMapping("/searchByName/{page}/{name}")
     public Result searchByName(@PathVariable("page") Integer page, @PathVariable("name") String name){
