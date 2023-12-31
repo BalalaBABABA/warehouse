@@ -39,6 +39,7 @@
             AND d.deliver_time BETWEEN #{startYear} AND #{endYear}
         </if>
     </select>
+
     <resultMap id="deliverResult" type="com.abc.warehouse.pojo.Deliver">
         <id column="deliver_id" property="deliverId"/>
         <result column="deliver_no" property="deliverNo"/>
