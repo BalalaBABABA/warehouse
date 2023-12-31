@@ -157,6 +157,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     public List<User> getAllUser() {
         return list();
     }
+
+    public Result getNowUser(String token)
+    {
+        Long userId = JwtUtils.getUserIdFromToken(token);
+        // 获取用户信息
+        User user = getById(userId);
+        return Result.ok(user);
+    }
 }
 
 

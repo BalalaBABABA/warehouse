@@ -85,4 +85,12 @@ public class UserController {
     public Result getAllUser(){
         return Result.ok(userService.getAllUser());
     }
+
+    @GetMapping("/getNowUser")
+    public Result getNowUser(@RequestHeader("Authorization")String token)
+    {
+        return userService.getNowUser(token);
+    }
+
+
 }

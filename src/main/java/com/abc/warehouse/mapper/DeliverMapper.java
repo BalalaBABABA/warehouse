@@ -1,5 +1,6 @@
 package com.abc.warehouse.mapper;
 
+import cn.hutool.json.JSONObject;
 import com.abc.warehouse.pojo.Deliver;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.MapKey;
@@ -10,28 +11,40 @@ import java.util.List;
 import java.util.Map;
 
 /**
-* @author 吧啦
-* @description 针对表【deliver_208201302】的数据库操作Mapper
-* @createDate 2023-12-02 16:59:21
-* @Entity com.abc.warehouse.pojo.Deliver
-*/
+ * @author 吧啦
+ * @description 针对表【deliver_208201302】的数据库操作Mapper
+ * @createDate 2023-12-02 16:59:21
+ * @Entity com.abc.warehouse.pojo.Deliver
+ */
 public interface DeliverMapper extends BaseMapper<Deliver> {
-    List<String> findMaterialNamesByDeliverTime(
-            @Param("startTime") Date startTime,
-            @Param("endTime") Date endTime
 
-    );
+        List<Deliver> searchAll(@Param("pageNum") Integer page, @Param("pageSize") Integer pageSize);
+        List<Deliver> selectByCondition(@Param("deliverNo") Long deliverNo,
+                                        @Param("houseName") String houseName,
+                                        @Param("startTime") Date startTime,
+                                        @Param("endTime") Date endTime,
+                                        @Param("materialId") Long materialId,
+                                        @Param("userId") Long userId,
+                                        @Param("notes") String notes,
+                                        @Param("pageNum")Integer pageNum,
+                                        @Param("pageSize")Integer pageSize);
 
-    //    List<Integer> findCountByNameBetweenDates(
-//            @Param("startTime") Date startTime,
-//            @Param("endTime") Date endTime
-//    );
+        Long totalNum(@Param("deliverNo") Long deliverNo,
+                      @Param("houseName") String houseName,
+                      @Param("startTime") Date startTime,
+                      @Param("endTime") Date endTime,
+                      @Param("materialId") Long materialId,
+                      @Param("userId") Long userId,
+                      @Param("notes") String notes);
 
         @MapKey("materialName")
         List<Map<String, Object>> findCountByNameBetweenDates(
                 @Param("startTime") Date startTime,
                 @Param("endTime") Date endTime
         );
+
+        void callMultiDelivery(@Param("deliverList") String deliverList, @Param("resultMessage") String resultMessage);
+
 
 }
 

@@ -37,4 +37,6 @@ public interface UserService extends IService<User> {
     List<String> findAllUserName();
 
     List<User> getAllUser();
+
+    Result getNowUser(String token);
 }
