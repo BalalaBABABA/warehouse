@@ -8,6 +8,7 @@ import com.abc.warehouse.dto.Result;
 import com.abc.warehouse.mapper.DeliverMapper;
 import com.abc.warehouse.mapper.StoreMapper;
 import com.abc.warehouse.pojo.Deliver;
+import com.abc.warehouse.pojo.Store;
 import com.abc.warehouse.service.DeliverService;
 import com.abc.warehouse.service.MaterialService;
 import com.abc.warehouse.service.StoreService;
@@ -17,6 +18,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.sql.Timestamp;
 import java.text.ParseException;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 @RequestMapping("/deliver")
@@ -84,6 +87,26 @@ public class DeliverController {
 
        return deliverService.conditionSearch(storeNo,houseName,startTime,endTime,materialId,userId,notes,page);
     }
+
+    @PostMapping("/selectDeliverByDate")
+    @Encrypt
+    @Decrypt
+    public Result selectDeliverByDate(@JsonParam("year") String year, @JsonParam("month") String month){
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Integer.parseInt(year), Integer.parseInt(month) - 1, 1);
+        Date startDate = calendar.getTime();
+        calendar.add(Calendar.MONTH, 1);
+        calendar.add(Calendar.DATE, -1);
+        Date endDate = calendar.getTime();
+
+        List<Deliver> result = deliverMapper.selectDeliverByDate(startDate, endDate);
+        if(result != null){
+            return new Result(true, "0", result, Long.valueOf(result.size()));
+        }else{
+            return new Result(false, null, null, 0L);
+        }
+    }
+
     @PostMapping("/deliverByYear")
     @Encrypt
     @Decrypt

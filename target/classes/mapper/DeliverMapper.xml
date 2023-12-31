@@ -22,6 +22,14 @@
         remain_count,user_id,notes
     </sql>
 
+    <select id="selectDeliverByDate" resultMap="deliverResult">
+        select d.*, m.*
+        from deliver_208201302 d
+                 right join material_208201302 m on d.material_id = m.id
+        where (d.deliver_time between #{startDate} and #{endDate})
+        order by d.deliver_no asc
+    </select>
+
     <select id="selectDeliverByYear" resultType="com.abc.warehouse.pojo.Deliver">
         select *
         from deliver_208201302
@@ -47,6 +55,7 @@
         <result column="deliver_time" property="deliverTime"/>
         <result column="material_id" property="materialId"/>
         <result column="deliver_count" property="deliverCount"/>
+        <result column="remain_count" property="remainCount"/>
         <result column="user_id" property="userId"/>
         <result column="notes" property="notes"/>
         <association property="material" javaType="com.abc.warehouse.pojo.Material">
