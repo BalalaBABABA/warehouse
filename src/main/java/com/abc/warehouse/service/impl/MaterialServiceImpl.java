@@ -3,6 +3,7 @@ package com.abc.warehouse.service.impl;
 import com.abc.warehouse.dto.EncryotResult;
 import com.abc.warehouse.dto.Result;
 import com.abc.warehouse.dto.constants.PageConstants;
+import com.abc.warehouse.pojo.Store;
 import com.abc.warehouse.utils.GenerateID;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -12,6 +13,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.abc.warehouse.pojo.Material;
 import com.abc.warehouse.service.MaterialService;
 import com.abc.warehouse.mapper.MaterialMapper;
+import org.jfree.chart.needle.LongNeedle;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -27,10 +29,19 @@ public class MaterialServiceImpl extends ServiceImpl<MaterialMapper, Material>
 
     @Override
     public Result saveMaterial(Material material) {
-        long id = generateID.getId("3", "Material");
+        Long id = generateID.getId("3", "Material");
         material.setId(id);
         save(material);
-        return Result.ok();
+        return EncryotResult.ok();
+    }
+
+    @Override
+    public Result saveMaterialEqual(Material material) {
+        Long id = generateID.getId("3", "Material");
+        material.setId(id);
+        save(material);
+        updateEqual(material);
+        return EncryotResult.ok();
     }
 
     @Override
@@ -42,7 +53,27 @@ public class MaterialServiceImpl extends ServiceImpl<MaterialMapper, Material>
     @Override
     public Result updateMaterial(Material material) {
         updateById(material);
-        return Result.ok();
+        return EncryotResult.ok();
+    }
+
+    @Override
+    public Result updateEqualType(Material material) {
+        updateById(material);
+        updateEqual(material);
+        return EncryotResult.ok();
+    }
+
+    private void updateEqual(Material material){
+        QueryWrapper wrapper = new QueryWrapper();
+        wrapper.eq("name", material.getName());
+        List<Material> materials = list(wrapper);
+        for(Material m : materials){
+            if(!m.getHouseName().equals(material.getHouseName())){
+                m.setType(material.getType());
+                updateById(m);
+            }
+        }
+
     }
 
     @Override
@@ -136,7 +167,13 @@ public class MaterialServiceImpl extends ServiceImpl<MaterialMapper, Material>
         return material;
     }
 
-
+    @Override
+    public Material houseByYearAndName(String year, String name) {
+        QueryWrapper wrapper = new QueryWrapper();
+//        List<String> stores = wrapper.between("store_time", year + "-01-01 00:00:00", year + "-12-31 00:00:00")
+//                .select("house_name");
+        return null;
+    }
 }
 
 

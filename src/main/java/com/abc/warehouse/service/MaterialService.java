@@ -8,8 +8,10 @@ import java.util.List;
 
 public interface MaterialService extends IService<Material> {
     Result saveMaterial(Material material);
+    Result saveMaterialEqual(Material material);
     Result delMaterial(Long id);
     Result updateMaterial(Material material);
+    Result updateEqualType(Material material);
     Result searchAll();
     Result materialPage(Integer curPage);
     Result materialId(Integer curPage, Long id);
@@ -20,4 +22,5 @@ public interface MaterialService extends IService<Material> {
     List<String> getMaterialNameByType(String type);
     List<String> getHouseByMaterialName(String name);
     Material getMaterialByNameAndHouse(String name, String house);
+    Material houseByYearAndName(String year, String name);
 }

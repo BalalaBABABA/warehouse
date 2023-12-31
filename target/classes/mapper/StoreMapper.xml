@@ -5,20 +5,21 @@
 <mapper namespace="com.abc.warehouse.mapper.StoreMapper">
 
     <resultMap id="BaseResultMap" type="com.abc.warehouse.pojo.Store">
-        <id property="storeId" column="store_id" jdbcType="BIGINT"/>
-        <result property="storeNo" column="store_no" jdbcType="BIGINT"/>
-        <result property="houseName" column="house_name" jdbcType="VARCHAR"/>
-        <result property="storeTime" column="store_time" jdbcType="DATE"/>
-        <result property="materialId" column="material_id" jdbcType="BIGINT"/>
-        <result property="storeCount" column="store_count" jdbcType="INTEGER"/>
-        <result property="userId" column="user_id" jdbcType="BIGINT"/>
-        <result property="notes" column="notes" jdbcType="VARCHAR"/>
+            <id property="storeId" column="store_id" jdbcType="BIGINT"/>
+            <result property="storeNo" column="store_no" jdbcType="BIGINT"/>
+            <result property="houseName" column="house_name" jdbcType="VARCHAR"/>
+            <result property="storeTime" column="store_time" jdbcType="DATE"/>
+            <result property="materialId" column="material_id" jdbcType="BIGINT"/>
+            <result property="storeCount" column="store_count" jdbcType="INTEGER"/>
+            <result property="remainCount" column="remain_count" jdbcType="INTEGER"/>
+            <result property="userId" column="user_id" jdbcType="BIGINT"/>
+            <result property="notes" column="notes" jdbcType="VARCHAR"/>
     </resultMap>
 
     <sql id="Base_Column_List">
         store_id,store_no,house_name,
         store_time,material_id,store_count,
-        user_id,notes
+        remain_count,user_id,notes
     </sql>
 
     <resultMap id="storeResult" type="com.abc.warehouse.pojo.Store">
@@ -28,6 +29,7 @@
         <result column="store_time" property="storeTime"/>
         <result column="material_id" property="materialId"/>
         <result column="store_count" property="storeCount"/>
+        <result column="remain_count" property="remainCount"/>
         <result column="user_id" property="userId"/>
         <result column="notes" property="notes"/>
         <association property="material" javaType="com.abc.warehouse.pojo.Material">
@@ -92,17 +94,35 @@
     <select id="searchAll" resultMap="storeResult">
         select *
         from store_208201302 s
-                 right join material_208201302 m on s.material_id = m.id
+        right join material_208201302 m on s.material_id = m.id
         where IFNULL(s.store_time, '') != ''
         order by s.store_time desc, s.store_no desc
-            limit #{pageSize} offset ${(pageNum - 1) * pageSize}
+        limit #{pageSize} offset ${(pageNum - 1) * pageSize}
     </select>
 
     <select id="selectStoreByDate" resultMap="storeResult">
         select s.*, m.*
         from store_208201302 s
-                 right join material_208201302 m on s.material_id = m.id
+        right join material_208201302 m on s.material_id = m.id
         where (s.store_time between #{startDate} and #{endDate})
         order by s.store_no asc
+    </select>
+
+    <select id="selectStoreByYear" resultType="com.abc.warehouse.pojo.Store">
+        select *
+        from store_208201302
+        where material_id = #{materialId} and house_name = #{houseName}
+        and store_time between #{startYear} and #{endYear}
+        order by store_time asc
+    </select>
+
+    <select id="selectStoreByYearAndMaterialName" resultType="com.abc.warehouse.pojo.Store">
+        SELECT *
+        FROM store_208201302 s
+        INNER JOIN material_208201302 m ON s.material_id = m.id
+        WHERE m.name = #{materialName}
+        <if test="startYear != null and endYear != null">
+            AND s.store_time BETWEEN #{startYear} AND #{endYear}
+        </if>
     </select>
 </mapper>

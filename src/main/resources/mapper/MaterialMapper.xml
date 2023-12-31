@@ -21,4 +21,15 @@
         comments,create_time
     </sql>
 
+    <select id="ifStore" resultType="Integer">
+        select count(*)
+        from store_208201302
+        where material_id = #{materialId};
+    </select>
+
+    <select id="ifDeliver" resultType="Integer">
+        select count(*)
+        from deliver_208201302
+        where material_id = #{materialId};
+    </select>
 </mapper>

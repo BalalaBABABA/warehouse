@@ -1,5 +1,6 @@
 package com.abc.warehouse.mapper;
 
+import com.abc.warehouse.annotation.JsonParam;
 import com.abc.warehouse.pojo.Material;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Param;
@@ -13,7 +14,8 @@ import java.util.List;
 * @Entity com.abc.warehouse.pojo.Material
 */
 public interface MaterialMapper extends BaseMapper<Material> {
-
+    Integer ifStore(@JsonParam("materialId") Long materialId);
+    Integer ifDeliver(@JsonParam("materialId") Long materialId);
 }
 
 

@@ -1,5 +1,6 @@
 package com.abc.warehouse.mapper;
 
+import com.abc.warehouse.annotation.JsonParam;
 import com.abc.warehouse.pojo.Store;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Options;
@@ -43,4 +44,10 @@ public interface StoreMapper extends BaseMapper<Store> {
     void callSimpleStore(Map<String, Object> params);
 
     List<Store> selectStoreByDate(@Param("startDate") Date startDate, @Param("endDate") Date endDate);
+
+    List<Store> selectStoreByYear(@Param("startYear") Date startYear, @Param("endYear") Date endYear,
+                                  @Param("materialId") Long materialId, @Param("houseName") String houseName);
+
+    List<Store> selectStoreByYearAndMaterialName(@Param("startYear") Date startYear, @Param("endYear") Date endYear,
+                                                 @Param("materialName") String materialName);
 }
