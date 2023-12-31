@@ -18,6 +18,8 @@ import java.util.Map;
  */
 public interface DeliverMapper extends BaseMapper<Deliver> {
 
+        List<Deliver> selectDeliverByYearAndMaterialName(@Param("startYear") Date startYear, @Param("endYear") Date endYear,
+                                                         @Param("materialName") String materialName);
         List<Deliver> searchAll(@Param("pageNum") Integer page, @Param("pageSize") Integer pageSize);
         List<Deliver> selectByCondition(@Param("deliverNo") Long deliverNo,
                                         @Param("houseName") String houseName,

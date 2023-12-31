@@ -119,4 +119,13 @@
                 #{resultMessage, mode=OUT, jdbcType=VARCHAR}
               )}
     </select>
+    <select id="selectDeliverByYearAndMaterialName" resultType="com.abc.warehouse.pojo.Deliver">
+        SELECT *
+        FROM deliver_208201302 d
+        INNER JOIN material_208201302 m ON d.material_id = m.id
+        WHERE m.name = #{materialName}
+        <if test="startYear != null and endYear != null">
+            AND d.deliver_time BETWEEN #{startYear} AND #{endYear}
+        </if>
+    </select>
 </mapper>
