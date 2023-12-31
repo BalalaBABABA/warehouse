@@ -107,4 +107,22 @@
         where (s.store_time between #{startDate} and #{endDate})
         order by s.store_no asc
     </select>
+
+    <select id="selectStoreByYear" resultType="com.abc.warehouse.pojo.Store">
+        select *
+        from store_208201302
+        where material_id = #{materialId} and house_name = #{houseName}
+        and store_time between #{startYear} and #{endYear}
+        order by store_time asc
+    </select>
+
+    <select id="selectStoreByYearAndMaterialName" resultType="com.abc.warehouse.pojo.Store">
+        SELECT *
+        FROM store_208201302 s
+        INNER JOIN material_208201302 m ON s.material_id = m.id
+        WHERE m.name = #{materialName}
+        <if test="startYear != null and endYear != null">
+            AND s.store_time BETWEEN #{startYear} AND #{endYear}
+        </if>
+    </select>
 </mapper>

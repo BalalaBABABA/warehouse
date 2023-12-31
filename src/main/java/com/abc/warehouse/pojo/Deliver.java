@@ -46,7 +46,7 @@ public class Deliver implements Serializable {
      */
     private Integer deliverCount;
 
-    private Integer remainCount;
+    private Integer remainCount = 0;
 
     /**
      * 操作人员代码

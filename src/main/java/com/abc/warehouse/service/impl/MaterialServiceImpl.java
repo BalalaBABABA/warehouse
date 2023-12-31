@@ -3,6 +3,7 @@ package com.abc.warehouse.service.impl;
 import com.abc.warehouse.dto.EncryotResult;
 import com.abc.warehouse.dto.Result;
 import com.abc.warehouse.dto.constants.PageConstants;
+import com.abc.warehouse.pojo.Store;
 import com.abc.warehouse.utils.GenerateID;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -166,7 +167,13 @@ public class MaterialServiceImpl extends ServiceImpl<MaterialMapper, Material>
         return material;
     }
 
-
+    @Override
+    public Material houseByYearAndName(String year, String name) {
+        QueryWrapper wrapper = new QueryWrapper();
+//        List<String> stores = wrapper.between("store_time", year + "-01-01 00:00:00", year + "-12-31 00:00:00")
+//                .select("house_name");
+        return null;
+    }
 }
 
 

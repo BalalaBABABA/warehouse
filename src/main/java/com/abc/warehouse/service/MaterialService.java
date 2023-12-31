@@ -22,4 +22,5 @@ public interface MaterialService extends IService<Material> {
     List<String> getMaterialNameByType(String type);
     List<String> getHouseByMaterialName(String name);
     Material getMaterialByNameAndHouse(String name, String house);
+    Material houseByYearAndName(String year, String name);
 }

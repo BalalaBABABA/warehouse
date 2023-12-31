@@ -1,21 +1,29 @@
 package com.abc.warehouse.controller;
 
 
+import cn.hutool.core.date.DateTime;
 import cn.hutool.json.JSONObject;
 import com.abc.warehouse.annotation.Decrypt;
 import com.abc.warehouse.annotation.Encrypt;
 import com.abc.warehouse.annotation.JsonParam;
 import com.abc.warehouse.dto.EncryotResult;
 import com.abc.warehouse.dto.Result;
+import com.abc.warehouse.mapper.DeliverMapper;
 import com.abc.warehouse.mapper.MaterialMapper;
+import com.abc.warehouse.mapper.StoreMapper;
+import com.abc.warehouse.pojo.Deliver;
 import com.abc.warehouse.pojo.Material;
+import com.abc.warehouse.pojo.Store;
 import com.abc.warehouse.service.HouseService;
 import com.abc.warehouse.service.MaterialService;
 import com.abc.warehouse.service.MaterialTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Timestamp;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/material")
@@ -28,6 +36,10 @@ public class MaterialController {
     private MaterialTypeService materialTypeService;
     @Autowired
     private MaterialMapper materialMapper;
+    @Autowired
+    private StoreMapper storeMapper;
+    @Autowired
+    private DeliverMapper deliverMapper;
 
     @GetMapping
     public Result enter(){
@@ -150,6 +162,57 @@ public class MaterialController {
     @Encrypt
     @Decrypt
     public Result getMaterialByNameAndHouse(@JsonParam("name") String name, @JsonParam("house") String house){
-        return EncryotResult.ok(materialService.getMaterialByNameAndHouse(name, house));
+        Material material = materialService.getMaterialByNameAndHouse(name, house);
+        if(material == null){
+            return new Result(false, null, null, 0L);
+        }
+        return EncryotResult.ok(material);
+    }
+
+    @GetMapping("/ifStoreOrDeliver/{materialId}")
+    @Encrypt
+    public Result ifStoreOrDeliver(@PathVariable("materialId") Long materialId){
+        if(materialMapper.ifStore(materialId) > 0 || materialMapper.ifDeliver(materialId) > 0){
+            return EncryotResult.ok(true);
+        }
+        return EncryotResult.ok(false);
+    }
+
+    @GetMapping("/houseByYearAndName")
+    @Encrypt
+    @Decrypt
+    public Result houseByYearAndName(@JsonParam("year") String year, @JsonParam("name") String name){
+        return null;
+    }
+
+    @PostMapping("/houseByYearAndMaterialName")
+    @Encrypt
+    @Decrypt
+    public Result houseByYearAndMaterialName(@JsonParam("Year") String year,@JsonParam("MaterialName") String materialName){
+        String start = "1970";
+        String end = String.valueOf(DateTime.now().year());
+        if(year != null && !year.equals("")){
+            start = year;
+            end = year;
+        }
+        Timestamp startYear = Timestamp.valueOf(start + "-01-01 00:00:00");
+        Timestamp endYear = Timestamp.valueOf(end + "-12-31 23:59:59");
+        List<Store> stores = storeMapper.selectStoreByYearAndMaterialName(startYear, endYear, materialName);
+        List<Deliver> delivers = deliverMapper.selectDeliverByYearAndMaterialName(startYear, endYear, materialName);
+        Set<String> houses = new HashSet<>();
+        if(stores.size() > 0){
+            for(Store store : stores){
+                houses.add(store.getHouseName());
+            }
+        }
+        if(delivers.size() > 0){
+            for(Deliver deliver : delivers){
+                houses.add(deliver.getHouseName());
+            }
+        }
+        if(houses.size() > 0){
+            return new Result(true, "0", houses, Long.valueOf(houses.size()));
+        }
+        return new Result(false, null, null, 0L);
     }
 }

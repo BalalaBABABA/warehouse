@@ -5,8 +5,11 @@ import com.abc.warehouse.annotation.Encrypt;
 import com.abc.warehouse.annotation.JsonParam;
 import com.abc.warehouse.dto.Result;
 import com.abc.warehouse.dto.constants.PageConstants;
+import com.abc.warehouse.mapper.MaterialMapper;
 import com.abc.warehouse.mapper.StoreMapper;
 import com.abc.warehouse.pojo.Store;
+import com.abc.warehouse.service.MaterialService;
+import com.abc.warehouse.service.MaterialTypeService;
 import com.abc.warehouse.service.StoreService;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -14,6 +17,7 @@ import com.baomidou.mybatisplus.core.injector.methods.SelectCount;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -28,6 +32,8 @@ public class StoreController {
     private StoreService storeService;
     @Autowired
     private StoreMapper storeMapper;
+    @Autowired
+    private MaterialService materialService;
 
     @GetMapping
     public Result enter(){
@@ -125,6 +131,20 @@ public class StoreController {
         }else{
             return new Result(false, null, null, 0L);
         }
+    }
+
+    @PostMapping("/storeByYear")
+    @Encrypt
+    @Decrypt
+    public Result storeByYear(@JsonParam("Year") String year, @JsonParam("id") Long materialId,
+                              @JsonParam("HouseName") String houseName){
+        Timestamp startYear = Timestamp.valueOf(year + "-01-01 00:00:00");
+        Timestamp endYear = Timestamp.valueOf(year + "-12-31 23:59:59");
+        List<Store> stores = storeMapper.selectStoreByYear(startYear, endYear, materialId, houseName);
+        if(stores != null){
+            return new Result(true, "0", stores, Long.valueOf(stores.size()));
+        }
+        return new Result(false, null, null, 0L);
     }
 
 }

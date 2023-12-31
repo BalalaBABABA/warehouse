@@ -21,4 +21,22 @@
         deliver_time,material_id,deliver_count,
         remain_count,user_id,notes
     </sql>
+
+    <select id="selectDeliverByYear" resultType="com.abc.warehouse.pojo.Deliver">
+        select *
+        from deliver_208201302
+        where material_id = #{materialId} and house_name = #{houseName}
+        and deliver_time between #{startYear} and #{endYear}
+        order by deliver_time asc
+    </select>
+
+    <select id="selectDeliverByYearAndMaterialName" resultType="com.abc.warehouse.pojo.Deliver">
+        SELECT *
+        FROM deliver_208201302 d
+        INNER JOIN material_208201302 m ON d.material_id = m.id
+        WHERE m.name = #{materialName}
+        <if test="startYear != null and endYear != null">
+            AND d.deliver_time BETWEEN #{startYear} AND #{endYear}
+        </if>
+    </select>
 </mapper>

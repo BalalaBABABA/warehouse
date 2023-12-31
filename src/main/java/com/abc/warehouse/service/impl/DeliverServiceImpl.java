@@ -10,6 +10,7 @@ import com.abc.warehouse.pojo.Deliver;
 import com.abc.warehouse.service.DeliverService;
 import com.abc.warehouse.mapper.DeliverMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PostMapping;
 
 /**
 * @author 吧啦
@@ -27,6 +28,7 @@ public class DeliverServiceImpl extends ServiceImpl<DeliverMapper, Deliver>
         System.out.println(page);
         return Result.ok(page.getRecords(), page.getPages());
     }
+
 
 }
 

@@ -2,6 +2,10 @@ package com.abc.warehouse.mapper;
 
 import com.abc.warehouse.pojo.Deliver;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.Date;
+import java.util.List;
 
 /**
 * @author 吧啦
@@ -10,7 +14,11 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 * @Entity com.abc.warehouse.pojo.Deliver
 */
 public interface DeliverMapper extends BaseMapper<Deliver> {
+    List<Deliver> selectDeliverByYear(@Param("startYear") Date startYear, @Param("endYear") Date endYear,
+                                      @Param("materialId") Long materialId, @Param("houseName") String houseName);
 
+    List<Deliver> selectDeliverByYearAndMaterialName(@Param("startYear") Date startYear, @Param("endYear") Date endYear,
+                                                     @Param("materialName") String materialName);
 }
 
 
