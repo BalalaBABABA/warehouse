@@ -59,8 +59,20 @@ public class Deliver implements Serializable {
     private String notes;
 
     @TableField(exist = false)
-    private Integer stock;
+    private Material material;
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
+
+    public Deliver(Long storeId, Long storeNo, String houseName, Date storeTime, Long materialId, Integer storeCount, Long userId, String notes) {
+        this.deliverId = storeId;
+        this.deliverNo = storeNo;
+        this.houseName = houseName;
+        this.deliverTime = storeTime;
+        this.materialId = materialId;
+        this.deliverCount = storeCount;
+        this.userId = userId;
+        this.notes = notes;
+    }
+    public Deliver(){}
 }

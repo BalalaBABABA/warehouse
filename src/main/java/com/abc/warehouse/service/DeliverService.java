@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.text.ParseException;
 import java.util.Date;
+import java.util.List;
 
 /**
 * @author 吧啦
@@ -18,4 +19,12 @@ public interface DeliverService extends IService<Deliver> {
     Result findMaterialNamesByDeliverTime(String startTime, String endTime) throws ParseException;
 
     Result findCountByNameBetweenDates(String startTime, String endTime) throws ParseException;
+
+    Result MultiDelivery(List<Deliver> list);
+
+    Result getAll(Integer page);
+    Result conditionSearch(Long storeNo, String houseName, String startTime,String endTime,
+                           Long materialId, Long userId,
+                           String notes,Integer page) throws ParseException;
+
 }
