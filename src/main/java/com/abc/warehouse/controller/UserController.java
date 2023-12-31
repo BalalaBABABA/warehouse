@@ -1,6 +1,7 @@
 package com.abc.warehouse.controller;
 
 
+import com.abc.warehouse.annotation.Encrypt;
 import com.abc.warehouse.dto.Result;
 import com.abc.warehouse.pojo.Material;
 import com.abc.warehouse.pojo.User;
@@ -51,18 +52,22 @@ public class UserController {
         return userService.getTotalPage();
     }
 
+
     @GetMapping("/search/{page}")
+    @Encrypt
     public Result search(@PathVariable("page") Integer page){
         return userService.userPage(page);
     }
 
 
     @GetMapping("/searchByName/{page}/{name}")
+    @Encrypt
     public Result searchByName(@PathVariable("page") Integer page, @PathVariable("name") String name){
         return userService.searchByName(page, name);
     }
 
     @GetMapping("/searchById/{page}/{id}")
+    @Encrypt
     public Result searchById(@PathVariable("page") Integer page, @PathVariable("id") Long id){
         return userService.searchById(page, id);
     }
