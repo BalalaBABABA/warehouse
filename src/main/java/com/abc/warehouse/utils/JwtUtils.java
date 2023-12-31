@@ -10,10 +10,6 @@ public class JwtUtils {
     //随机密钥
     private static String secretKey = generateRandomKey();
 
-//    public static String getSecretKey(){
-//        return secretKey;
-//    }
-
     public static void setSecretKey(String newSecretKey){
         secretKey = newSecretKey;
     }
@@ -28,8 +24,6 @@ public class JwtUtils {
         new SecureRandom().nextBytes(key);
         return Base64.getEncoder().encodeToString(key);
     }
-//    //密钥
-//    private static final String jwtToken = "123456wms!@#ss";
 
     public static String createToken(Long userId){
         Map<String,Object> claims = new HashMap<>();
@@ -39,7 +33,7 @@ public class JwtUtils {
                 .signWith(SignatureAlgorithm.HS256,secretKey) //签发算法，密钥为jwtToken
                 .setClaims(claims) //body数据，要唯一，自己设置
                 .setIssuedAt(new Date()) //设置签发时间
-                .setExpiration(new Date(System.currentTimeMillis()+24*60*60*60*1000)); //一天过期时间
+                .setExpiration(new Date(System.currentTimeMillis()+2*24*60*60*60*1000)); //两天过期时间
         String token =jwtBuilder.compact();
         return token;
     }

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.abc.backend_server.mapper.FreeUriMapper" >
+
+  <resultMap id="BaseResultMap" type="com.abc.backend_server.pojo.FreeUri">
+    <id property="id" column="id" jdbcType="INTEGER"/>
+    <result property="uri" column="uri" jdbcType="VARCHAR"/>
+  </resultMap>
+    <update id="updateFreeUri">
+        update free_uri_208201302 set uri = #{uri} where id = #{id}
+    </update>
+    <delete id="delFreeUriList">
+        delete from free_uri_208201302 where id in
+        <foreach collection="list" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+
+    <select id="getFreeUriList" resultType="com.abc.backend_server.pojo.FreeUri">
+    select id,uri from free_uri_208201302;
+  </select>
+
+  <insert id="delByResourceId">
+    insert into free_uri_208201302(uri)
+      (select uri.uri
+       from permission_type_208201302 pt,
+            permission_type_uri_208201302 uri,
+            resource_208201302 r
+       where pt.id = uri.type_id
+         and r.id = pt.resource_id
+         and r.id = #{resourceId}
+         AND uri NOT IN (SELECT uri FROM free_uri_208201302));
+  </insert>
+
+  <insert id="delByPermissionId">
+    insert into free_uri_208201302(uri)
+      (select uri.uri
+       from permission_type_208201302 pt,
+            permission_type_uri_208201302 uri
+       where pt.id = uri.type_id
+         and pt.id = #{permissionId}
+         AND uri NOT IN (SELECT uri FROM free_uri_208201302))
+  </insert>
+
+  <insert id="delByUriId">
+    insert into free_uri_208201302(uri)
+    select uri from permission_type_uri_208201302 where id = #{uriId}
+    AND uri NOT IN (SELECT uri FROM free_uri_208201302);
+  </insert>
+    <insert id="addFreeUri">
+        insert into free_uri_208201302(uri) values (#{uri})
+    </insert>
+
+</mapper>

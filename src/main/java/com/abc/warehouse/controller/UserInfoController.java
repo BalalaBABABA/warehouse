@@ -1,8 +1,11 @@
 package com.abc.warehouse.controller;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.abc.warehouse.dto.Result;
 import com.abc.warehouse.dto.UserDTO;
+import com.abc.warehouse.pojo.User;
 import com.abc.warehouse.service.UserService;
+import com.abc.warehouse.utils.JwtUtils;
 import com.abc.warehouse.utils.UserHolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -19,9 +22,11 @@ public class UserInfoController {
     }
 
     @GetMapping("/show")
-    public Result showById(){
-        UserDTO user = UserHolder.getUser();
-        return Result.ok(UserHolder.getUser());
+    public Result showById(@RequestHeader("Authorization")String token){
+        Long userId = JwtUtils.getUserIdFromToken(token);
+        User user = userService.getById(userId);
+        UserDTO userDTO = BeanUtil.copyProperties(user, UserDTO.class);
+        return Result.ok(userDTO);
     }
     @GetMapping("/updatePassword/{newPassword}")
     public Result updatePassword(@PathVariable("newPassword") String newPassword){
@@ -32,6 +37,4 @@ public class UserInfoController {
         System.out.println("updatePhone");
         return userService.updatePhone(newPhone,token);
     }
-
-
 }

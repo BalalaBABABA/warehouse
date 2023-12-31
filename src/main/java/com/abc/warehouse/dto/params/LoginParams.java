@@ -7,6 +7,4 @@ import lombok.Data;
 public class LoginParams {
     private Long userId;
     private String password;
-
-    private String nickName;
 }

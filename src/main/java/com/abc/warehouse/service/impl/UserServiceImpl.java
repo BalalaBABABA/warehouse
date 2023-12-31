@@ -59,8 +59,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     @Override
     public Result userPage(Integer curPage) {
         LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<>();  //查询条件构造器
-        IPage<User> pageQuery = new Page<>(curPage, PageConstants.MATERIAL_SEARCH_PAGE_SIZE);
+        IPage<User> pageQuery = new Page<>(curPage, PageConstants.USER_SEARCH_PAGE_SIZE);
         IPage<User> page = baseMapper.selectPage(pageQuery, wrapper);
+        System.out.println(page.getRecords().toString());
         return Result.ok(page.getRecords(), page.getPages());
     }
 
@@ -81,8 +82,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     @Override
     public Result searchByName(Integer curPage, String name) {
         QueryWrapper<User> wrapper = new QueryWrapper();
-        wrapper.eq("name", name);
-        IPage<User> pageQuery = new Page((long)curPage, (long) PageConstants.MATERIAL_SEARCH_PAGE_SIZE);
+        wrapper.like("name", name);
+        IPage<User> pageQuery = new Page((long)curPage, (long) PageConstants.USER_SEARCH_PAGE_SIZE);
         IPage<User> page = ((UserMapper)this.baseMapper).selectPage(pageQuery, wrapper);
         return Result.ok(page.getRecords(), page.getPages());
     }
@@ -91,7 +92,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     public Result searchById(Integer curPage, Long id) {
         QueryWrapper<User> wrapper = new QueryWrapper();
         wrapper.eq("id", id);
-        IPage<User> pageQuery = new Page((long)curPage, (long)PageConstants.MATERIAL_SEARCH_PAGE_SIZE);
+        IPage<User> pageQuery = new Page((long)curPage, (long)PageConstants.USER_SEARCH_PAGE_SIZE);
         IPage<User> page = ((UserMapper)this.baseMapper).selectPage(pageQuery, wrapper);
         return Result.ok(page.getRecords(), page.getPages());
     }
@@ -151,6 +152,19 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
                 .map(user -> user.getName())
                 .collect(Collectors.toList());
         return userName;
+    }
+
+    @Override
+    public List<User> getAllUser() {
+        return list();
+    }
+
+    public Result getNowUser(String token)
+    {
+        Long userId = JwtUtils.getUserIdFromToken(token);
+        // 获取用户信息
+        User user = getById(userId);
+        return Result.ok(user);
     }
 }
 

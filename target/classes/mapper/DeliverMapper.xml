@@ -39,4 +39,101 @@
             AND d.deliver_time BETWEEN #{startYear} AND #{endYear}
         </if>
     </select>
+    <resultMap id="deliverResult" type="com.abc.warehouse.pojo.Deliver">
+        <id column="deliver_id" property="deliverId"/>
+        <result column="deliver_no" property="deliverNo"/>
+        <result column="house_name" property="houseName"/>
+        <result column="deliver_time" property="deliverTime"/>
+        <result column="material_id" property="materialId"/>
+        <result column="deliver_count" property="deliverCount"/>
+        <result column="user_id" property="userId"/>
+        <result column="notes" property="notes"/>
+        <association property="material" javaType="com.abc.warehouse.pojo.Material">
+            <id column="id" property="id"/>
+            <result column="name" property="name"/>
+            <result column="house_name" property="houseName"/>
+            <result column="type" property="type"/>
+            <result column="unit" property="unit"/>
+            <result column="stock" property="stock"/>
+            <result column="comments" property="comments"/>
+            <result column="create_time" property="createTime"/>
+        </association>
+    </resultMap>
+
+    <select id="selectByCondition" resultMap="deliverResult">
+        select * from deliver_208201302 s right join material_208201302 m on s.material_id = m.id
+        where 1 = 1
+        <if test="deliverNo != null and deliverNo != ''">
+            and deliver_no = #{deliverNo}
+        </if>
+        <if test="houseName != null and houseName != ''">
+            and house_name like '%${houseName}%'
+        </if>
+        <if test="startTime != null and endTime != null">
+            and (deliver_time BETWEEN #{startTime} AND #{endTime})
+        </if>
+        <if test="materialId != null and materialId != ''">
+            and material_id = #{materialId}
+        </if>
+        <if test="userId != null and userId != ''">
+            AND user_id = #{userId}
+        </if>
+        <if test="notes != null and notes != ''">
+            and notes like '%${notes}%'
+        </if>
+        ORDER BY deliver_time DESC, deliver_no DESC
+        limit #{pageSize} offset ${(pageNum - 1) * pageSize}
+    </select>
+
+    <select id="totalNum" resultType="Long">
+        select count(*) from deliver_208201302 where 1 = 1
+        <if test="deliverNo != null and deliverNo != ''">
+            and deliver_no = #{deliverNo}
+        </if>
+        <if test="houseName != null and houseName != ''">
+            and house_name like '%${houseName}%'
+        </if>
+        <if test="startTime != null and endTime != null">
+            and (deliver_time BETWEEN #{startTime} AND #{endTime})
+        </if>
+        <if test="materialId != null and materialId != ''">
+            and material_id = #{materialId}
+        </if>
+        <if test="userId != null and userId != ''">
+            AND user_id = #{userId}
+        </if>
+        <if test="notes != null and notes != ''">
+            and notes like '%${notes}%'
+        </if>
+    </select>
+
+    <select id="searchAll" resultMap="deliverResult">
+        select *
+        from deliver_208201302 s
+                 right join material_208201302 m on s.material_id = m.id
+        where IFNULL(s.deliver_time, '') != ''
+        order by s.deliver_time desc, s.deliver_no desc
+            limit #{pageSize} offset ${(pageNum - 1) * pageSize}
+    </select>
+
+    <select id="findCountByNameBetweenDates" resultType="java.util.Map">
+        SELECT
+            m.name AS materialName,
+            CAST(SUM(d.deliver_count) AS SIGNED) AS totalDeliverCount
+        FROM
+            material_208201302 m
+                INNER JOIN deliver_208201302 d ON m.id = d.material_id
+        WHERE
+            d.deliver_time BETWEEN #{startTime} AND #{endTime}
+        GROUP BY
+            m.name
+        ORDER BY totalDeliverCount ASC
+    </select>
+
+    <select id="callMultiDelivery" statementType="CALLABLE">
+        {call MultiDelivery_208201302(
+                #{deliverList, mode=IN, jdbcType=OTHER, javaType=String},
+                #{resultMessage, mode=OUT, jdbcType=VARCHAR}
+              )}
+    </select>
 </mapper>

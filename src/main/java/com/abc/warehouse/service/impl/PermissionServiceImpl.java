@@ -14,9 +14,7 @@ import com.abc.warehouse.mapper.PermissionTypeMapper;
 import com.abc.warehouse.pojo.PermissionType;
 import com.abc.warehouse.pojo.Resource;
 import com.abc.warehouse.pojo.User;
-import com.abc.warehouse.service.PermissionTypeService;
-import com.abc.warehouse.service.ResourceService;
-import com.abc.warehouse.service.UserService;
+import com.abc.warehouse.service.*;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -24,7 +22,6 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.abc.warehouse.pojo.Permission;
-import com.abc.warehouse.service.PermissionService;
 import com.abc.warehouse.mapper.PermissionMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -57,6 +54,8 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
     @Autowired
     private PermissionTypeService permissionTypeService;
 
+    @Autowired
+    private FreeUriService freeUriService;
     @Autowired
     private PermissionTypeMapper permissionTypeMapper;
     @Autowired
@@ -223,12 +222,12 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
         // 删除缓存
         redisTemplate.delete(userIdList);
         // 更新数据库
-        permissionTypeService.updateById(new PermissionType(permissionId,null,null,null,1));
+        permissionTypeService.updateById(new PermissionType(permissionId,null,null,1));
         if(!userIds.isEmpty()){
             permissionMapper.saveUserPermissions(userIds,permissionId);
         }
         //删除free_uri中该权限对应的所有uri
-        permissionMapper.deleteFromFreeUri(permissionId);
+        freeUriService.deleteFromFreeUri(permissionId);
 
         return Result.ok();
     }

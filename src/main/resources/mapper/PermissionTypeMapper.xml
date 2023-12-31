@@ -8,13 +8,12 @@
             <id property="id" column="id" jdbcType="BIGINT"/>
             <result property="resourceId" column="resource_id" jdbcType="BIGINT"/>
             <result property="type" column="type" jdbcType="VARCHAR"/>
-            <result property="uri" column="uri" jdbcType="VARCHAR"/>
         <result property="isdisplay" column="isdisplay" javaType="INTEGER"></result>
     </resultMap>
 
     <sql id="Base_Column_List">
         id,resource_id,type,
-        uri,isdisplay
+        isdisplay
     </sql>
     <select id="getSelectMap" resultType="com.abc.warehouse.pojo.PermissionType">
         select id,type from permission_type_208201302

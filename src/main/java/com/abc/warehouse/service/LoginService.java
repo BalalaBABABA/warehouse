@@ -8,12 +8,7 @@ import com.abc.warehouse.pojo.User;
 import java.util.List;
 
 public interface LoginService {
-    Result login(LoginParams loginParams);
-    Result logout(String token);
-
-    UserPermission checkToken(String token);
-
+    Result login(Long userId,String password);
     String createToken(User user);
 
-    List<String> getFreeUriList();
 }

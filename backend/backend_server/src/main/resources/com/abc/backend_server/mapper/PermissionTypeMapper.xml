@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.abc.backend_server.mapper.PermissionTypeMapper" >
+  <resultMap id="PermissionTypeMap" type="com.abc.backend_server.pojo.PermissionType" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="resource_id" property="resourceId" jdbcType="BIGINT" />
+    <result column="type" property="name" jdbcType="VARCHAR" />
+  </resultMap>
+<!--  <resultMap id="PermissionTypeUriMap" type="com.abc.backend_server.pojo.PermissionTypeUri" >-->
+<!--    <id column="id" property="id" jdbcType="INTEGER" />-->
+<!--    <result column="uri" property="uri" jdbcType="VARCHAR" />-->
+<!--  </resultMap>-->
+<!--  <resultMap id="ResourceMap" type="com.abc.backend_server.pojo.Resource" >-->
+<!--    <id column="id" property="id" jdbcType="BIGINT" />-->
+<!--    <result column="name" property="name" jdbcType="VARCHAR" />-->
+<!--    <result column="uri_name" property="uriName" jdbcType="VARCHAR" />-->
+<!--  </resultMap>-->
+  <insert id="AddPermissionType">
+    insert into permission_type_208201302(resource_id,type,isdisplay)
+    values(#{resourceId},#{type},0)
+  </insert>
+  <update id="updateType">
+    update permission_type_208201302 set type = #{name} where id = #{id}
+  </update>
+  <delete id="DelPermissionType">
+    delete from permission_type_208201302 where id = #{typeId}
+  </delete>
+  <delete id="DelUserPermission">
+    delete from permission_208201302 where permission_id = #{typeId}
+  </delete>
+  <select id="listByResourceId" resultType="com.abc.backend_server.pojo.PermissionType">
+    select pt.id as id,pt.resource_id as resourceId,pt.type as name from
+                                          permission_type_208201302 pt,resource_208201302 r
+    where pt.resource_id = r.id
+      and resource_id = #{resourceId};
+  </select>
+
+
+</mapper>

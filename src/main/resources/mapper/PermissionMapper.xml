@@ -52,28 +52,4 @@
     </select>
 
 
-    <select id="getFreeUriList" resultType="java.lang.String">
-        select uri from free_uri_208201302;
-    </select>
-
-    <delete id="deleteFromFreeUri">
-        delete from free_uri_208201302
-        where uri in (
-            select uri.uri from
-                               permission_type_208201302 pt,permission_type_uri_208201302 uri
-            where pt.id =uri.type_id
-              and pt.id = #{permissionId}
-        )
-    </delete>
-
-
-    <insert id="AddUriToFreeUri">
-        insert into free_uri_208201302(uri)
-            (
-                select uri.uri from
-                                   permission_type_208201302 pt,permission_type_uri_208201302 uri
-                where pt.id =uri.type_id
-                  and pt.id = #{permissionId}
-            )
-    </insert>
 </mapper>

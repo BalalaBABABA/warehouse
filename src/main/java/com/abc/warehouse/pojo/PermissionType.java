@@ -34,10 +34,6 @@ public class PermissionType implements Serializable {
     private String type;
 
     /**
-     * 
-     */
-    private String uri;
-    /**
      * 表示是否展示
      */
     private Integer isdisplay;
@@ -54,8 +50,4 @@ public class PermissionType implements Serializable {
         this.id = id;
         this.type = type;
     }
-//    public PermissionType(Long id, Long resourceId) {
-//        this.id = id;
-//        this.resourceId = resourceId;
-//    }
 }

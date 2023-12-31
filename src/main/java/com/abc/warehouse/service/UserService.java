@@ -35,4 +35,8 @@ public interface UserService extends IService<User> {
     Result updatePhone(String newPhone,String token);
 
     List<String> findAllUserName();
+
+    List<User> getAllUser();
+
+    Result getNowUser(String token);
 }
