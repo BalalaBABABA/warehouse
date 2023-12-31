@@ -9,7 +9,7 @@ import java.util.Date;
 import lombok.Data;
 
 /**
- * 
+ *
  * @TableName deliver_208201302
  */
 @TableName(value ="deliver_208201302")

@@ -5,15 +5,15 @@
 <mapper namespace="com.abc.warehouse.mapper.StoreMapper">
 
     <resultMap id="BaseResultMap" type="com.abc.warehouse.pojo.Store">
-            <id property="storeId" column="store_id" jdbcType="BIGINT"/>
-            <result property="storeNo" column="store_no" jdbcType="BIGINT"/>
-            <result property="houseName" column="house_name" jdbcType="VARCHAR"/>
-            <result property="storeTime" column="store_time" jdbcType="DATE"/>
-            <result property="materialId" column="material_id" jdbcType="BIGINT"/>
-            <result property="storeCount" column="store_count" jdbcType="INTEGER"/>
-            <result property="remainCount" column="remain_count" jdbcType="INTEGER"/>
-            <result property="userId" column="user_id" jdbcType="BIGINT"/>
-            <result property="notes" column="notes" jdbcType="VARCHAR"/>
+        <id property="storeId" column="store_id" jdbcType="BIGINT"/>
+        <result property="storeNo" column="store_no" jdbcType="BIGINT"/>
+        <result property="houseName" column="house_name" jdbcType="VARCHAR"/>
+        <result property="storeTime" column="store_time" jdbcType="DATE"/>
+        <result property="materialId" column="material_id" jdbcType="BIGINT"/>
+        <result property="storeCount" column="store_count" jdbcType="INTEGER"/>
+        <result property="remainCount" column="remain_count" jdbcType="INTEGER"/>
+        <result property="userId" column="user_id" jdbcType="BIGINT"/>
+        <result property="notes" column="notes" jdbcType="VARCHAR"/>
     </resultMap>
 
     <sql id="Base_Column_List">
@@ -94,16 +94,16 @@
     <select id="searchAll" resultMap="storeResult">
         select *
         from store_208201302 s
-        right join material_208201302 m on s.material_id = m.id
+                 right join material_208201302 m on s.material_id = m.id
         where IFNULL(s.store_time, '') != ''
         order by s.store_time desc, s.store_no desc
-        limit #{pageSize} offset ${(pageNum - 1) * pageSize}
+            limit #{pageSize} offset ${(pageNum - 1) * pageSize}
     </select>
 
     <select id="selectStoreByDate" resultMap="storeResult">
         select s.*, m.*
         from store_208201302 s
-        right join material_208201302 m on s.material_id = m.id
+                 right join material_208201302 m on s.material_id = m.id
         where (s.store_time between #{startDate} and #{endDate})
         order by s.store_no asc
     </select>
@@ -112,7 +112,7 @@
         select *
         from store_208201302
         where material_id = #{materialId} and house_name = #{houseName}
-        and store_time between #{startYear} and #{endYear}
+          and store_time between #{startYear} and #{endYear}
         order by store_time asc
     </select>
 
