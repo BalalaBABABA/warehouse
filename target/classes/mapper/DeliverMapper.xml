@@ -5,23 +5,40 @@
 <mapper namespace="com.abc.warehouse.mapper.DeliverMapper">
 
     <resultMap id="BaseResultMap" type="com.abc.warehouse.pojo.Deliver">
-        <id property="deliverId" column="deliver_id" jdbcType="BIGINT"/>
-        <result property="deliverNo" column="deliver_no" jdbcType="BIGINT"/>
-        <result property="houseName" column="house_name" jdbcType="VARCHAR"/>
-        <result property="deliverTime" column="deliver_time" jdbcType="DATE"/>
-        <result property="materialId" column="material_id" jdbcType="BIGINT"/>
-        <result property="deliverCount" column="deliver_count" jdbcType="INTEGER"/>
-        <result property="userId" column="user_id" jdbcType="BIGINT"/>
-        <result property="notes" column="notes" jdbcType="VARCHAR"/>
+            <id property="deliverId" column="deliver_id" jdbcType="BIGINT"/>
+            <result property="deliverNo" column="deliver_no" jdbcType="BIGINT"/>
+            <result property="houseName" column="house_name" jdbcType="VARCHAR"/>
+            <result property="deliverTime" column="deliver_time" jdbcType="DATE"/>
+            <result property="materialId" column="material_id" jdbcType="BIGINT"/>
+            <result property="deliverCount" column="deliver_count" jdbcType="INTEGER"/>
+            <result property="remainCount" column="remain_count" jdbcType="INTEGER"/>
+            <result property="userId" column="user_id" jdbcType="BIGINT"/>
+            <result property="notes" column="notes" jdbcType="VARCHAR"/>
     </resultMap>
-
-
 
     <sql id="Base_Column_List">
         deliver_id,deliver_no,house_name,
         deliver_time,material_id,deliver_count,
-        user_id,notes
+        remain_count,user_id,notes
     </sql>
+
+    <select id="selectDeliverByYear" resultType="com.abc.warehouse.pojo.Deliver">
+        select *
+        from deliver_208201302
+        where material_id = #{materialId} and house_name = #{houseName}
+        and deliver_time between #{startYear} and #{endYear}
+        order by deliver_time asc
+    </select>
+
+    <select id="selectDeliverByYearAndMaterialName" resultType="com.abc.warehouse.pojo.Deliver">
+        SELECT *
+        FROM deliver_208201302 d
+        INNER JOIN material_208201302 m ON d.material_id = m.id
+        WHERE m.name = #{materialName}
+        <if test="startYear != null and endYear != null">
+            AND d.deliver_time BETWEEN #{startYear} AND #{endYear}
+        </if>
+    </select>
     <resultMap id="deliverResult" type="com.abc.warehouse.pojo.Deliver">
         <id column="deliver_id" property="deliverId"/>
         <result column="deliver_no" property="deliverNo"/>
@@ -118,14 +135,5 @@
                 #{deliverList, mode=IN, jdbcType=OTHER, javaType=String},
                 #{resultMessage, mode=OUT, jdbcType=VARCHAR}
               )}
-    </select>
-    <select id="selectDeliverByYearAndMaterialName" resultType="com.abc.warehouse.pojo.Deliver">
-        SELECT *
-        FROM deliver_208201302 d
-        INNER JOIN material_208201302 m ON d.material_id = m.id
-        WHERE m.name = #{materialName}
-        <if test="startYear != null and endYear != null">
-            AND d.deliver_time BETWEEN #{startYear} AND #{endYear}
-        </if>
     </select>
 </mapper>
