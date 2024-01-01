@@ -8,6 +8,7 @@ import com.abc.warehouse.annotation.Encrypt;
 import com.abc.warehouse.annotation.JsonParam;
 import com.abc.warehouse.dto.Result;
 import com.abc.warehouse.dto.constants.PageConstants;
+import com.abc.warehouse.mapper.DeliverMapper;
 import com.abc.warehouse.mapper.StoreMapper;
 import com.abc.warehouse.pojo.Deliver;
 import com.abc.warehouse.pojo.Store;
@@ -21,10 +22,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 @RequestMapping("/deliver")
@@ -32,6 +35,8 @@ import java.util.List;
 public class DeliverController {
     @Autowired
     private DeliverService deliverService;
+    @Autowired
+    private DeliverMapper deliverMapper;
 
     @GetMapping
     public Result enter() {
@@ -84,39 +89,35 @@ public class DeliverController {
        return deliverService.conditionSearch(storeNo,houseName,startTime,endTime,materialId,userId,notes,page);
     }
 
-    @PostMapping("/selectDeliverByDate")
+
+    @PostMapping({"/selectDeliverByDate"})
     @Encrypt
     @Decrypt
-    public Result selectDeliverByDate(@JsonParam("year") String year, @JsonParam("month") String month){
+    public Result selectDeliverByDate(@JsonParam("year") String year, @JsonParam("month") String month) {
         Calendar calendar = Calendar.getInstance();
         calendar.set(Integer.parseInt(year), Integer.parseInt(month) - 1, 1);
         Date startDate = calendar.getTime();
-        calendar.add(Calendar.MONTH, 1);
-        calendar.add(Calendar.DATE, -1);
+        calendar.add(2, 1);
+        calendar.add(5, -1);
         Date endDate = calendar.getTime();
-
-        List<Deliver> result = deliverMapper.selectDeliverByDate(startDate, endDate);
-        if(result != null){
-            return new Result(true, "0", result, Long.valueOf(result.size()));
-        }else{
-            return new Result(false, null, null, 0L);
-        }
+        List<Deliver> result = this.deliverMapper.selectDeliverByDate(startDate, endDate);
+        return result != null ? new Result(true, "0", result, (long)result.size()) : new Result(false, (String)null, (Object)null, 0L);
     }
 
-    @PostMapping("/deliverByYear")
+    @PostMapping({"/deliverByYear"})
     @Encrypt
     @Decrypt
-    public Result deliverByYear(@JsonParam("Year") String year, @JsonParam("id") Long materialId,
-                              @JsonParam("HouseName") String houseName){
+    public Result deliverByYear(@JsonParam("Year") String year, @JsonParam("id") Long materialId, @JsonParam("HouseName") String houseName) {
         Timestamp startYear = Timestamp.valueOf(year + "-01-01 00:00:00");
         Timestamp endYear = Timestamp.valueOf(year + "-12-31 23:59:59");
-        List<Deliver> delivers = deliverMapper.selectDeliverByYear(startYear, endYear, materialId, houseName);
-        for (Deliver deliver : delivers) {
+        List<Deliver> delivers = this.deliverMapper.selectDeliverByYear(startYear, endYear, materialId, houseName);
+        Iterator var7 = delivers.iterator();
+
+        while(var7.hasNext()) {
+            Deliver deliver = (Deliver)var7.next();
             System.out.println(deliver);
         }
-        if(delivers != null){
-            return new Result(true, "0", delivers, Long.valueOf(delivers.size()));
-        }
-        return new Result(false, null, null, 0L);
+
+        return delivers != null ? new Result(true, "0", delivers, (long)delivers.size()) : new Result(false, (String)null, (Object)null, 0L);
     }
 }

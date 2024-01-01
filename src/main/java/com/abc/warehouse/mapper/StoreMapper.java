@@ -59,9 +59,5 @@ public interface StoreMapper extends BaseMapper<Store> {
     List<Store> selectStoreByYearAndMaterialName(@Param("startYear") Date startYear, @Param("endYear") Date endYear,
                                                  @Param("materialName") String materialName);
 
-    @MapKey("materialName")
-    List<Map<String, Object>> findCountByNameBetweenDates(
-            @Param("startTime") Date startTime,
-            @Param("endTime") Date endTime
-    );
+
 }

@@ -73,13 +73,13 @@ public class LoginServiceImpl implements LoginService {
         //用户权限uri的list
         List<String> permissionList = new ArrayList<>();
 
-        Result result=userService.getUserById(userId);
-        User user=(User)result.getData();
+
+        User user=userService.getById(userId);
 
 //        //输入密码通过算法加密
 //        String encodedPassword = PasswordEncoder.encode(password,salt);
 //        //查找该用户信息，匹配用户名和密码
-        LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
+
 //        queryWrapper.eq(User::getId,userId)
 //                        .eq(User::getPassword,encodedPassword)
 //                                .last("limit 1");
@@ -96,9 +96,9 @@ public class LoginServiceImpl implements LoginService {
 
         //判断用户身份
         //是超级管理员
-        if(userId == 9797 && password.equals("123456")){
+        if(userId == 9797){
             //查找管理员信息
-            queryWrapper = new LambdaQueryWrapper<>();
+            LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
             queryWrapper.eq(User::getId,userId)
                     .last("limit 1");
             user = userService.getOne(queryWrapper);

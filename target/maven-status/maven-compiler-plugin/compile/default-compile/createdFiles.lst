@@ -31,6 +31,7 @@ com\abc\warehouse\service\MaterialTypeService.class
 com\abc\warehouse\service\impl\LogoutServiceImpl.class
 com\abc\warehouse\service\FreeUriService.class
 com\abc\warehouse\controller\PermissionTypesController.class
+com\abc\warehouse\utils\SaltMD5Util.class
 com\abc\warehouse\dto\UserPermission.class
 com\abc\warehouse\service\impl\HouseServiceImpl.class
 com\abc\warehouse\service\MsmService.class
