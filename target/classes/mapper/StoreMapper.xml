@@ -147,4 +147,18 @@
             m.name
         ORDER BY totalstoreCount ASC
     </select>
+
+    <select id="findCountByNameBetweenDates" resultType="java.util.Map">
+        SELECT
+            m.name AS materialName,
+            CAST(SUM(s.store_count) AS SIGNED) AS totalstoreCount
+        FROM
+            material_208201302 m
+                INNER JOIN store_208201302 s ON m.id = s.material_id
+        WHERE
+            s.store_time BETWEEN #{startTime} AND #{endTime}
+        GROUP BY
+            m.name
+        ORDER BY totalstoreCount ASC
+    </select>
 </mapper>

@@ -1,6 +1,9 @@
 package com.abc.warehouse.controller;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.abc.warehouse.annotation.Decrypt;
+import com.abc.warehouse.annotation.Encrypt;
+import com.abc.warehouse.annotation.JsonParam;
 import com.abc.warehouse.dto.Result;
 import com.abc.warehouse.dto.UserDTO;
 import com.abc.warehouse.pojo.User;
@@ -28,13 +31,18 @@ public class UserInfoController {
         UserDTO userDTO = BeanUtil.copyProperties(user, UserDTO.class);
         return Result.ok(userDTO);
     }
-    @GetMapping("/updatePassword/{newPassword}")
-    public Result updatePassword(@PathVariable("newPassword") String newPassword){
-        return userService.updatePassword(newPassword);
+
+    @PostMapping("/updatePassword")
+    @Encrypt
+    @Decrypt
+    public Result updatePassword(@RequestHeader("Authorization")String token,@JsonParam("newPassword") String newPassword){
+        return userService.updatePassword(token,newPassword);
     }
-    @GetMapping("/updatePhone/{newPhone}")
-    public Result updatePhone(@PathVariable("newPhone") String newPhone,@RequestHeader("Authorization")String token){
-        System.out.println("updatePhone");
+
+    @PostMapping("/updatePhone")
+    @Encrypt
+    @Decrypt
+    public Result updatePhone(@JsonParam("newPhone") String newPhone,@JsonParam("Authorization")String token){
         return userService.updatePhone(newPhone,token);
     }
 }

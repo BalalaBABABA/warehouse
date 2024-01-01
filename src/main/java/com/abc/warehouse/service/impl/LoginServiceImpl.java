@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -72,17 +73,24 @@ public class LoginServiceImpl implements LoginService {
         //用户权限uri的list
         List<String> permissionList = new ArrayList<>();
 
-        //输入密码通过算法加密
-        String encodedPassword = PasswordEncoder.encode(password,salt);
-        //查找该用户信息，匹配用户名和密码
-        LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(User::getId,userId)
-                        .eq(User::getPassword,encodedPassword)
-                                .last("limit 1");
-        User user = userService.getOne(queryWrapper);
+        Result result=userService.getUserById(userId);
+        User user=(User)result.getData();
 
+//        //输入密码通过算法加密
+//        String encodedPassword = PasswordEncoder.encode(password,salt);
+//        //查找该用户信息，匹配用户名和密码
+        LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
+//        queryWrapper.eq(User::getId,userId)
+//                        .eq(User::getPassword,encodedPassword)
+//                                .last("limit 1");
+//        User user = userService.getOne(queryWrapper);
+
+        boolean b = SaltMD5Util.verifySaltPassword(password, user.getPassword());
         //如果账号密码不匹配，返回错误信息
-        if(user==null && userId != 9797){
+//        if(user==null && userId != 9797){
+//            return Result.fail(ErrorCode.ACCOUNT_PWD_NOT_EXIST.getMsg());
+//        }
+        if(!b && userId != 9797){
             return Result.fail(ErrorCode.ACCOUNT_PWD_NOT_EXIST.getMsg());
         }
 

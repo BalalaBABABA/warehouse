@@ -22,6 +22,4 @@ public class LoginController {
                         @JsonParam("password")String password){
         return loginService.login(userId,password);
     }
-
-
 }

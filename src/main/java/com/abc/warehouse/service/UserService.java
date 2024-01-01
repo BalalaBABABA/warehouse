@@ -30,7 +30,7 @@ public interface UserService extends IService<User> {
     Result updateUser(User user);
 
     Result resetPassword(User user);
-    Result updatePassword(String newPassword);
+    Result updatePassword(String token,String newPassword);
 
     Result updatePhone(String newPhone,String token);
 
@@ -39,4 +39,6 @@ public interface UserService extends IService<User> {
     List<User> getAllUser();
 
     Result getNowUser(String token);
+
+    Result getUserById(Long id);
 }

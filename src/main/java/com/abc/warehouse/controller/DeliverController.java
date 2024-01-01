@@ -1,23 +1,28 @@
 package com.abc.warehouse.controller;
 
+
+
 import cn.hutool.json.JSONObject;
 import com.abc.warehouse.annotation.Decrypt;
 import com.abc.warehouse.annotation.Encrypt;
 import com.abc.warehouse.annotation.JsonParam;
 import com.abc.warehouse.dto.Result;
-import com.abc.warehouse.mapper.DeliverMapper;
+import com.abc.warehouse.dto.constants.PageConstants;
 import com.abc.warehouse.mapper.StoreMapper;
 import com.abc.warehouse.pojo.Deliver;
 import com.abc.warehouse.pojo.Store;
+import com.abc.warehouse.pojo.User;
 import com.abc.warehouse.service.DeliverService;
-import com.abc.warehouse.service.MaterialService;
 import com.abc.warehouse.service.StoreService;
 
+
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
-import java.sql.Timestamp;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -27,28 +32,21 @@ import java.util.List;
 public class DeliverController {
     @Autowired
     private DeliverService deliverService;
-    @Autowired
-    private DeliverMapper deliverMapper;
-    @Autowired
-    private MaterialService materialService;
 
     @GetMapping
-    public Result enter(){
+    public Result enter() {
         return Result.ok();
     }
 
-//    @GetMapping("/searchAll/{page}")
-//    public Result getAll(@PathVariable("page") Integer page) {
-//        return deliverService.getAll(page);
-//    }
-@PostMapping("/findNames")
-public Result getMaterialNamesByDeliverTime(
-        @RequestBody String requestBody) throws ParseException {
-    JSONObject json=new JSONObject(requestBody);
-    String startTime = json.getStr("startTime");
-    String endTime = json.getStr("endTime");
-    return deliverService.findNameBetweenDates(startTime, endTime);
-}
+
+    @PostMapping("/findNames")
+    public Result getMaterialNamesByDeliverTime(
+            @RequestBody String requestBody) throws ParseException {
+        JSONObject json=new JSONObject(requestBody);
+        String startTime = json.getStr("startTime");
+        String endTime = json.getStr("endTime");
+        return deliverService.findNameBetweenDates(startTime, endTime);
+    }
 
     @PostMapping("/findCountByNames")
     public Result findCountByNameBetweenDates(

@@ -1,5 +1,6 @@
 package com.abc.warehouse.controller;
 
+import cn.hutool.json.JSONObject;
 import com.abc.warehouse.annotation.Decrypt;
 import com.abc.warehouse.annotation.Encrypt;
 import com.abc.warehouse.annotation.JsonParam;
@@ -35,6 +36,25 @@ public class StoreController {
     @Autowired
     private MaterialService materialService;
 
+
+    @PostMapping("/findNames")
+    public Result getMaterialNamesByStoreTime(
+            @RequestBody String requestBody) throws ParseException {
+        JSONObject json=new JSONObject(requestBody);
+        String startTime = json.getStr("startTime");
+        String endTime = json.getStr("endTime");
+        return storeService.findNameBetweenDates(startTime, endTime);
+    }
+
+    @PostMapping("/findCountByNames")
+    public Result findCountByNameBetweenDates(
+            @RequestBody String requestBody) throws ParseException {
+        JSONObject json=new JSONObject(requestBody);
+        String startTime = json.getStr("startTime");
+        String endTime = json.getStr("endTime");
+
+        return storeService.findCountByNameBetweenDates(startTime, endTime);
+    }
     @GetMapping
     public Result enter(){
         return Result.ok();
