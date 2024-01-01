@@ -12,11 +12,14 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.abc.warehouse.pojo.Store;
 import com.abc.warehouse.service.StoreService;
 import com.abc.warehouse.mapper.StoreMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.Date;
-
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 /**
 * @author 吧啦
 * @description 针对表【store_208201302】的数据库操作Service实现
@@ -28,7 +31,8 @@ public class StoreServiceImpl extends ServiceImpl<StoreMapper, Store>
 
     @Resource
     private  GenerateID generateID;
-
+    @Autowired
+    private StoreMapper storeMapper;
     @Override
     public Result storePage(Integer curPage) {
         LambdaQueryWrapper<Store> wrapper = new LambdaQueryWrapper<>();  //查询条件构造器
@@ -51,6 +55,55 @@ public class StoreServiceImpl extends ServiceImpl<StoreMapper, Store>
         return EncryotResult.ok();
     }
 
+    public Result findNameBetweenDates(String startTime, String endTime) throws ParseException {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Date start = null, end = null;
+
+        if(startTime != null && !startTime.isEmpty()){
+            start = sdf.parse(startTime);
+        }
+        if(endTime != null && !endTime.isEmpty()){
+            end = sdf.parse(endTime);
+
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(end);
+            calendar.add(Calendar.DATE, 1);
+            end = calendar.getTime();
+        }
+        List<String> nameList = new ArrayList<>();
+        List<Map<String, Object>> resultMapList = storeMapper.findCountByNameBetweenDates(start,end);
+        // 遍历列表并获取每个Map的键和值
+        for (Map<String, Object> resultMap : resultMapList) {
+            nameList.add(resultMap.get("materialName").toString());
+        }
+        return Result.ok(nameList);
+    }
+
+    public Result findCountByNameBetweenDates(String startTime, String endTime) throws ParseException {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Date start = null, end = null;
+
+        if(startTime != null && !startTime.isEmpty()){
+            start = sdf.parse(startTime);
+        }
+        if(endTime != null && !endTime.isEmpty()){
+            end = sdf.parse(endTime);
+
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(end);
+            calendar.add(Calendar.DATE, 1);
+            end = calendar.getTime();
+        }
+        List<Long>countList = new ArrayList<>();
+        List<Map<String, Object>> resultMapList = storeMapper.findCountByNameBetweenDates(start,end);
+        // 遍历列表并获取每个Map的键和值
+        for (Map<String, Object> resultMap : resultMapList) {
+            Long totalstoreCount = (Long) resultMap.get("totalstoreCount");
+            countList.add(totalstoreCount);
+        }
+        return Result.ok(countList);
+
+    }
 }
 
 

@@ -87,7 +87,7 @@ public class DeliverServiceImpl extends ServiceImpl<DeliverMapper, Deliver>
     }
 
 
-    public Result findMaterialNamesByDeliverTime(String startTime, String endTime) throws ParseException {
+    public Result findNameBetweenDates(String startTime, String endTime) throws ParseException {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         Date start = null, end = null;
 

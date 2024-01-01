@@ -16,7 +16,7 @@ import java.util.List;
 public interface DeliverService extends IService<Deliver> {
     Result deliverPage(Integer page);
 
-    Result findMaterialNamesByDeliverTime(String startTime, String endTime) throws ParseException;
+    Result findNameBetweenDates(String startTime, String endTime) throws ParseException;
 
     Result findCountByNameBetweenDates(String startTime, String endTime) throws ParseException;
 
@@ -26,5 +26,7 @@ public interface DeliverService extends IService<Deliver> {
     Result conditionSearch(Long storeNo, String houseName, String startTime,String endTime,
                            Long materialId, Long userId,
                            String notes,Integer page) throws ParseException;
+
+
 
 }
