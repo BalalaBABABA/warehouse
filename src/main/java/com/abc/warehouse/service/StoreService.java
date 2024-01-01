@@ -4,6 +4,7 @@ import com.abc.warehouse.dto.Result;
 import com.abc.warehouse.pojo.Store;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import java.text.ParseException;
 import java.util.Date;
 
 /**
@@ -17,5 +18,9 @@ public interface StoreService extends IService<Store> {
     Result del_store(Long id);
 
     Result update_store(Store store);
+
+    Result findNameBetweenDates(String startTime, String endTime) throws ParseException;
+
+    Result findCountByNameBetweenDates(String startTime, String endTime) throws ParseException;
 
 }

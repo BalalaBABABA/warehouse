@@ -1,7 +1,9 @@
 package com.abc.warehouse.service.impl;
+import com.abc.warehouse.dto.EncryotResult;
 import com.abc.warehouse.dto.Result;
 import com.abc.warehouse.dto.UserDTO;
 import com.abc.warehouse.dto.constants.PageConstants;
+import com.abc.warehouse.pojo.Material;
 import com.abc.warehouse.utils.*;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -39,7 +41,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     public Result saveUser(User user) {
         long id = generateID.getId("2", "User");
         user.setId(id);
-        user.setPassword(DigestUtils.md5DigestAsHex("123456".getBytes()));
+        String password=SaltMD5Util.generateSaltPassword("123456");
+//        String password = PasswordEncoder.encode("123456",salt);
+        user.setPassword(password);
         if(RegexUtils.isIdNumberInvalid(user.getIdNumber())||RegexUtils.isPhoneInvalid(user.getPhone()))
         {
             return Result.fail("格式错误");
@@ -92,9 +96,19 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     public Result searchById(Integer curPage, Long id) {
         QueryWrapper<User> wrapper = new QueryWrapper();
         wrapper.eq("id", id);
+
+
         IPage<User> pageQuery = new Page((long)curPage, (long)PageConstants.USER_SEARCH_PAGE_SIZE);
         IPage<User> page = ((UserMapper)this.baseMapper).selectPage(pageQuery, wrapper);
         return Result.ok(page.getRecords(), page.getPages());
+    }
+
+    public Result getUserById(Long id)
+    {
+        QueryWrapper<User> wrapper = new QueryWrapper<>();
+        wrapper.eq("id", id);
+        User user = baseMapper.selectOne(wrapper);
+        return Result.ok(user);
     }
 
     @Override
@@ -111,38 +125,35 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     @Override
     public Result resetPassword(User user)
     {
-        String password = PasswordEncoder.encode("123456",salt);
+        String password=SaltMD5Util.generateSaltPassword("123456");
+//        String password = PasswordEncoder.encode("123456",salt);
         user.setPassword(password);
         boolean b = updateById(user);
         return b?Result.ok():Result.fail("重置失败");
     }
     @Override
-    public Result updatePassword(String newPassword) {
-        UserDTO user0 = UserHolder.getUser();
-        Long userId=user0.getId();
+    public Result updatePassword(String token,String newPassword) {
+        Long userId = JwtUtils.getUserIdFromToken(token);
         // 获取用户信息
         User user = getById(userId);
 
         // 进行密码修改
-        String encryptedPassword = PasswordEncoder.encode(newPassword, salt);
-        user.setPassword(encryptedPassword);
+        String password = SaltMD5Util.generateSaltPassword(newPassword);
+//        String encryptedPassword = PasswordEncoder.encode(newPassword, salt);
+        user.setPassword(password);
 
         // 更新用户信息
         boolean updateResult = updateById(user);
-        return updateResult ? Result.ok() : Result.fail("密码修改失败");
+        return updateResult ? EncryotResult.ok() : EncryotResult.fail("密码修改失败");
     }
 
     @Override
     public Result updatePhone(String newPhone,String token) {
         Long userId = JwtUtils.getUserIdFromToken(token);
-        // 获取用户信息
         User user = getById(userId);
-
         user.setPhone(newPhone);
-
-        // 更新用户信息
         boolean updateResult = updateById(user);
-        return updateResult ? Result.ok() : Result.fail("手机号修改失败");
+        return updateResult ? EncryotResult.ok() : EncryotResult.fail("手机号修改失败");
     }
 
 

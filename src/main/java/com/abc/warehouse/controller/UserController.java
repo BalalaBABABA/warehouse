@@ -37,10 +37,10 @@ public class UserController {
         return userService.deleteUser(id);
     }
 
-    @GetMapping("/{id}")
-    public Result getUserById(@PathVariable("id")Long id){
-        return Result.ok("你好");
-    }
+//    @GetMapping("/{id}")
+//    public Result getUserById(@PathVariable("id")Long id){
+//        return Result.ok("你好");
+//    }
 
     @GetMapping("/getNamesAndIds")
     public Result getNamesAndIds(){
@@ -81,6 +81,7 @@ public class UserController {
     public Result resetPassword(@RequestBody User user){
         return userService.resetPassword(user);
     }
+
     @GetMapping("/findAllUserName")
     public Result findAllUserName(){
         return Result.ok(userService.findAllUserName());

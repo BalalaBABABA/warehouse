@@ -38,19 +38,14 @@ public class DeliverController {
         return Result.ok();
     }
 
-//    @GetMapping("/searchAll/{page}")
-//    public Result getAll(@PathVariable("page") Integer page) {
-//        return deliverService.getAll(page);
-//    }
 
-    @PostMapping("/getNames")
+    @PostMapping("/findNames")
     public Result getMaterialNamesByDeliverTime(
             @RequestBody String requestBody) throws ParseException {
         JSONObject json=new JSONObject(requestBody);
         String startTime = json.getStr("startTime");
         String endTime = json.getStr("endTime");
-
-        return deliverService.findMaterialNamesByDeliverTime(startTime, endTime);
+        return deliverService.findNameBetweenDates(startTime, endTime);
     }
 
     @PostMapping("/findCountByNames")
