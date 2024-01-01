@@ -1,4 +1,5 @@
 package com.abc.warehouse.service.impl;
+import com.abc.warehouse.dto.EncryotResult;
 import com.abc.warehouse.dto.Result;
 import com.abc.warehouse.dto.UserDTO;
 import com.abc.warehouse.dto.constants.PageConstants;
@@ -62,7 +63,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         IPage<User> pageQuery = new Page<>(curPage, PageConstants.USER_SEARCH_PAGE_SIZE);
         IPage<User> page = baseMapper.selectPage(pageQuery, wrapper);
         System.out.println(page.getRecords().toString());
-        return Result.ok(page.getRecords(), page.getPages());
+        return EncryotResult.ok(page.getRecords(), page.getPages());
     }
 
     @Override
@@ -85,7 +86,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         wrapper.like("name", name);
         IPage<User> pageQuery = new Page((long)curPage, (long) PageConstants.USER_SEARCH_PAGE_SIZE);
         IPage<User> page = ((UserMapper)this.baseMapper).selectPage(pageQuery, wrapper);
-        return Result.ok(page.getRecords(), page.getPages());
+        return EncryotResult.ok(page.getRecords(), page.getPages());
     }
 
     @Override
@@ -94,7 +95,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         wrapper.eq("id", id);
         IPage<User> pageQuery = new Page((long)curPage, (long)PageConstants.USER_SEARCH_PAGE_SIZE);
         IPage<User> page = ((UserMapper)this.baseMapper).selectPage(pageQuery, wrapper);
-        return Result.ok(page.getRecords(), page.getPages());
+        return EncryotResult.ok(page.getRecords(), page.getPages());
     }
 
     @Override
