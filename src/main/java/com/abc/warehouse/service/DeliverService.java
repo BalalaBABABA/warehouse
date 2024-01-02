@@ -20,7 +20,7 @@ public interface DeliverService extends IService<Deliver> {
 
     Result findCountByNameBetweenDates(String startTime, String endTime) throws ParseException;
 
-    Result MultiDelivery(List<Deliver> list);
+    Result MultiDelivery(String list);
 
     Result getAll(Integer page);
     Result conditionSearch(Long storeNo, String houseName, String startTime,String endTime,

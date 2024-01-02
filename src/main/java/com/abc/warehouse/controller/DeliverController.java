@@ -45,6 +45,50 @@ public class DeliverController {
 
 
     @PostMapping("/findNames")
+    @Encrypt
+    @Decrypt
+    public Result getMaterialNamesByDeliverTime(
+            @JsonParam("startTime") String startTime, @JsonParam("endTime") String endTime) throws ParseException {
+//        JSONObject json=new JSONObject(requestBody);
+//        String startTime = json.getStr("startTime");
+//        String endTime = json.getStr("endTime");
+        return deliverService.findNameBetweenDates(startTime, endTime);
+    }
+
+//    @PostMapping("/findCountByNames")
+//    @Encrypt
+//    @Decrypt
+//    public Result findCountByNameBetweenDates(
+//            @JsonParam("startTime") String startTime, @JsonParam("endTime") String endTime) throws ParseException {
+////        JSONObject json=new JSONObject(requestBody);
+////        String startTime = json.getStr("startTime");
+////        String endTime = json.getStr("endTime");
+//
+//        return deliverService.findCountByNameBetweenDates(startTime, endTime);
+//    }
+//
+//    @PostMapping("/findNames")
+//    @Encrypt
+//    @Decrypt
+//    public Result getMaterialNamesByDeliverTime(
+//            @JsonParam("startTime") String startTime, @JsonParam("endTime") String endTime) throws ParseException {
+////        JSONObject json=new JSONObject(requestBody);
+////        String startTime = json.getStr("startTime");
+////        String endTime = json.getStr("endTime");
+//        return deliverService.findNameBetweenDates(startTime, endTime);
+//    }
+
+    @PostMapping("/findCountByNames")
+    public Result findCountByNameBetweenDates(
+            @RequestBody String requestBody) throws ParseException {
+        JSONObject json=new JSONObject(requestBody);
+        String startTime = json.getStr("startTime");
+        String endTime = json.getStr("endTime");
+        return deliverService.findCountByNameBetweenDates(startTime, endTime);
+    }
+
+
+    @PostMapping("/findNames")
     public Result getMaterialNamesByDeliverTime(
             @RequestBody String requestBody) throws ParseException {
         JSONObject json=new JSONObject(requestBody);
@@ -53,20 +97,16 @@ public class DeliverController {
         return deliverService.findNameBetweenDates(startTime, endTime);
     }
 
-    @PostMapping("/findCountByNames")
-    public Result findCountByNameBetweenDates(
-            @RequestBody String requestBody) throws ParseException {
-        JSONObject json=new JSONObject(requestBody);
-        String startTime = json.getStr("startTime");
-        String endTime = json.getStr("endTime");
-
-        return deliverService.findCountByNameBetweenDates(startTime, endTime);
-    }
-
     @PostMapping("/multiDelivery")
-    public Result MultiDelivery(@RequestBody List<Deliver> deliverList) {
+    @Encrypt
+    @Decrypt
+    public Result MultiDelivery(@JsonParam("list") String deliverList) {
+
         return deliverService.MultiDelivery(deliverList);
     }
+
+
+
 
     //@Encrypt 加密
     //@Decrypt 解密

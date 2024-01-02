@@ -140,10 +140,19 @@
         ORDER BY totalDeliverCount ASC
     </select>
 
-    <select id="callMultiDelivery" statementType="CALLABLE">
-        {call MultiDelivery_208201302(
-                #{deliverList, mode=IN, jdbcType=OTHER, javaType=String},
-                #{resultMessage, mode=OUT, jdbcType=VARCHAR}
-              )}
+<!--    <select id="callMultiDelivery" statementType="CALLABLE">-->
+<!--        {call MultiDelivery_208201302(-->
+<!--                #{deliverList, mode=IN, jdbcType=OTHER, javaType=String},-->
+<!--                #{resultMessage, mode=OUT, jdbcType=VARCHAR}-->
+<!--              )}-->
+<!--    </select>-->
+
+    <select id="CallDeliverProcedure" statementType="CALLABLE" parameterMap="setDeliverMap" resultType="java.util.Map">
+        call MultiDelivery_208201302(?,?);
     </select>
+
+    <parameterMap id="setDeliverMap" type="java.util.Map">
+        <parameter property="deliverList" mode="IN" jdbcType="OTHER" />
+        <parameter property="resultMessage" mode="OUT" jdbcType="VARCHAR" />
+    </parameterMap>
 </mapper>

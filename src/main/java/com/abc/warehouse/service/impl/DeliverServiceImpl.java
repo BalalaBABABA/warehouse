@@ -1,5 +1,8 @@
 package com.abc.warehouse.service.impl;
 
+import cn.hutool.json.JSONUtil;
+import com.abc.warehouse.annotation.JsonParam;
+import com.abc.warehouse.dto.EncryotResult;
 import com.abc.warehouse.dto.Result;
 import com.abc.warehouse.dto.constants.PageConstants;
 import com.abc.warehouse.pojo.Store;
@@ -137,24 +140,64 @@ public class DeliverServiceImpl extends ServiceImpl<DeliverMapper, Deliver>
 
     }
 
-    public Result MultiDelivery(List<Deliver> list) {
-        System.out.println("哈哈");
-
-        long id = generateID.getId("4", "Deliver");
-        for (Deliver deliver : list) {
-            deliver.setDeliverNo(id);
+    public Result MultiDelivery(String deliverList) {
+        List<Deliver> list = JSONUtil.toList(deliverList, Deliver.class);
+        Long deliverNo = generateID.getId("2", "deliver");
+        for(Deliver deliver : list){
+            deliver.setDeliverNo(deliverNo);
+            deliver.setDeliverTime(null);
         }
-        String deliverList=list.toString();
-        String resultMessage=" ";
-        // 调用存储过程
-        deliverMapper.callMultiDelivery(deliverList, resultMessage);
+        String jsonList = JSONUtil.toJsonStr(list);
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("deliverList", jsonList);
+        List<Map<String, Object>> result = deliverMapper.CallDeliverProcedure(map);
+        String resultMessage = (String) map.get("resultMessage");
+        System.out.println(resultMessage);
         if(resultMessage.equals("出库成功"))
         {
-            return Result.ok(resultMessage);
+            return EncryotResult.ok(resultMessage);
         }
         else {
-            return Result.fail(resultMessage);
+            return EncryotResult.fail(resultMessage);
         }
+//        System.out.println(list.toString());
+//
+//
+//
+//        List<Store> list = JSONUtil.toList(deliverList, Store.class);
+//        long id = generateID.getId("2", "Deliver");
+//        for (Deliver deliver : list) {
+//            deliver.setDeliverNo(id);
+//            deliver.setDeliverTime(null);
+//        }
+//
+//        String jsonList = JSONUtil.toJsonStr(list);
+//
+//        Map<String, Object> map = new HashMap<>();
+//        map.put("storeList", jsonList);
+//        List<Map<String, Object>> result = storeMapper.CallStoreProcedure(map);
+//        String resultMessage = (String) map.get("resultMessage");
+//        System.out.println(resultMessage);
+//        return Result.ok(resultMessage);
+//
+//
+//
+//        long id = generateID.getId("2", "Deliver");
+//        for (Deliver deliver : list) {
+//            deliver.setDeliverNo(id);
+//        }
+//        String deliverList=list.toString();
+//        String resultMessage=" ";
+//        // 调用存储过程
+//        deliverMapper.callMultiDelivery(deliverList, resultMessage);
+//        if(resultMessage.equals("出库成功"))
+//        {
+//            return Result.ok(resultMessage);
+//        }
+//        else {
+//            return Result.fail(resultMessage);
+//        }
     }
 }
 
