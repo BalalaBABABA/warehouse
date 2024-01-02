@@ -151,7 +151,8 @@ public class EncryptedAspect {
                 System.out.println("解密出来的data数据：" + decrypt);
 
                 // 将解密后的数据转换为JSON对象
-                JSONObject decryptedJson = new JSONObject(decrypt);
+                JSONObject decryptedJson = JSONUtil.parseObj(decrypt);
+                //JSONObject decryptedJson = new JSONObject(decrypt);
 
                 // 设置到方法的形参中
                 mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);

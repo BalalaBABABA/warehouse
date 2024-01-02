@@ -37,12 +37,6 @@ public interface StoreMapper extends BaseMapper<Store> {
                   @Param("userId") Long userId,
                   @Param("notes") String notes);
 
-    @Select("{call simpleStore_208201302(#{no, mode=IN, jdbcType=BIGINT}, #{hname, mode=IN, jdbcType=VARCHAR}," +
-            " #{time, mode=IN, jdbcType=DATE}, #{mid, mode=IN, jdbcType=BIGINT}, #{storenum, mode=IN, jdbcType=INTEGER}, " +
-            "#{uid, mode=IN, jdbcType=BIGINT}, #{note, mode=IN, jdbcType=VARCHAR})}")
-    @Options(statementType = StatementType.CALLABLE)
-    void callSimpleStore(Map<String, Object> params);
-
     List<Store> selectStoreByDate(@Param("startDate") Date startDate, @Param("endDate") Date endDate);
 
     List<Store> selectStoreByYear(@Param("startYear") Date startYear, @Param("endYear") Date endYear,
@@ -50,4 +44,10 @@ public interface StoreMapper extends BaseMapper<Store> {
 
     List<Store> selectStoreByYearAndMaterialName(@Param("startYear") Date startYear, @Param("endYear") Date endYear,
                                                  @Param("materialName") String materialName);
+
+//    @Select("{call callStoreProcedure(#{storeList, mode=IN}, #{resultMessage, mode=OUT, jdbcType=VARCHAR})}")
+//    @Options(statementType = StatementType.CALLABLE)
+//    void callStoreProcedure(@Param("storeList") String storeList, @Param("resultMessage") String resultMessage);
+
+    List<Map<String, Object>> CallStoreProcedure(Map<String, Object> map);
 }
