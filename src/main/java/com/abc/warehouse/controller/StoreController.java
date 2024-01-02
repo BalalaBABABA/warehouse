@@ -1,9 +1,12 @@
 package com.abc.warehouse.controller;
 
 import cn.hutool.json.JSONObject;
+import cn.hutool.json.JSONObject;
+import cn.hutool.json.JSONUtil;
 import com.abc.warehouse.annotation.Decrypt;
 import com.abc.warehouse.annotation.Encrypt;
 import com.abc.warehouse.annotation.JsonParam;
+import com.abc.warehouse.dto.EncryotResult;
 import com.abc.warehouse.dto.Result;
 import com.abc.warehouse.dto.constants.PageConstants;
 import com.abc.warehouse.mapper.MaterialMapper;
@@ -12,19 +15,21 @@ import com.abc.warehouse.pojo.Store;
 import com.abc.warehouse.service.MaterialService;
 import com.abc.warehouse.service.MaterialTypeService;
 import com.abc.warehouse.service.StoreService;
+import com.abc.warehouse.utils.GenerateID;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.injector.methods.SelectCount;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 @RequestMapping("/store")
@@ -55,6 +60,9 @@ public class StoreController {
 
         return storeService.findCountByNameBetweenDates(startTime, endTime);
     }
+    @Resource
+    private GenerateID generateID;
+
     @GetMapping
     public Result enter(){
         return Result.ok();
@@ -96,6 +104,7 @@ public class StoreController {
     @PostMapping("/conditionSearch")
     @Encrypt
     @Decrypt
+    @Transactional
     public Result conditionSearch(@JsonParam("storeNo") Long storeNo, @JsonParam("houseName") String houseName,
                                   @JsonParam("startTime") String startTime, @JsonParam("endTime") String endTime,
                                   @JsonParam("materialId") Long materialId, @JsonParam("userId") Long userId,
@@ -125,12 +134,6 @@ public class StoreController {
         }else{
             return new Result(false, null, null, 0L);
         }
-    }
-
-    @PostMapping("/simpleStore")
-    public Result simpleStore(@RequestBody Map<String, Object> params){
-        storeMapper.callSimpleStore(params);
-        return Result.ok();
     }
 
     @PostMapping("/selectStoreByDate")
@@ -167,4 +170,27 @@ public class StoreController {
         return new Result(false, null, null, 0L);
     }
 
+    @PostMapping("/callStoreProcedure")
+    @Encrypt
+    @Decrypt
+    public Result callStoreProcedure(@JsonParam("storeList") String storeList){
+
+        List<Store> list = JSONUtil.toList(storeList, Store.class);
+        Long storeNo = generateID.getId("1", "Store");
+        for(Store store : list){
+            store.setStoreNo(storeNo);
+            store.setStoreTime(null);
+        }
+        String jsonList = JSONUtil.toJsonStr(list);
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("storeList", jsonList);
+        List<Map<String, Object>> result = storeMapper.CallStoreProcedure(map);
+        String resultMessage = (String) map.get("resultMessage");
+        if(resultMessage.equals("入库成功")){
+            return EncryotResult.ok(resultMessage);
+        }else{
+            return EncryotResult.fail(resultMessage);
+        }
+    }
 }

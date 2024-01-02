@@ -141,4 +141,17 @@
             m.name
         ORDER BY totalstoreCount ASC
     </select>
+
+    <resultMap id="storeProcedureResul" type="java.util.HashMap">
+        <result property="resultMessage" column="resultMessage" />
+    </resultMap>
+
+    <select id="CallStoreProcedure" statementType="CALLABLE" parameterMap="setStoreMap" resultType="java.util.Map">
+        call MultiStore_208201302(?,?);
+    </select>
+
+    <parameterMap id="setStoreMap" type="java.util.Map">
+        <parameter property="storeList" mode="IN" jdbcType="OTHER" />
+        <parameter property="resultMessage" mode="OUT" jdbcType="VARCHAR" />
+    </parameterMap>
 </mapper>

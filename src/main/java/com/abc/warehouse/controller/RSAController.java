@@ -1,5 +1,7 @@
 package com.abc.warehouse.controller;
 
+import cn.hutool.json.JSONObject;
+import cn.hutool.json.JSONUtil;
 import com.abc.warehouse.annotation.Decrypt;
 import com.abc.warehouse.annotation.Encrypt;
 import com.abc.warehouse.annotation.JsonParam;
@@ -24,11 +26,9 @@ public class RSAController {
     @PostMapping("/test")
     @Encrypt
     @Decrypt
-    public EncryotResult test(){
-        List<String> list = new ArrayList<>();
-        list.add("add");
-        list.add("del");
-        list.add("modify");
+    public EncryotResult test(@JsonParam("list")String list){
+        List<User> userList = JSONUtil.toList(list, User.class);
+
         return EncryotResult.ok(list);
     }
 

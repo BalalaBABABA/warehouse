@@ -26,6 +26,7 @@ import com.abc.warehouse.mapper.PermissionMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
@@ -51,6 +52,9 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
 
     @Autowired
     private PermissionMapper permissionMapper;
+
+    @Autowired
+    private UserService userService;
     @Autowired
     private PermissionTypeService permissionTypeService;
 
@@ -58,9 +62,11 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
     private FreeUriService freeUriService;
     @Autowired
     private PermissionTypeMapper permissionTypeMapper;
-    @Autowired
-    private UserService userService;
+
     @Override
+    /**
+     * 得到resourceId，权限类型名称列表的Map
+     */
     public Result getPermissionTypes() {
         //1.查询所有资源id
         List<Resource> list = resourceService.list();
@@ -74,27 +80,17 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
             List<String> types = permissionTypes.stream().map(permissionType -> permissionType.getType()).collect(Collectors.toList());
             permissions.put(resourceId,types);
         });
-//        list.forEach(resource -> {
-//            //2.1 获取id
-//            Long resourceId = resource.getId();
-//            QueryWrapper<Permission> queryWrapper=new QueryWrapper<>();
-//            queryWrapper.eq("resource_id",resourceId).groupBy("type");
-//            //2.2 查询所有id对应的权限
-//            List<Permission> permissionsByresourceId = list(queryWrapper);
-//            //2.3 存储权限的类型字段
-//            List<String> types=new ArrayList();
-//            permissionsByresourceId.forEach(permission -> types.add(permission.getType()));
-//            //2.4 存入Map
-//            permissions.put(resourceId,types);
-//        });
         return Result.ok(permissions);
     }
 
     @Override
+    @Transactional
     public Result getAllUsersPermissionsByResourceId(Integer pageCount, Long resourceId) {
         //设置分页参数
         Page<User> page =new Page<>(pageCount, PERMISSION_SEARCH_PAGE_SIZE);
-        List<User> userList = userService.page(page, null).getRecords();
+        LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<>();
+        wrapper.ne(User::getRole, "SuperAdmin");
+        List<User> userList = userService.page(page, wrapper).getRecords();
 
         //获取所有用户
         List<UserPermission> userPermissions = userList
@@ -119,7 +115,9 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
             );
             user.setPermissionList(permissons);
         });
-        return EncryotResult.ok(userPermissions);
+
+        long totalPage = userService.getTotalPage();
+        return EncryotResult.ok(userPermissions,totalPage);
     }
 
     @Override
@@ -263,10 +261,8 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
             permission.setPermissionListStr(null);
 
         }
-        Map<String,Object> map = new HashMap<>();
-        map.put("records",permissions.getRecords());
-        map.put("totalPage",permissions.getPages());
-        return EncryotResult.ok(map);
+
+        return EncryotResult.ok(permissions.getRecords(),permissions.getPages());
 
     }
 
@@ -300,10 +296,7 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
             permission.setPermissionListStr(null);
 
         }
-        Map<String,Object> map = new HashMap<>();
-        map.put("records",permissions.getRecords());
-        map.put("totalPage",permissions.getPages());
-        return EncryotResult.ok(map);
+        return EncryotResult.ok(permissions.getRecords(),permissions.getPages());
     }
 
     @Override

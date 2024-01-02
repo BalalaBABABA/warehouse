@@ -139,7 +139,6 @@ public class EncryptedAspect {
                 //前端公钥
                 publicKey = json.getStr("publicKey");
 
-
                 System.out.println("前端公钥：" + publicKey);
 
                 //后端私钥解密的到AES的key
@@ -151,7 +150,8 @@ public class EncryptedAspect {
                 System.out.println("解密出来的data数据：" + decrypt);
 
                 // 将解密后的数据转换为JSON对象
-                JSONObject decryptedJson = new JSONObject(decrypt);
+                JSONObject decryptedJson = JSONUtil.parseObj(decrypt);
+                //JSONObject decryptedJson = new JSONObject(decrypt);
 
                 // 设置到方法的形参中
                 mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
@@ -160,7 +160,6 @@ public class EncryptedAspect {
                     for (int i = 0; i < args.length; i++) {
                         Annotation[] argsAnnotations = method.getParameterAnnotations()[i];
                         for (Annotation annotation : argsAnnotations) {
-
                             if (annotation instanceof JsonParam) {
                                 String paramName = ((JsonParam) annotation).value();
                                 Object paramValue = decryptedJson.get(paramName);
@@ -204,7 +203,6 @@ public class EncryptedAspect {
                 result.setData(data);
                 result.setAesKey(aesKey);
                 o = result;
-
             }
 
             //返回

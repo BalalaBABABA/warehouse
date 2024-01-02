@@ -62,12 +62,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
 
     @Override
     public Result userPage(Integer curPage) {
-        LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<>();  //查询条件构造器
+        LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<>();  // 查询条件构造器
+        wrapper.ne(User::getRole, "SuperAdmin");
         IPage<User> pageQuery = new Page<>(curPage, PageConstants.USER_SEARCH_PAGE_SIZE);
         IPage<User> page = baseMapper.selectPage(pageQuery, wrapper);
         System.out.println(page.getRecords().toString());
         return EncryotResult.ok(page.getRecords(), page.getPages());
     }
+
 
     @Override
     public Result deleteUser(Long id) {
@@ -75,18 +77,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         return b?Result.ok():Result.fail("删除失败");
     }
 
-    @Override
-    public Result getNamesAndIds(){
-        LambdaQueryWrapper<User> queryWrapper=new LambdaQueryWrapper<>();
-        queryWrapper.select(User::getId,User::getName);
-        List<User> list = list(queryWrapper);
-        return Result.ok(list);
-    }
 
     @Override
     public Result searchByName(Integer curPage, String name) {
         QueryWrapper<User> wrapper = new QueryWrapper();
-        wrapper.like("name", name);
+        wrapper.like("name", name)
+                .ne("role", "SuperAdmin");
         IPage<User> pageQuery = new Page((long)curPage, (long) PageConstants.USER_SEARCH_PAGE_SIZE);
         IPage<User> page = ((UserMapper)this.baseMapper).selectPage(pageQuery, wrapper);
         return EncryotResult.ok(page.getRecords(), page.getPages());
@@ -94,10 +90,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
 
     @Override
     public Result searchById(Integer curPage, Long id) {
-        QueryWrapper<User> wrapper = new QueryWrapper();
-        wrapper.eq("id", id);
-
-
+        QueryWrapper<User> wrapper = new QueryWrapper<>();
+        wrapper.eq("id", id)
+                .ne("role", "SuperAdmin");
         IPage<User> pageQuery = new Page((long)curPage, (long)PageConstants.USER_SEARCH_PAGE_SIZE);
         IPage<User> page = ((UserMapper)this.baseMapper).selectPage(pageQuery, wrapper);
         return EncryotResult.ok(page.getRecords(), page.getPages());
@@ -106,7 +101,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     public Result getUserById(Long id)
     {
         QueryWrapper<User> wrapper = new QueryWrapper<>();
-        wrapper.eq("id", id);
+        wrapper.eq("id", id)
+                .ne("role", "SuperAdmin");
         User user = baseMapper.selectOne(wrapper);
         return Result.ok(user);
     }
@@ -167,7 +163,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
 
     @Override
     public List<User> getAllUser() {
-        return list();
+        QueryWrapper<User> wrapper = new QueryWrapper<>();
+        wrapper.ne("role", "SuperAdmin");
+        return list(wrapper);
     }
 
     public Result getNowUser(String token)

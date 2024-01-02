@@ -37,22 +37,6 @@ public class UserController {
         return userService.deleteUser(id);
     }
 
-//    @GetMapping("/{id}")
-//    public Result getUserById(@PathVariable("id")Long id){
-//        return Result.ok("你好");
-//    }
-
-    @GetMapping("/getNamesAndIds")
-    public Result getNamesAndIds(){
-        return userService.getNamesAndIds();
-    }
-
-    @GetMapping("/totalpage")
-    public long getTotalPage(){
-        return userService.getTotalPage();
-    }
-
-
     @GetMapping("/search/{page}")
     @Encrypt
     public Result search(@PathVariable("page") Integer page){

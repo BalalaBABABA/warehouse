@@ -19,7 +19,6 @@ public interface UserService extends IService<User> {
 
     Result deleteUser(Long id);
 
-    Result getNamesAndIds();
 
     Result userPage(Integer pageCount);
 

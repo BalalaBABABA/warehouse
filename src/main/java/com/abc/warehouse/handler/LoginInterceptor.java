@@ -89,7 +89,6 @@ public class LoginInterceptor implements HandlerInterceptor {
         log.info("request uri:{}",requestURI);
         log.info("request method:{}",request.getMethod());
         log.info("token:{}", token);
-
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
         //获取放行uri,如果有匹配的就直接放行
@@ -133,7 +132,7 @@ public class LoginInterceptor implements HandlerInterceptor {
         String role = userDTO.getRole();
 
         //如果是amdin，直接放行
-        if(role.equals("admin")){
+        if(role.equals("SuperAdmin")){
             log.warn("result:超级管理员直接通过");
             log.info("=================request end===========================");
             return true;
@@ -148,7 +147,6 @@ public class LoginInterceptor implements HandlerInterceptor {
         redisTemplate.expire(RedisConstants.LOGIN_USER_KEY + token,PERMISSIONS_USER_TTL,TimeUnit.SECONDS);
 
         //请求路径 与 权限uri 匹配
-
         for (String permissionUri : permissions) {
             if (pathMatcher.match(permissionUri, requestURI)) {
                 log.warn("result:用户有权限，访问成功");

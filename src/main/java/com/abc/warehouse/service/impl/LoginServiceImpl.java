@@ -69,27 +69,15 @@ public class LoginServiceImpl implements LoginService {
         {
             return Result.fail(ErrorCode.PARAMS_ERROR.getMsg());
         }
-
         //用户权限uri的list
         List<String> permissionList = new ArrayList<>();
 
 
         User user=userService.getById(userId);
 
-//        //输入密码通过算法加密
-//        String encodedPassword = PasswordEncoder.encode(password,salt);
-//        //查找该用户信息，匹配用户名和密码
-
-//        queryWrapper.eq(User::getId,userId)
-//                        .eq(User::getPassword,encodedPassword)
-//                                .last("limit 1");
-//        User user = userService.getOne(queryWrapper);
-
         boolean b = SaltMD5Util.verifySaltPassword(password, user.getPassword());
+
         //如果账号密码不匹配，返回错误信息
-//        if(user==null && userId != 9797){
-//            return Result.fail(ErrorCode.ACCOUNT_PWD_NOT_EXIST.getMsg());
-//        }
         if(!b && userId != 9797){
             return Result.fail(ErrorCode.ACCOUNT_PWD_NOT_EXIST.getMsg());
         }

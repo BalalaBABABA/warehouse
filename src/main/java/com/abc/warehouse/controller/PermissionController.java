@@ -37,7 +37,6 @@ public class PermissionController {
     }
 
 
-
     /**
      * 根据resourceId获取types
      * @return
@@ -51,7 +50,7 @@ public class PermissionController {
     /**
      * 根据resourceId获取对应的所有用户权限
      * @param resourceId
-     * @return
+     * @/permissiontype/types/map
      */
     @GetMapping("/get/{page}/{resource_id}")
     @Encrypt
