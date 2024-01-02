@@ -67,22 +67,22 @@ public class StoreController {
 
 
     @PostMapping("/findNames")
+    @Encrypt
     public Result getMaterialNamesByStoreTime(
             @RequestBody String requestBody) throws ParseException {
         JSONObject json=new JSONObject(requestBody);
-        String startTime = json.getStr("startTime");
-        String endTime = json.getStr("endTime");
+        Date startTime = json.getDate("startTime");
+        Date endTime = json.getDate("endTime");
         return storeService.findNameBetweenDates(startTime, endTime);
     }
 
     @PostMapping("/findCountByNames")
     @Encrypt
-    @Decrypt
     public Result findCountByNameBetweenDates(
             @RequestBody String requestBody) throws ParseException {
         JSONObject json=new JSONObject(requestBody);
-        String startTime = json.getStr("startTime");
-        String endTime = json.getStr("endTime");
+        Date startTime = json.getDate("startTime");
+        Date endTime = json.getDate("endTime");
 
         return storeService.findCountByNameBetweenDates(startTime, endTime);
     }

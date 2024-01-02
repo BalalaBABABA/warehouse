@@ -5,7 +5,6 @@ import com.abc.warehouse.dto.Result;
 import com.abc.warehouse.dto.constants.PageConstants;
 import com.abc.warehouse.utils.GenerateID;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -17,9 +16,6 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.Date;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -61,53 +57,53 @@ public class StoreServiceImpl extends ServiceImpl<StoreMapper, Store>
         return EncryotResult.ok();
     }
 
-    public Result findNameBetweenDates(String startTime, String endTime) throws ParseException {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        Date start = null, end = null;
-
-        if(startTime != null && !startTime.isEmpty()){
-            start = sdf.parse(startTime);
-        }
-        if(endTime != null && !endTime.isEmpty()){
-            end = sdf.parse(endTime);
-
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTime(end);
-            calendar.add(Calendar.DATE, 1);
-            end = calendar.getTime();
-        }
+    public Result findNameBetweenDates(Date startTime, Date endTime) throws ParseException {
+//        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+//        Date start = null, end = null;
+//
+//        if(startTime != null && !startTime.isEmpty()){
+//            start = sdf.parse(startTime);
+//        }
+//        if(endTime != null && !endTime.isEmpty()){
+//            end = sdf.parse(endTime);
+//
+//            Calendar calendar = Calendar.getInstance();
+//            calendar.setTime(end);
+//            calendar.add(Calendar.DATE, 1);
+//            end = calendar.getTime();
+//        }
         List<String> nameList = new ArrayList<>();
-        List<Map<String, Object>> resultMapList = storeMapper.findCountByNameBetweenDates(start,end);
+        List<Map<String, Object>> resultMapList = storeMapper.findCountByNameBetweenDates(startTime,endTime);
         // 遍历列表并获取每个Map的键和值
         for (Map<String, Object> resultMap : resultMapList) {
             nameList.add(resultMap.get("materialName").toString());
         }
-        return Result.ok(nameList);
+        return EncryotResult.ok(nameList);
     }
 
-    public Result findCountByNameBetweenDates(String startTime, String endTime) throws ParseException {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        Date start = null, end = null;
-
-        if(startTime != null && !startTime.isEmpty()){
-            start = sdf.parse(startTime);
-        }
-        if(endTime != null && !endTime.isEmpty()){
-            end = sdf.parse(endTime);
-
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTime(end);
-            calendar.add(Calendar.DATE, 1);
-            end = calendar.getTime();
-        }
+    public Result findCountByNameBetweenDates(Date startTime, Date endTime) throws ParseException {
+//        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+//        Date start = null, end = null;
+//
+//        if(startTime != null && !startTime.isEmpty()){
+//            start = sdf.parse(startTime);
+//        }
+//        if(endTime != null && !endTime.isEmpty()){
+//            end = sdf.parse(endTime);
+//
+//            Calendar calendar = Calendar.getInstance();
+//            calendar.setTime(end);
+//            calendar.add(Calendar.DATE, 1);
+//            end = calendar.getTime();
+//        }
         List<Long>countList = new ArrayList<>();
-        List<Map<String, Object>> resultMapList = storeMapper.findCountByNameBetweenDates(start,end);
+        List<Map<String, Object>> resultMapList = storeMapper.findCountByNameBetweenDates(startTime,endTime);
         // 遍历列表并获取每个Map的键和值
         for (Map<String, Object> resultMap : resultMapList) {
             Long totalstoreCount = (Long) resultMap.get("totalstoreCount");
             countList.add(totalstoreCount);
         }
-        return Result.ok(countList);
+        return EncryotResult.ok(countList);
 
     }
 }

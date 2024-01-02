@@ -44,29 +44,6 @@ public class DeliverController {
     }
 
 
-    @PostMapping("/findNames")
-    @Encrypt
-    @Decrypt
-    public Result getMaterialNamesByDeliverTime(
-            @JsonParam("startTime") String startTime, @JsonParam("endTime") String endTime) throws ParseException {
-//        JSONObject json=new JSONObject(requestBody);
-//        String startTime = json.getStr("startTime");
-//        String endTime = json.getStr("endTime");
-        return deliverService.findNameBetweenDates(startTime, endTime);
-    }
-
-//    @PostMapping("/findCountByNames")
-//    @Encrypt
-//    @Decrypt
-//    public Result findCountByNameBetweenDates(
-//            @JsonParam("startTime") String startTime, @JsonParam("endTime") String endTime) throws ParseException {
-////        JSONObject json=new JSONObject(requestBody);
-////        String startTime = json.getStr("startTime");
-////        String endTime = json.getStr("endTime");
-//
-//        return deliverService.findCountByNameBetweenDates(startTime, endTime);
-//    }
-//
 //    @PostMapping("/findNames")
 //    @Encrypt
 //    @Decrypt
@@ -78,22 +55,27 @@ public class DeliverController {
 //        return deliverService.findNameBetweenDates(startTime, endTime);
 //    }
 
+
     @PostMapping("/findCountByNames")
+    @Encrypt
     public Result findCountByNameBetweenDates(
             @RequestBody String requestBody) throws ParseException {
         JSONObject json=new JSONObject(requestBody);
-        String startTime = json.getStr("startTime");
-        String endTime = json.getStr("endTime");
+        Date startTime = json.getDate("startTime");
+        Date endTime = json.getDate("endTime");
+//        String startTime = json.getStr("startTime");
+//        String endTime = json.getStr("endTime");
         return deliverService.findCountByNameBetweenDates(startTime, endTime);
     }
 
 
     @PostMapping("/findNames")
+    @Encrypt
     public Result getMaterialNamesByDeliverTime(
             @RequestBody String requestBody) throws ParseException {
         JSONObject json=new JSONObject(requestBody);
-        String startTime = json.getStr("startTime");
-        String endTime = json.getStr("endTime");
+        Date startTime = json.getDate("startTime");
+        Date endTime = json.getDate("endTime");
         return deliverService.findNameBetweenDates(startTime, endTime);
     }
 

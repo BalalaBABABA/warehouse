@@ -6,7 +6,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.text.ParseException;
 import java.util.Date;
-import java.util.List;
 
 /**
 * @author 吧啦
@@ -16,9 +15,9 @@ import java.util.List;
 public interface DeliverService extends IService<Deliver> {
     Result deliverPage(Integer page);
 
-    Result findNameBetweenDates(String startTime, String endTime) throws ParseException;
+    Result findNameBetweenDates(Date startTime, Date endTime) throws ParseException;
 
-    Result findCountByNameBetweenDates(String startTime, String endTime) throws ParseException;
+    Result findCountByNameBetweenDates(Date startTime, Date endTime) throws ParseException;
 
     Result MultiDelivery(String list);
 

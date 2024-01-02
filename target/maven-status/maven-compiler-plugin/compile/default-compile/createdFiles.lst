@@ -55,7 +55,6 @@ com\abc\warehouse\service\PermissionService.class
 com\abc\warehouse\pojo\Deliver.class
 com\abc\warehouse\service\UserService.class
 com\abc\warehouse\service\impl\PermissionServiceImpl.class
-com\abc\warehouse\handler\InterceptorManager.class
 com\abc\warehouse\pojo\Material.class
 com\abc\warehouse\controller\MaterialTypeController.class
 com\abc\warehouse\aspect\EncryptedAspect.class
