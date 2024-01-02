@@ -39,10 +39,8 @@ public class UserInfoController {
         return userService.updatePassword(token,newPassword);
     }
 
-    @PostMapping("/updatePhone")
-    @Encrypt
-    @Decrypt
-    public Result updatePhone(@JsonParam("newPhone") String newPhone,@JsonParam("Authorization")String token){
+    @GetMapping("/updatePhone/{newPhone}")
+    public Result updatePhone(@PathVariable("newPhone") String newPhone,@RequestHeader("Authorization")String token){
         return userService.updatePhone(newPhone,token);
     }
 }

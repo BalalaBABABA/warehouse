@@ -52,10 +52,11 @@ public interface DeliverMapper extends BaseMapper<Deliver> {
                 @Param("endTime") Date endTime
         );
 
-        void callMultiDelivery(@Param("deliverList") String deliverList, @Param("resultMessage") String resultMessage);
+//        void callMultiDelivery(@Param("deliverList") String deliverList, @Param("resultMessage") String resultMessage);
+        List<Map<String, Object>> CallDeliverProcedure(Map<String, Object> map);
 
 
-    List<Deliver> selectDeliverByYearAndMaterialName(@Param("startYear") Date startYear, @Param("endYear") Date endYear,
+        List<Deliver> selectDeliverByYearAndMaterialName(@Param("startYear") Date startYear, @Param("endYear") Date endYear,
                                                      @Param("materialName") String materialName);
 }
 

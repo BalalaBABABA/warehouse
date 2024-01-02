@@ -39,7 +39,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     private static final String salt = "wms@#!";
     @Override
     public Result saveUser(User user) {
-        long id = generateID.getId("2", "User");
+        long id = generateID.getId("4", "User");
         user.setId(id);
         String password=SaltMD5Util.generateSaltPassword("123456");
 //        String password = PasswordEncoder.encode("123456",salt);
