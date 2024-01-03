@@ -44,18 +44,6 @@ public class DeliverController {
     }
 
 
-//    @PostMapping("/findNames")
-//    @Encrypt
-//    @Decrypt
-//    public Result getMaterialNamesByDeliverTime(
-//            @JsonParam("startTime") String startTime, @JsonParam("endTime") String endTime) throws ParseException {
-////        JSONObject json=new JSONObject(requestBody);
-////        String startTime = json.getStr("startTime");
-////        String endTime = json.getStr("endTime");
-//        return deliverService.findNameBetweenDates(startTime, endTime);
-//    }
-
-
     @PostMapping("/findCountByNames")
     @Encrypt
     public Result findCountByNameBetweenDates(
@@ -63,8 +51,6 @@ public class DeliverController {
         JSONObject json=new JSONObject(requestBody);
         Date startTime = json.getDate("startTime");
         Date endTime = json.getDate("endTime");
-//        String startTime = json.getStr("startTime");
-//        String endTime = json.getStr("endTime");
         return deliverService.findCountByNameBetweenDates(startTime, endTime);
     }
 
@@ -86,12 +72,6 @@ public class DeliverController {
 
         return deliverService.MultiDelivery(deliverList);
     }
-
-
-
-
-    //@Encrypt 加密
-    //@Decrypt 解密
 
     @GetMapping("/searchAll/{page}")
     @Encrypt

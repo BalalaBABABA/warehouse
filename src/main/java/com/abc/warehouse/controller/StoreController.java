@@ -41,30 +41,6 @@ public class StoreController {
     @Autowired
     private MaterialService materialService;
 
-//
-//    @PostMapping("/findNames")
-//    @Encrypt
-//    @Decrypt
-//    public Result getMaterialNamesByStoreTime(
-//            @JsonParam("startTime") String startTime, @JsonParam("endTime") String endTime) throws ParseException {
-////        JSONObject json=new JSONObject(requestBody);
-////        String startTime = json.getStr("startTime");
-////        String endTime = json.getStr("endTime");
-//        return storeService.findNameBetweenDates(startTime, endTime);
-//    }
-//
-//    @PostMapping("/findCountByNames")
-//    @Encrypt
-//    @Decrypt
-//    public Result findCountByNameBetweenDates(
-//            @JsonParam("startTime") String startTime, @JsonParam("endTime") String endTime) throws ParseException {
-////        JSONObject json=new JSONObject(requestBody);
-////        String startTime = json.getStr("startTime");
-////        String endTime = json.getStr("endTime");
-//
-//        return storeService.findCountByNameBetweenDates(startTime, endTime);
-//    }
-
 
     @PostMapping("/findNames")
     @Encrypt

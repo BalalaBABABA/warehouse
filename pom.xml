@@ -157,18 +157,6 @@
             <version>1.10</version>
         </dependency>
 
-        <!--        <dependency>-->
-        <!--            <groupId>net.sf.jasperreports</groupId>-->
-        <!--            <artifactId>jasperreports</artifactId>-->
-        <!--            <version>6.8.0</version>-->
-        <!--            <exclusions>-->
-        <!--                <exclusion>-->
-        <!--                    <groupId>com.lowagie</groupId>-->
-        <!--                    <artifactId>itext</artifactId>-->
-        <!--                </exclusion>-->
-        <!--            </exclusions>-->
-        <!--        </dependency>-->
-
 
     </dependencies>
     <dependencyManagement>

@@ -41,7 +41,7 @@ public class ResourceServiceImpl extends ServiceImpl<ResourceMapper, Resource>
     @Override
     public Result getAllResourcesInfo() {
         List<Resource> list = list();
-        Map<String,Object> map=new LinkedHashMap<>();
+        LinkedHashMap<String,Object> map=new LinkedHashMap<>();
         list.forEach(resource -> {
             map.put(resource.getName(),resource);
         });
